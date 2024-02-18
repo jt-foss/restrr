@@ -78,8 +78,7 @@ class CompiledRoute {
     if (!Restrr.hostInformation.hasHostUrl) {
       throw StateError('Host URL is not set!');
     }
-    Dio dio = Dio();
-    dio.interceptors.add(CookieManager(PersistCookieJar()));
+    Dio dio = Dio()..interceptors.add(CookieManager(PersistCookieJar()));
     Map<String, dynamic> headers = {};
     headers['Content-Type'] = contentType;
     return dio
@@ -107,20 +106,4 @@ class CompiledRoute {
         ? '$effectiveHostUrl/api/v${hostInformation.apiVersion}'
         : '$effectiveHostUrl/api';
   }
-}
-
-class StatusRoutes {
-  const StatusRoutes._();
-
-  static final Route health = Route.get('/status/health', isVersioned: false);
-  static final Route coffee = Route.get('/status/coffee', isVersioned: false);
-}
-
-class UserRoutes {
-  const UserRoutes._();
-
-  static final Route me = Route.get('/user/@me');
-  static final Route login = Route.post('/user/login');
-  static final Route logout = Route.delete('/user/logout');
-  static final Route register = Route.post('/user/register');
 }

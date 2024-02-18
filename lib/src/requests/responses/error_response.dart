@@ -1,5 +1,4 @@
 import 'package:restrr/restrr.dart';
-import 'package:restrr/src/requests/rest_response.dart';
 
 /// Represents an error response from a REST request.
 class ErrorResponse {

@@ -1,5 +1,4 @@
 import 'package:restrr/restrr.dart';
-import 'package:restrr/src/entities/user.dart';
 
 class EntityBuilder {
   final RestrrImpl api;

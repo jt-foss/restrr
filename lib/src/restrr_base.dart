@@ -22,65 +22,52 @@ class HostInformation {
   }
 }
 
-class RestrrOptions {
-  const RestrrOptions();
-}
-
-enum SessionInitType { refresh, login, register }
+enum SessionInitType { login, register }
 
 class RestrrBuilder {
   final SessionInitType sessionInitType;
-  final Uri hostUri;
+  final Uri uri;
   String? sessionId;
   String? username;
   String? password;
   String? mfaCode;
 
-  RestrrOptions options = RestrrOptions();
-
-  RestrrBuilder.refresh({required this.hostUri, required this.sessionId})
-      : sessionInitType = SessionInitType.refresh;
-
   RestrrBuilder.login(
-      {required this.hostUri,
-      required this.username,
-      required this.password,
-      this.mfaCode})
+      {required this.uri, required this.username, required this.password})
       : sessionInitType = SessionInitType.login;
 
   Future<RestResponse<RestrrImpl>> create() async {
     Restrr.log.info(
-        'Attempting to initialize a session (${sessionInitType.name}) with $hostUri');
+        'Attempting to initialize a session (${sessionInitType.name}) with $uri');
     final RestResponse<HealthResponse> statusResponse =
-        await Restrr.checkUri(hostUri);
+        await Restrr.checkUri(uri);
     if (!statusResponse.hasData) {
-      Restrr.log.warning('Invalid financrr URI: $hostUri');
+      Restrr.log.warning('Invalid financrr URI: $uri');
       return RestrrError.invalidUri.toRestResponse();
     }
-    Restrr.hostInformation = Restrr.hostInformation.copyWith(
-        hostUri: hostUri, apiVersion: statusResponse.data!.apiVersion);
     Restrr.log.info(
-        'Updated host information: $hostUri, API v${statusResponse.data!.apiVersion}');
-    final bool success = await switch (sessionInitType) {
-      SessionInitType.refresh => throw UnimplementedError(),
+        'Updated host information: $uri, API v${statusResponse.data!.apiVersion}');
+    final RestrrImpl? api = await switch (sessionInitType) {
       SessionInitType.register => throw UnimplementedError(),
       SessionInitType.login => _handleLogin(username!, password!),
     };
-    if (!success) {
+    if (api == null) {
       return RestrrError.invalidCredentials.toRestResponse();
     }
-    final RestResponse<User> userResponse = await UserService.getSelf();
-    Restrr.log.info(userResponse.hasData);
-    if (!userResponse.hasData) {
-      return RestrrError.invalidCredentials.toRestResponse();
-    }
-    return RestResponse(data: RestrrImpl._(selfUser: userResponse.data!));
+    return RestResponse(data: api);
   }
 
-  Future<bool> _handleLogin(String username, String password) async {
+  Future<RestrrImpl?> _handleLogin(String username, String password) async {
     final RestResponse<bool> response =
         await UserService.login(username, password);
-    return response.hasData && response.data!;
+    if (!response.hasData) {
+      return null;
+    }
+    final RestResponse<User> userResponse = await UserService.getSelf();
+    if (!userResponse.hasData) {
+      return null;
+    }
+    return RestrrImpl._(selfUser: userResponse.data!);
   }
 }
 
@@ -90,6 +77,9 @@ abstract class Restrr {
 
   /// Getter for the [EntityBuilder] of this [Restrr] instance.
   EntityBuilder get entityBuilder;
+
+  /// The currently authenticated user.
+  User get selfUser;
 
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri) async {
     hostInformation = hostInformation.copyWith(hostUri: uri, apiVersion: -1);
@@ -112,5 +102,6 @@ class RestrrImpl implements Restrr {
   @override
   late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
+  @override
   final User selfUser;
 }

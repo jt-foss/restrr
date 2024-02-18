@@ -1,26 +1,25 @@
 library;
 
-/* [ /src ] */
-
-export 'src/entity_builder.dart';
-export 'src/restrr_base.dart';
-
-/* [ /entities ] */
+/* [ /src/entities ] */
 
 export 'src/entities/health_response.dart';
 export 'src/entities/user.dart';
+/* [ /src ] */
 
-/* [ /requests ] */
+export 'src/entity_builder.dart';
+/* [ /src/requests/responses ] */
 
-export 'src/requests/error_response.dart';
-export 'src/requests/rest_response.dart';
-export 'src/requests/routes.dart';
+export 'src/requests/responses/error_response.dart';
+export 'src/requests/responses/rest_response.dart';
+/* [ /src/requests ] */
 
-/* [ /service ] */
+export 'src/requests/route.dart';
+export 'src/requests/route_definitions.dart';
+export 'src/restrr_base.dart';
+/* [ /src/service ] */
 
 export 'src/service/api_service.dart';
 export 'src/service/user_service.dart';
-
-/* [ /utils ] */
+/* [ /src/utils ] */
 
 export 'src/utils/string_utils.dart';

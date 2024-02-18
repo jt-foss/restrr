@@ -1,7 +1,4 @@
-import 'package:restrr/src/service/api_service.dart';
-
 import '../../restrr.dart';
-import '../entities/user.dart';
 
 class UserService extends ApiService {
   const UserService({required super.api});
