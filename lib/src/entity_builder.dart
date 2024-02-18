@@ -1,4 +1,5 @@
 import 'package:restrr/restrr.dart';
+import 'package:restrr/src/entities/user.dart';
 
 class EntityBuilder {
   final RestrrImpl api;
@@ -10,6 +11,17 @@ class EntityBuilder {
       healthy: json['healthy'],
       apiVersion: json['api_version'],
       details: json.keys.contains('details') ? json['details'] : null,
+    );
+  }
+
+  static User buildUser(Map<String, dynamic> json) {
+    Restrr.log.info(json);
+    return UserImpl(
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
+      createdAt: DateTime.parse(json['created_at']),
+      isAdmin: json['is_admin'],
     );
   }
 }

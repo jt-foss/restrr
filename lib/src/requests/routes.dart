@@ -1,27 +1,33 @@
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 import '../../restrr.dart';
 
-enum RouteMethod {
-  get,
-  post,
-  put,
-  delete,
-  patch;
-
-  @override
-  String toString() => name.toUpperCase();
-}
-
 class Route {
-  final RouteMethod method;
+  final String method;
   final String path;
   final int paramCount;
   final bool isVersioned;
 
-  Route(this.method, this.path, {this.isVersioned = true})
+  Route._(this.method, this.path, {this.isVersioned = true})
       : assert(StringUtils.count(path, '{') == StringUtils.count(path, '}')),
         paramCount = StringUtils.count(path, '{');
+
+  Route.get(String path, {bool isVersioned = true})
+      : this._('GET', path, isVersioned: isVersioned);
+
+  Route.post(String path, {bool isVersioned = true})
+      : this._('POST', path, isVersioned: isVersioned);
+
+  Route.put(String path, {bool isVersioned = true})
+      : this._('PUT', path, isVersioned: isVersioned);
+
+  Route.delete(String path, {bool isVersioned = true})
+      : this._('DELETE', path, isVersioned: isVersioned);
+
+  Route.patch(String path, {bool isVersioned = true})
+      : this._('PATCH', path, isVersioned: isVersioned);
 
   static Future<ErrorResponse> asErrorResponse(DioException error) async {
     // TODO: implement
@@ -39,7 +45,8 @@ class Route {
       int paramStart = compiledRoute.indexOf('{');
       int paramEnd = compiledRoute.indexOf('}');
       values[compiledRoute.substring(paramStart + 1, paramEnd)] = param;
-      compiledRoute = compiledRoute.replaceRange(paramStart, paramEnd + 1, param);
+      compiledRoute =
+          compiledRoute.replaceRange(paramStart, paramEnd + 1, param);
     }
     return CompiledRoute(this, compiledRoute, values);
   }
@@ -51,43 +58,50 @@ class CompiledRoute {
   final Map<String, String> parameters;
   Map<String, String>? queryParameters;
 
-  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, {this.queryParameters});
+  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters,
+      {this.queryParameters});
 
   CompiledRoute withQueryParams(Map<String, String> params) {
     String newRoute = compiledRoute;
     params.forEach((key, value) {
-      newRoute = '$newRoute${queryParameters == null || queryParameters!.isEmpty ? '?' : '&'}$key=$value';
+      newRoute =
+          '$newRoute${queryParameters == null || queryParameters!.isEmpty ? '?' : '&'}$key=$value';
       queryParameters ??= {};
       queryParameters![key] = value;
     });
-    return CompiledRoute(baseRoute, newRoute, parameters, queryParameters: queryParameters);
+    return CompiledRoute(baseRoute, newRoute, parameters,
+        queryParameters: queryParameters);
   }
 
-  Future<Response> submit({String? bearerToken, String? mfaCode, dynamic body, String contentType = 'application/json'}) {
+  Future<Response> submit(
+      {dynamic body, String contentType = 'application/json'}) {
     if (!Restrr.hostInformation.hasHostUrl) {
       throw StateError('Host URL is not set!');
     }
     Dio dio = Dio();
+    dio.interceptors.add(CookieManager(PersistCookieJar()));
     Map<String, dynamic> headers = {};
-    if (bearerToken != null) {
-      headers['Authorization'] = 'Bearer $bearerToken';
-    }
-    if (mfaCode != null) {
-      headers['X-MFA-Code'] = mfaCode;
-    }
     headers['Content-Type'] = contentType;
-    return dio.fetch(RequestOptions(
-        path: compiledRoute,
-        headers: headers,
-        data: body,
-        method: baseRoute.method.toString(),
-        baseUrl: _buildBaseUrl(Restrr.hostInformation, baseRoute.isVersioned)));
+    return dio
+        .fetch(RequestOptions(
+            path: compiledRoute,
+            headers: headers,
+            data: body,
+            method: baseRoute.method.toString(),
+            baseUrl:
+                _buildBaseUrl(Restrr.hostInformation, baseRoute.isVersioned)))
+        .then((value) {
+      Restrr.log.info(
+          '[$compiledRoute] => ${value.statusCode} ${value.statusMessage}');
+      return value;
+    });
   }
 
   String _buildBaseUrl(HostInformation hostInformation, bool isVersioned) {
     String effectiveHostUrl = hostInformation.hostUri!.toString();
     if (effectiveHostUrl.endsWith('/')) {
-      effectiveHostUrl = effectiveHostUrl.substring(0, effectiveHostUrl.length - 1);
+      effectiveHostUrl =
+          effectiveHostUrl.substring(0, effectiveHostUrl.length - 1);
     }
     return isVersioned
         ? '$effectiveHostUrl/api/v${hostInformation.apiVersion}'
@@ -98,6 +112,15 @@ class CompiledRoute {
 class StatusRoutes {
   const StatusRoutes._();
 
-  static final Route health = Route(RouteMethod.get, '/status/health', isVersioned: false);
-  static final Route coffee = Route(RouteMethod.get, '/status/coffee', isVersioned: false);
+  static final Route health = Route.get('/status/health', isVersioned: false);
+  static final Route coffee = Route.get('/status/coffee', isVersioned: false);
+}
+
+class UserRoutes {
+  const UserRoutes._();
+
+  static final Route me = Route.get('/user/@me');
+  static final Route login = Route.post('/user/login');
+  static final Route logout = Route.delete('/user/logout');
+  static final Route register = Route.post('/user/register');
 }
