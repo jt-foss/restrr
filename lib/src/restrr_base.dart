@@ -22,52 +22,53 @@ class HostInformation {
   }
 }
 
-enum SessionInitType { login, register }
+///
+enum RestrrInitType { login, register }
 
+/// A builder for creating a new [Restrr] instance.
+/// The [Restrr] instance is created by calling [create].
 class RestrrBuilder {
-  final SessionInitType sessionInitType;
+  final RestrrInitType initType;
   final Uri uri;
   String? sessionId;
   String? username;
   String? password;
-  String? mfaCode;
 
-  RestrrBuilder.login(
-      {required this.uri, required this.username, required this.password})
-      : sessionInitType = SessionInitType.login;
+  RestrrBuilder.login({required this.uri, required this.username, required this.password})
+      : initType = RestrrInitType.login;
 
-  Future<RestResponse<RestrrImpl>> create() async {
-    Restrr.log.info(
-        'Attempting to initialize a session (${sessionInitType.name}) with $uri');
-    final RestResponse<HealthResponse> statusResponse =
-        await Restrr.checkUri(uri);
+  /// Creates a new session with the given [uri].
+  Future<RestResponse<Restrr>> create() async {
+    Restrr.log.info('Attempting to initialize a session (${initType.name}) with $uri');
+    // check if the URI is valid
+    final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri);
     if (!statusResponse.hasData) {
       Restrr.log.warning('Invalid financrr URI: $uri');
       return RestrrError.invalidUri.toRestResponse();
     }
-    Restrr.log.info(
-        'Updated host information: $uri, API v${statusResponse.data!.apiVersion}');
-    final RestrrImpl? api = await switch (sessionInitType) {
-      SessionInitType.register => throw UnimplementedError(),
-      SessionInitType.login => _handleLogin(username!, password!),
+    Restrr.log.info('Host: $uri, API v${statusResponse.data!.apiVersion}');
+    // create the API instance
+    final RestrrImpl? api = await switch (initType) {
+      RestrrInitType.register => throw UnimplementedError(),
+      RestrrInitType.login => _handleLogin(username!, password!),
     };
     if (api == null) {
+      Restrr.log.warning('Invalid credentials for user $username');
       return RestrrError.invalidCredentials.toRestResponse();
     }
+    Restrr.log.info('Successfully logged in as ${api.selfUser.username}');
     return RestResponse(data: api);
   }
 
+  /// Handles the login process.
+  /// Returns a [RestrrImpl] instance if the login was successful, otherwise null.
   Future<RestrrImpl?> _handleLogin(String username, String password) async {
-    final RestResponse<bool> response =
-        await UserService.login(username, password);
-    if (!response.hasData) {
-      return null;
-    }
-    final RestResponse<User> userResponse = await UserService.getSelf();
+    final RestrrImpl api = RestrrImpl._();
+    final RestResponse<User> userResponse = await UserService(api: api).login(username, password);
     if (!userResponse.hasData) {
       return null;
     }
-    return RestrrImpl._(selfUser: userResponse.data!);
+    return api..selfUser = userResponse.data!;
   }
 }
 
@@ -81,15 +82,15 @@ abstract class Restrr {
   /// The currently authenticated user.
   User get selfUser;
 
+  /// Checks whether the given [uri] is valid and the API is healthy.
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri) async {
     hostInformation = hostInformation.copyWith(hostUri: uri, apiVersion: -1);
     return ApiService.request(
-            route: StatusRoutes.health.compile(),
-            mapper: (json) => EntityBuilder.buildHealthResponse(json))
-        .then((response) {
+        route: StatusRoutes.health.compile(),
+        mapper: (json) => EntityBuilder.buildHealthResponse(json)).then((response) {
       if (response.hasData && response.data!.healthy) {
-        hostInformation =
-            hostInformation.copyWith(apiVersion: response.data!.apiVersion);
+        // if successful, update the API version
+        hostInformation = hostInformation.copyWith(apiVersion: response.data!.apiVersion);
       }
       return response;
     });
@@ -97,11 +98,11 @@ abstract class Restrr {
 }
 
 class RestrrImpl implements Restrr {
-  RestrrImpl._({required this.selfUser});
+  RestrrImpl._();
 
   @override
   late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
   @override
-  final User selfUser;
+  late final User selfUser;
 }

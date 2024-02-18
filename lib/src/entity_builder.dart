@@ -1,5 +1,6 @@
 import 'package:restrr/restrr.dart';
 
+/// Defines how to build entities from JSON responses.
 class EntityBuilder {
   final RestrrImpl api;
 
@@ -13,9 +14,9 @@ class EntityBuilder {
     );
   }
 
-  static User buildUser(Map<String, dynamic> json) {
-    Restrr.log.info(json);
+  User buildUser(Map<String, dynamic> json) {
     return UserImpl(
+      api: api,
       id: json['id'],
       username: json['username'],
       email: json['email'],

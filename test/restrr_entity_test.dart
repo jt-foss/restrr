@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:logging/logging.dart';
 import 'package:restrr/restrr.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
+
+final Uri _validUri = Uri.parse('https://financrr-stage.denux.dev');
 
 const String healthJson = '''
 {
@@ -23,6 +26,13 @@ const String userJson = '''
 ''';
 
 void main() {
+  late Restrr api;
+
+  setUp(() async {
+    // log in, get api instance
+    api = (await RestrrBuilder.login(uri: _validUri, username: 'admin', password: 'Financrr123').create()).data!;
+  });
+
   group('[EntityBuilder] ', () {
     test('.buildHealthResponse', () {
       final HealthResponse healthResponse = EntityBuilder.buildHealthResponse(jsonDecode(healthJson));
@@ -32,7 +42,7 @@ void main() {
     });
 
     test('.buildUser', () {
-      final User user = EntityBuilder.buildUser(jsonDecode(userJson));
+      final User user = api.entityBuilder.buildUser(jsonDecode(userJson));
       expect(user.id, 1);
       expect(user.username, 'admin');
       expect(user.email, null);

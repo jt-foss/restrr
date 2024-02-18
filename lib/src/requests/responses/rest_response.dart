@@ -10,8 +10,7 @@ class RestResponse<T> {
 
   bool get hasData => data != null;
 
-  static Future<RestResponse<T>> fromError<T>(
-      Future<ErrorResponse> error) async {
+  static Future<RestResponse<T>> fromError<T>(Future<ErrorResponse> error) async {
     return RestResponse(error: await error);
   }
 }

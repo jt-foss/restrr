@@ -3,19 +3,17 @@ import '../../restrr.dart';
 class UserService extends ApiService {
   const UserService({required super.api});
 
-  static Future<RestResponse<bool>> login(
-      String username, String password) async {
-    return ApiService.noResponseRequest(
+  Future<RestResponse<User>> login(String username, String password) async {
+    return ApiService.request(
         route: UserRoutes.login.compile(),
         body: {
           'username': username,
           'password': password,
-        });
+        },
+        mapper: (json) => api.entityBuilder.buildUser(json));
   }
 
-  static Future<RestResponse<User>> getSelf() async {
-    return ApiService.request(
-        route: UserRoutes.me.compile(),
-        mapper: (json) => EntityBuilder.buildUser(json));
+  Future<RestResponse<User>> getSelf() async {
+    return ApiService.request(route: UserRoutes.me.compile(), mapper: (json) => api.entityBuilder.buildUser(json));
   }
 }
