@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:logging/logging.dart';
 import 'package:restrr/restrr.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
