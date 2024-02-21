@@ -1,6 +1,6 @@
 ## 0.2.0
 - Added `RestrrBuilder#login`
-- 
+- More cleanup
 
 ## 0.1.1
 - Added Dart Action
