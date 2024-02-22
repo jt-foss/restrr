@@ -22,4 +22,5 @@ export 'src/service/api_service.dart';
 export 'src/service/user_service.dart';
 
 /* [ /src/utils ] */
+export 'src/utils/io_utils.dart';
 export 'src/utils/string_utils.dart';
