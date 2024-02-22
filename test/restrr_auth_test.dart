@@ -25,8 +25,22 @@ void main() {
 
     test('.login (valid)', () async {
       final RestResponse<Restrr> response =
-          await RestrrBuilder.login(uri: _validUri, username: 'admin', password: 'Financrr123').create();
+      await RestrrBuilder.login(uri: _validUri, username: 'admin', password: 'Financrr123').create();
       expect(response.hasData, true);
+    });
+
+    test('.register (bad request (password too short))', () async {
+      final RestResponse<Restrr> response =
+      await RestrrBuilder.register(uri: _validUri, username: 'jasonlessenich', password: 'Financrr123!').create();
+      expect(response.hasData, false);
+      expect(response.error, RestrrError.badRequest);
+    });
+
+    test('.register (already signed in)', () async {
+      final RestResponse<Restrr> response =
+      await RestrrBuilder.register(uri: _validUri, username: 'jasonlessenich', password: 'Financrr123567879!').create();
+      expect(response.hasData, false);
+      expect(response.error, RestrrError.alreadySignedIn);
     });
   });
 }
