@@ -40,7 +40,8 @@ class RestrrBuilder {
   RestrrBuilder.login({required this.uri, required this.username, required this.password})
       : initType = RestrrInitType.login;
 
-  RestrrBuilder.register({required this.uri, required this.username, required this.password, this.email, this.displayName})
+  RestrrBuilder.register(
+      {required this.uri, required this.username, required this.password, this.email, this.displayName})
       : initType = RestrrInitType.register;
 
   /// Creates a new session with the given [uri].
@@ -73,9 +74,11 @@ class RestrrBuilder {
     return RestResponse(data: api);
   }
 
-  Future<RestResponse<RestrrImpl>> _handleRegistration(String username, String password, {String? email, String? displayName}) async {
+  Future<RestResponse<RestrrImpl>> _handleRegistration(String username, String password,
+      {String? email, String? displayName}) async {
     final RestrrImpl api = RestrrImpl._();
-    final RestResponse<User> response = await UserService(api: api).register(username, password, email: email, displayName: displayName);
+    final RestResponse<User> response =
+        await UserService(api: api).register(username, password, email: email, displayName: displayName);
     if (response.hasError) {
       Restrr.log.warning('Failed to register user $username');
       return response.error?.toRestResponse() ?? RestrrError.unknown.toRestResponse();
