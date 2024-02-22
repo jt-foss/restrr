@@ -1,3 +1,4 @@
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:logging/logging.dart';
 
 import '../restrr.dart';
@@ -84,6 +85,8 @@ abstract class Restrr {
   /// The currently authenticated user.
   User get selfUser;
 
+  Future<void> logout();
+
   /// Checks whether the given [uri] is valid and the API is healthy.
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri) async {
     hostInformation = hostInformation.copyWith(hostUri: uri, apiVersion: -1);
@@ -107,4 +110,14 @@ class RestrrImpl implements Restrr {
 
   @override
   late final User selfUser;
+
+  @override
+  Future<bool> logout() async {
+    final RestResponse<bool> response = await UserService(api: this).logout();
+    if (response.hasData && response.data!) {
+      await CompiledRoute.cookieJar.deleteAll();
+      return true;
+    }
+    return false;
+  }
 }

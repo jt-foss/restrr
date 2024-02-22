@@ -13,6 +13,10 @@ class UserService extends ApiService {
         mapper: (json) => api.entityBuilder.buildUser(json));
   }
 
+  Future<RestResponse<bool>> logout() async {
+    return ApiService.noResponseRequest(route: UserRoutes.logout.compile());
+  }
+
   Future<RestResponse<User>> getSelf() async {
     return ApiService.request(route: UserRoutes.me.compile(), mapper: (json) => api.entityBuilder.buildUser(json));
   }

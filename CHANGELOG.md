@@ -1,3 +1,7 @@
+## 0.3.0
+- Added `User#displayName`
+- Added `Restrr#logout`
+
 ## 0.2.1
 - Removed `ErrorResponse`
 - Replaced `RestResponse#error` with `RestrrError?`
