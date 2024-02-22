@@ -13,14 +13,14 @@ void main() {
       final RestResponse<Restrr> loginResponse =
           await RestrrBuilder.login(uri: _invalidUri, username: '', password: '').create();
       expect(loginResponse.hasData, false);
-      expect(loginResponse.error?.type, RestrrError.invalidUri);
+      expect(loginResponse.error, RestrrError.invalidUri);
     });
 
     test('.login (invalid credentials)', () async {
       final RestResponse<Restrr> loginResponse =
           await RestrrBuilder.login(uri: _validUri, username: 'abc', password: 'abc').create();
       expect(loginResponse.hasData, false);
-      expect(loginResponse.error?.type, RestrrError.invalidCredentials);
+      expect(loginResponse.error, RestrrError.invalidCredentials);
     });
 
     test('.login (valid)', () async {
@@ -33,7 +33,7 @@ void main() {
       final RestResponse<Restrr> loginResponse =
       await RestrrBuilder.register(uri: _validUri, username: 'jasonlessenich', password: 'Financrr123!').create();
       expect(loginResponse.hasData, false);
-      expect(loginResponse.error?.type, RestrrError.alreadySignedIn);
+      expect(loginResponse.error, RestrrError.alreadySignedIn);
     });
   });
 }

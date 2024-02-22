@@ -10,11 +10,20 @@ class UserService extends ApiService {
           'username': username,
           'password': password,
         },
-        mapper: (json) => api.entityBuilder.buildUser(json));
+        mapper: (json) => api.entityBuilder.buildUser(json),
+        errorMap: {
+          401: RestrrError.invalidCredentials,
+        }
+    );
   }
 
   Future<RestResponse<bool>> logout() async {
-    return ApiService.noResponseRequest(route: UserRoutes.logout.compile());
+    return ApiService.noResponseRequest(
+        route: UserRoutes.logout.compile(),
+        errorMap: {
+          401: RestrrError.notSignedIn,
+        }
+    );
   }
 
   Future<RestResponse<User>> register(String username, String password, {String? email, String? displayName}) async {
@@ -26,10 +35,20 @@ class UserService extends ApiService {
           if (email != null) 'email': email,
           if (displayName != null) 'display_name': displayName,
         },
-        mapper: (json) => api.entityBuilder.buildUser(json));
+        mapper: (json) => api.entityBuilder.buildUser(json),
+        errorMap: {
+          409: RestrrError.alreadySignedIn,
+        }
+    );
   }
 
   Future<RestResponse<User>> getSelf() async {
-    return ApiService.request(route: UserRoutes.me.compile(), mapper: (json) => api.entityBuilder.buildUser(json));
+    return ApiService.request(
+        route: UserRoutes.me.compile(),
+        mapper: (json) => api.entityBuilder.buildUser(json),
+        errorMap: {
+          401: RestrrError.invalidCredentials,
+        }
+    );
   }
 }

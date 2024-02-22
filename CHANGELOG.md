@@ -1,6 +1,8 @@
 ## 0.3.0
 - Added `User#displayName`
 - Added `Restrr#logout`
+- Added `Restrr#register`
+- Further refactored error handling
 
 ## 0.2.1
 - Removed `ErrorResponse`

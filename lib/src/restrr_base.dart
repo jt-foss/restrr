@@ -50,7 +50,7 @@ class RestrrBuilder {
     final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri);
     if (statusResponse.hasError) {
       Restrr.log.warning('Invalid financrr URI: $uri');
-      return statusResponse.error!.type == RestrrError.unknown
+      return statusResponse.error == RestrrError.unknown
           ? RestrrError.invalidUri.toRestResponse()
           : statusResponse.error?.toRestResponse() ?? RestrrError.invalidUri.toRestResponse();
     }
@@ -77,10 +77,6 @@ class RestrrBuilder {
     final RestrrImpl api = RestrrImpl._();
     final RestResponse<User> response = await UserService(api: api).register(username, password, email: email, displayName: displayName);
     if (response.hasError) {
-      if (response.error?.statusCode == 209) {
-        Restrr.log.warning('User $username is already signed in');
-        return RestrrError.alreadySignedIn.toRestResponse();
-      }
       Restrr.log.warning('Failed to register user $username');
       return response.error?.toRestResponse() ?? RestrrError.unknown.toRestResponse();
     }
