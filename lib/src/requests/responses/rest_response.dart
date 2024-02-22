@@ -9,4 +9,5 @@ class RestResponse<T> {
   const RestResponse({this.data, this.error});
 
   bool get hasData => data != null;
+  bool get hasError => error != null;
 }

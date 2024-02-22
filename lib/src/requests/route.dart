@@ -37,9 +37,7 @@ class Route {
     if (!await IOUtils.checkConnection()) {
       return RestrrError.noInternetConnection;
     }
-    if (error.type == DioExceptionType.connectionTimeout ||
-        error.type == DioExceptionType.connectionError ||
-        error.type == DioExceptionType.receiveTimeout) {
+    if (error.type == DioExceptionType.connectionTimeout || error.type == DioExceptionType.receiveTimeout) {
       return RestrrError.serverUnreachable;
     }
     return RestrrError.unknown;
