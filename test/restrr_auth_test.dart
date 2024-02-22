@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:restrr/restrr.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
@@ -11,20 +13,27 @@ void main() {
       final RestResponse<Restrr> loginResponse =
           await RestrrBuilder.login(uri: _invalidUri, username: '', password: '').create();
       expect(loginResponse.hasData, false);
-      expect(loginResponse.error, RestrrError.invalidUri);
+      expect(loginResponse.error?.type, RestrrError.invalidUri);
     });
 
     test('.login (invalid credentials)', () async {
       final RestResponse<Restrr> loginResponse =
           await RestrrBuilder.login(uri: _validUri, username: 'abc', password: 'abc').create();
       expect(loginResponse.hasData, false);
-      expect(loginResponse.error, RestrrError.invalidCredentials);
+      expect(loginResponse.error?.type, RestrrError.invalidCredentials);
     });
 
     test('.login (valid)', () async {
       final RestResponse<Restrr> loginResponse =
       await RestrrBuilder.login(uri: _validUri, username: 'admin', password: 'Financrr123').create();
       expect(loginResponse.hasData, true);
+    });
+
+    test('.register (already logged in)', () async {
+      final RestResponse<Restrr> loginResponse =
+      await RestrrBuilder.register(uri: _validUri, username: 'jasonlessenich', password: 'Financrr123!').create();
+      expect(loginResponse.hasData, false);
+      expect(loginResponse.error?.type, RestrrError.alreadySignedIn);
     });
   });
 }

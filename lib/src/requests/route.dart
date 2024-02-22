@@ -33,14 +33,15 @@ class Route {
   Route.patch(String path, {bool isVersioned = true}) : this._('PATCH', path, isVersioned: isVersioned);
 
   /// Translates a [DioException] into a [RestrrError].
-  static Future<RestrrError> translateDioException(DioException error) async {
+  static Future<RestResponse<T>> translateDioException<T>(DioException error) async {
+    RestrrError err = RestrrError.unknown;
     if (!await IOUtils.checkConnection()) {
-      return RestrrError.noInternetConnection;
+      err = RestrrError.noInternetConnection;
     }
     if (error.type == DioExceptionType.connectionTimeout || error.type == DioExceptionType.receiveTimeout) {
-      return RestrrError.serverUnreachable;
+      err = RestrrError.serverUnreachable;
     }
-    return RestrrError.unknown;
+    return err.toRestResponse(statusCode: error.response?.statusCode);
   }
 
   CompiledRoute compile({List<String> params = const []}) {

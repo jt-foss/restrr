@@ -4,7 +4,7 @@ import '../../../restrr.dart';
 /// This can either hold data, [T], or an [ErrorResponse].
 class RestResponse<T> {
   final T? data;
-  final RestrrError? error;
+  final ErrorResponse? error;
 
   const RestResponse({this.data, this.error});
 
