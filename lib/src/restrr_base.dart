@@ -99,7 +99,7 @@ abstract class Restrr {
   /// The currently authenticated user.
   User get selfUser;
 
-  Future<void> logout();
+  Future<bool> logout();
 
   /// Checks whether the given [uri] is valid and the API is healthy.
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri) async {

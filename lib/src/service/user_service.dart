@@ -42,7 +42,7 @@ class UserService extends ApiService {
         route: UserRoutes.me.compile(),
         mapper: (json) => api.entityBuilder.buildUser(json),
         errorMap: {
-          401: RestrrError.invalidCredentials,
+          401: RestrrError.notSignedIn,
         });
   }
 }
