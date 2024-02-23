@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:restrr/restrr.dart';
-import 'package:restrr/src/requests/responses/restrr_errors.dart';
 
 abstract class ApiService {
   final Restrr api;

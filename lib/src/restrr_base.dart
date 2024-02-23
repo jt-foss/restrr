@@ -1,4 +1,3 @@
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:logging/logging.dart';
 
 import '../restrr.dart';
