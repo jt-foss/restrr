@@ -49,7 +49,7 @@ class Route {
 }
 
 class CompiledRoute {
-  static late CookieJar? cookieJar;
+  static CookieJar? cookieJar;
 
   final Route baseRoute;
   final String compiledRoute;
