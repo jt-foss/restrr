@@ -1,9 +1,10 @@
+## 0.3.3
+- Fixed missing options param
+
 ## 0.3.2
 - Added `RestrrBuilder#refresh`
 - Fixed `RestrrOptions` and added `isWeb` attribute
-- Removed network check when no CookieJar is set (web)
-
-## 0.3.1 
+- Removed network check when no CookieJar is set (web) 0.3.1 
 - Added ability to customize & disable Cookie Jar
 
 ## 0.3
