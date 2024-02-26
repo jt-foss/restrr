@@ -31,7 +31,7 @@ class Route {
 
   Route.patch(String path, {bool isVersioned = true}) : this._('PATCH', path, isVersioned: isVersioned);
 
-  CompiledRoute compile({bool isWeb = false, List<String> params = const []}) {
+  CompiledRoute compile({List<String> params = const []}) {
     if (params.length != paramCount) {
       throw ArgumentError(
           'Error compiling route [$method $path}]: Incorrect amount of parameters! Expected: $paramCount, Provided: ${params.length}');
@@ -44,7 +44,7 @@ class Route {
       values[compiledRoute.substring(paramStart + 1, paramEnd)] = param;
       compiledRoute = compiledRoute.replaceRange(paramStart, paramEnd + 1, param);
     }
-    return CompiledRoute(this, compiledRoute, values, isWeb);
+    return CompiledRoute(this, compiledRoute, values);
   }
 }
 
@@ -54,10 +54,10 @@ class CompiledRoute {
   final Route baseRoute;
   final String compiledRoute;
   final Map<String, String> parameters;
-  final bool isWeb;
+  bool isWeb = false;
   Map<String, String>? queryParameters;
 
-  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, this.isWeb, {this.queryParameters});
+  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, {this.queryParameters});
 
   CompiledRoute withQueryParams(Map<String, String> params) {
     String newRoute = compiledRoute;
@@ -66,7 +66,7 @@ class CompiledRoute {
       queryParameters ??= {};
       queryParameters![key] = value;
     });
-    return CompiledRoute(baseRoute, newRoute, parameters, isWeb, queryParameters: queryParameters);
+    return CompiledRoute(baseRoute, newRoute, parameters, queryParameters: queryParameters);
   }
 
   Future<Response> submit({dynamic body, String contentType = 'application/json'}) {

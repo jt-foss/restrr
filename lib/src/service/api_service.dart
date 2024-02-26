@@ -3,10 +3,9 @@ import 'package:restrr/restrr.dart';
 
 import '../requests/route.dart';
 
-abstract class ApiService {
-  final Restrr api;
-
-  const ApiService({required this.api});
+/// Utility class for handling requests.
+class RequestHandler {
+  const RequestHandler._();
 
   /// Tries to execute a request, using the [CompiledRoute] and maps the received data using the
   /// specified [mapper] function, ultimately returning the entity in an [RestResponse].
@@ -15,10 +14,12 @@ abstract class ApiService {
   static Future<RestResponse<T>> request<T>(
       {required CompiledRoute route,
       required T Function(dynamic) mapper,
+      required bool isWeb,
       Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
+      route.isWeb = isWeb;
       final Response<dynamic> response = await route.submit(body: body, contentType: contentType);
       return RestResponse(data: mapper.call(response.data));
     } on DioException catch (e) {
@@ -31,10 +32,12 @@ abstract class ApiService {
   /// If this fails, this will return an [RestResponse] containing an error.
   static Future<RestResponse<bool>> noResponseRequest<T>(
       {required CompiledRoute route,
+      required bool isWeb,
       dynamic body,
       Map<int, RestrrError> errorMap = const {},
       String contentType = 'application/json'}) async {
     try {
+      route.isWeb = isWeb;
       await route.submit(body: body, contentType: contentType);
       return const RestResponse(data: true);
     } on DioException catch (e) {
@@ -48,12 +51,14 @@ abstract class ApiService {
   /// If this fails, this will return an [RestResponse] containing an error.
   static Future<RestResponse<List<T>>> multiRequest<T>(
       {required CompiledRoute route,
+      required bool isWeb,
       required T Function(dynamic) mapper,
       Map<int, RestrrError> errorMap = const {},
       Function(String)? fullRequest,
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
+      route.isWeb = isWeb;
       final Response<dynamic> response = await route.submit(body: body, contentType: contentType);
       if (response.data is! List<dynamic>) {
         throw StateError('Received response is not a list!');
@@ -93,5 +98,53 @@ abstract class ApiService {
     }
     Restrr.log.warning('Unknown error occurred: ${ex.message}, ${ex.stackTrace}');
     return RestrrError.unknown.toRestResponse();
+  }
+}
+
+/// A service that provides methods to interact with the API.
+abstract class ApiService {
+  final Restrr api;
+
+  const ApiService({required this.api});
+
+  Future<RestResponse<T>> request<T>(
+      {required CompiledRoute route,
+      required T Function(dynamic) mapper,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
+    return RequestHandler.request(
+        route: route,
+        isWeb: api.options.isWeb,
+        mapper: mapper,
+        errorMap: errorMap,
+        body: body,
+        contentType: contentType);
+  }
+
+  Future<RestResponse<bool>> noResponseRequest<T>(
+      {required CompiledRoute route,
+      dynamic body,
+      Map<int, RestrrError> errorMap = const {},
+      String contentType = 'application/json'}) async {
+    return RequestHandler.noResponseRequest(
+        route: route, isWeb: api.options.isWeb, body: body, errorMap: errorMap, contentType: contentType);
+  }
+
+  Future<RestResponse<List<T>>> multiRequest<T>(
+      {required CompiledRoute route,
+      required T Function(dynamic) mapper,
+      Map<int, RestrrError> errorMap = const {},
+      Function(String)? fullRequest,
+      dynamic body,
+      String contentType = 'application/json'}) async {
+    return RequestHandler.multiRequest(
+        route: route,
+        isWeb: api.options.isWeb,
+        mapper: mapper,
+        errorMap: errorMap,
+        fullRequest: fullRequest,
+        body: body,
+        contentType: contentType);
   }
 }

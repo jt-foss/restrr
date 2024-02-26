@@ -128,9 +128,11 @@ abstract class Restrr {
   /// Checks whether the given [uri] is valid and the API is healthy.
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri, {bool isWeb = false}) async {
     hostInformation = hostInformation.copyWith(hostUri: uri, apiVersion: -1);
-    return ApiService.request(
-        route: StatusRoutes.health.compile(isWeb: isWeb),
-        mapper: (json) => EntityBuilder.buildHealthResponse(json)).then((response) {
+    return RequestHandler.request(
+            route: StatusRoutes.health.compile(),
+            mapper: (json) => EntityBuilder.buildHealthResponse(json),
+            isWeb: isWeb)
+        .then((response) {
       if (response.hasData && response.data!.healthy) {
         // if successful, update the API version
         hostInformation = hostInformation.copyWith(apiVersion: response.data!.apiVersion);
