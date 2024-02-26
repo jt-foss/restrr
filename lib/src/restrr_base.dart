@@ -1,5 +1,6 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:logging/logging.dart';
+import 'package:restrr/src/requests/route.dart';
 
 import '../restrr.dart';
 
@@ -25,11 +26,7 @@ class HostInformation {
 
 class RestrrOptions {
   final bool isWeb;
-  final CookieJar? cookieJar;
-
-  const RestrrOptions({this.isWeb = false, this.cookieJar});
-
-  bool get canUseCookieJar => cookieJar != null && !isWeb;
+  const RestrrOptions({this.isWeb = false});
 }
 
 enum RestrrInitType { login, register, refresh }
@@ -54,12 +51,10 @@ class RestrrBuilder {
       {required this.uri, required this.username, required this.password, this.email, this.displayName})
       : initType = RestrrInitType.register;
 
-  RestrrBuilder.refresh({required this.uri})
-      : initType = RestrrInitType.refresh;
+  RestrrBuilder.refresh({required this.uri}) : initType = RestrrInitType.refresh;
 
   /// Creates a new session with the given [uri].
   Future<RestResponse<Restrr>> create() async {
-    CompiledRoute.cookieJar = options.canUseCookieJar ? options.cookieJar : null;
     Restrr.log.info('Attempting to initialize a session (${initType.name}) with $uri');
     // check if the URI is valid
     final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri);
@@ -131,10 +126,10 @@ abstract class Restrr {
   Future<bool> logout();
 
   /// Checks whether the given [uri] is valid and the API is healthy.
-  static Future<RestResponse<HealthResponse>> checkUri(Uri uri) async {
+  static Future<RestResponse<HealthResponse>> checkUri(Uri uri, {bool isWeb = false}) async {
     hostInformation = hostInformation.copyWith(hostUri: uri, apiVersion: -1);
     return ApiService.request(
-        route: StatusRoutes.health.compile(),
+        route: StatusRoutes.health.compile(isWeb: isWeb),
         mapper: (json) => EntityBuilder.buildHealthResponse(json)).then((response) {
       if (response.hasData && response.data!.healthy) {
         // if successful, update the API version
@@ -160,8 +155,8 @@ class RestrrImpl implements Restrr {
   @override
   Future<bool> logout() async {
     final RestResponse<bool> response = await UserService(api: this).logout();
-    if (response.hasData && response.data! && options.canUseCookieJar) {
-      await CompiledRoute.cookieJar?.deleteAll();
+    if (response.hasData && response.data! && !options.isWeb) {
+      await CompiledRoute.cookieJar.deleteAll();
       return true;
     }
     return false;

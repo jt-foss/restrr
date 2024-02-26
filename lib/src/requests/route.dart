@@ -31,7 +31,7 @@ class Route {
 
   Route.patch(String path, {bool isVersioned = true}) : this._('PATCH', path, isVersioned: isVersioned);
 
-  CompiledRoute compile({List<String> params = const []}) {
+  CompiledRoute compile({bool isWeb = false, List<String> params = const []}) {
     if (params.length != paramCount) {
       throw ArgumentError(
           'Error compiling route [$method $path}]: Incorrect amount of parameters! Expected: $paramCount, Provided: ${params.length}');
@@ -44,19 +44,20 @@ class Route {
       values[compiledRoute.substring(paramStart + 1, paramEnd)] = param;
       compiledRoute = compiledRoute.replaceRange(paramStart, paramEnd + 1, param);
     }
-    return CompiledRoute(this, compiledRoute, values);
+    return CompiledRoute(this, compiledRoute, values, isWeb);
   }
 }
 
 class CompiledRoute {
-  static CookieJar? cookieJar;
+  static final CookieJar cookieJar = PersistCookieJar();
 
   final Route baseRoute;
   final String compiledRoute;
   final Map<String, String> parameters;
+  final bool isWeb;
   Map<String, String>? queryParameters;
 
-  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, {this.queryParameters});
+  CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, this.isWeb, {this.queryParameters});
 
   CompiledRoute withQueryParams(Map<String, String> params) {
     String newRoute = compiledRoute;
@@ -65,7 +66,7 @@ class CompiledRoute {
       queryParameters ??= {};
       queryParameters![key] = value;
     });
-    return CompiledRoute(baseRoute, newRoute, parameters, queryParameters: queryParameters);
+    return CompiledRoute(baseRoute, newRoute, parameters, isWeb, queryParameters: queryParameters);
   }
 
   Future<Response> submit({dynamic body, String contentType = 'application/json'}) {
@@ -73,18 +74,17 @@ class CompiledRoute {
       throw StateError('Host URL is not set!');
     }
     Dio dio = Dio();
-    if (cookieJar != null) {
-      dio.interceptors.add(CookieManager(cookieJar!));
+    if (!isWeb) {
+      dio.interceptors.add(CookieManager(cookieJar));
     }
     Map<String, dynamic> headers = {};
     headers['Content-Type'] = contentType;
-    return dio
-        .fetch(RequestOptions(
-            path: compiledRoute,
-            headers: headers,
-            data: body,
-            method: baseRoute.method.toString(),
-            baseUrl: _buildBaseUrl(Restrr.hostInformation, baseRoute.isVersioned)));
+    return dio.fetch(RequestOptions(
+        path: compiledRoute,
+        headers: headers,
+        data: body,
+        method: baseRoute.method.toString(),
+        baseUrl: _buildBaseUrl(Restrr.hostInformation, baseRoute.isVersioned)));
   }
 
   String _buildBaseUrl(HostInformation hostInformation, bool isVersioned) {

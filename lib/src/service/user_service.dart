@@ -5,7 +5,7 @@ class UserService extends ApiService {
 
   Future<RestResponse<User>> login(String username, String password) async {
     return ApiService.request(
-        route: UserRoutes.login.compile(),
+        route: UserRoutes.login.compile(isWeb: api.options.isWeb),
         body: {
           'username': username,
           'password': password,
@@ -17,14 +17,14 @@ class UserService extends ApiService {
   }
 
   Future<RestResponse<bool>> logout() async {
-    return ApiService.noResponseRequest(route: UserRoutes.logout.compile(), errorMap: {
+    return ApiService.noResponseRequest(route: UserRoutes.logout.compile(isWeb: api.options.isWeb), errorMap: {
       401: RestrrError.notSignedIn,
     });
   }
 
   Future<RestResponse<User>> register(String username, String password, {String? email, String? displayName}) async {
     return ApiService.request(
-        route: UserRoutes.register.compile(),
+        route: UserRoutes.register.compile(isWeb: api.options.isWeb),
         body: {
           'username': username,
           'password': password,
@@ -39,7 +39,7 @@ class UserService extends ApiService {
 
   Future<RestResponse<User>> getSelf() async {
     return ApiService.request(
-        route: UserRoutes.me.compile(),
+        route: UserRoutes.me.compile(isWeb: api.options.isWeb),
         mapper: (json) => api.entityBuilder.buildUser(json),
         errorMap: {
           401: RestrrError.notSignedIn,

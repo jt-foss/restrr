@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:restrr/restrr.dart';
 
+import '../requests/route.dart';
+
 abstract class ApiService {
   final Restrr api;
 
@@ -20,7 +22,7 @@ abstract class ApiService {
       final Response<dynamic> response = await route.submit(body: body, contentType: contentType);
       return RestResponse(data: mapper.call(response.data));
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e, route.isWeb, errorMap);
     }
   }
 
@@ -36,7 +38,7 @@ abstract class ApiService {
       await route.submit(body: body, contentType: contentType);
       return const RestResponse(data: true);
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e, route.isWeb, errorMap);
     }
   }
 
@@ -59,13 +61,14 @@ abstract class ApiService {
       fullRequest?.call(response.data.toString());
       return RestResponse(data: (response.data as List<dynamic>).map((single) => mapper.call(single)).toList());
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e, route.isWeb, errorMap);
     }
   }
 
-  static Future<RestResponse<T>> _handleDioException<T>(DioException ex, Map<int, RestrrError> errorMap) async {
+  static Future<RestResponse<T>> _handleDioException<T>(
+      DioException ex, bool isWeb, Map<int, RestrrError> errorMap) async {
     // check internet connection
-    if (CompiledRoute.cookieJar != null && !await IOUtils.checkConnection()) {
+    if (!isWeb && !await IOUtils.checkConnection()) {
       return RestrrError.noInternetConnection.toRestResponse();
     }
     // check status code
