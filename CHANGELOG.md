@@ -1,3 +1,6 @@
+## 0.3.2
+- Added `RestrrBuilder#refresh`
+
 ## 0.3.1 
 - Added ability to customize & disable Cookie Jar
 
