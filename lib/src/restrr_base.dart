@@ -1,5 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:restrr/src/requests/route.dart';
+import 'package:restrr/src/service/api_service.dart';
+import 'package:restrr/src/service/user_service.dart';
 
 import '../restrr.dart';
 
@@ -45,48 +47,50 @@ class RestrrBuilder {
               RestrrError.invalidUri.toRestResponse();
     }
     Restrr.log.info('Host: $uri, API v${statusResponse.data!.apiVersion}');
-    final RestrrImpl api = RestrrImpl._(
+    final RestrrImpl apiImpl = RestrrImpl._(
         options: options, routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion));
     return switch (initType) {
-      RestrrInitType.register => _handleRegistration(api, username!, password!, email: email, displayName: displayName),
-      RestrrInitType.login => _handleLogin(api, username!, password!),
-      RestrrInitType.savedSession => _handleSavedSession(api),
+      RestrrInitType.register => _handleRegistration(apiImpl, username!, password!, email: email, displayName: displayName),
+      RestrrInitType.login => _handleLogin(apiImpl, username!, password!),
+      RestrrInitType.savedSession => _handleSavedSession(apiImpl),
     };
   }
 
-  Future<RestResponse<RestrrImpl>> _handleLogin(RestrrImpl api, String username, String password) async {
-    final RestResponse<User> response = await UserService(api: api).login(username, password);
+  /// Logs in with the given [username] and [password].
+  Future<RestResponse<RestrrImpl>> _handleLogin(RestrrImpl apiImpl, String username, String password) async {
+    final RestResponse<User> response = await apiImpl.userService.login(username, password);
     if (!response.hasData) {
       Restrr.log.warning('Invalid credentials for user $username');
       return RestrrError.invalidCredentials.toRestResponse(statusCode: response.statusCode);
     }
-    api.selfUser = response.data!;
-    Restrr.log.info('Successfully logged in as ${api.selfUser.username}');
-    return RestResponse(data: api, statusCode: response.statusCode);
+    apiImpl.selfUser = response.data!;
+    Restrr.log.info('Successfully logged in as ${apiImpl.selfUser.username}');
+    return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 
-  Future<RestResponse<RestrrImpl>> _handleRegistration(RestrrImpl api, String username, String password,
+  /// Registers a new user and logs in.
+  Future<RestResponse<RestrrImpl>> _handleRegistration(RestrrImpl apiImpl, String username, String password,
       {String? email, String? displayName}) async {
-    final RestResponse<User> response =
-        await UserService(api: api).register(username, password, email: email, displayName: displayName);
+    final RestResponse<User> response = await apiImpl.userService.register(username, password, email: email, displayName: displayName);
     if (response.hasError) {
       Restrr.log.warning('Failed to register user $username');
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
     }
-    api.selfUser = response.data!;
-    Restrr.log.info('Successfully registered & logged in as ${api.selfUser.username}');
-    return RestResponse(data: api, statusCode: response.statusCode);
+    apiImpl.selfUser = response.data!;
+    Restrr.log.info('Successfully registered & logged in as ${apiImpl.selfUser.username}');
+    return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 
-  Future<RestResponse<RestrrImpl>> _handleSavedSession(RestrrImpl api) async {
-    final RestResponse<User> response = await UserService(api: api).getSelf();
+  /// Attempts to refresh the session with still saved credentials.
+  Future<RestResponse<RestrrImpl>> _handleSavedSession(RestrrImpl apiImpl) async {
+    final RestResponse<User> response = await apiImpl.userService.getSelf();
     if (response.hasError) {
       Restrr.log.warning('Failed to refresh session');
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
     }
-    api.selfUser = response.data!;
-    Restrr.log.info('Successfully refreshed session for ${api.selfUser.username}');
-    return RestResponse(data: api, statusCode: response.statusCode);
+    apiImpl.selfUser = response.data!;
+    Restrr.log.info('Successfully refreshed session for ${apiImpl.selfUser.username}');
+    return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 }
 
@@ -119,6 +123,8 @@ class RestrrImpl implements Restrr {
   final RestrrOptions options;
   @override
   final RouteOptions routeOptions;
+
+  late final UserService userService = UserService(api: this);
 
   RestrrImpl._({required this.options, required this.routeOptions});
 

@@ -1,4 +1,5 @@
 import '../../restrr.dart';
+import 'api_service.dart';
 
 class UserService extends ApiService {
   const UserService({required super.api});

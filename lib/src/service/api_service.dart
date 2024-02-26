@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:restrr/restrr.dart';
 
+import '../requests/route.dart';
+
 /// Utility class for handling requests.
 class RequestHandler {
   const RequestHandler._();
