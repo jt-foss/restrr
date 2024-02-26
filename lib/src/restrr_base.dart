@@ -50,7 +50,8 @@ class RestrrBuilder {
     final RestrrImpl apiImpl = RestrrImpl._(
         options: options, routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion));
     return switch (initType) {
-      RestrrInitType.register => _handleRegistration(apiImpl, username!, password!, email: email, displayName: displayName),
+      RestrrInitType.register =>
+        _handleRegistration(apiImpl, username!, password!, email: email, displayName: displayName),
       RestrrInitType.login => _handleLogin(apiImpl, username!, password!),
       RestrrInitType.savedSession => _handleSavedSession(apiImpl),
     };
@@ -71,7 +72,8 @@ class RestrrBuilder {
   /// Registers a new user and logs in.
   Future<RestResponse<RestrrImpl>> _handleRegistration(RestrrImpl apiImpl, String username, String password,
       {String? email, String? displayName}) async {
-    final RestResponse<User> response = await apiImpl.userService.register(username, password, email: email, displayName: displayName);
+    final RestResponse<User> response =
+        await apiImpl.userService.register(username, password, email: email, displayName: displayName);
     if (response.hasError) {
       Restrr.log.warning('Failed to register user $username');
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
