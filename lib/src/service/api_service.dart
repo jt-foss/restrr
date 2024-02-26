@@ -20,7 +20,7 @@ class RequestHandler {
     try {
       final Response<dynamic> response =
           await route.submit(routeOptions: routeOptions, body: body, contentType: contentType);
-      return RestResponse(data: mapper.call(response.data));
+      return RestResponse(data: mapper.call(response.data), statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, isWeb, errorMap);
     }
@@ -37,8 +37,9 @@ class RequestHandler {
       Map<int, RestrrError> errorMap = const {},
       String contentType = 'application/json'}) async {
     try {
-      await route.submit(routeOptions: routeOptions, body: body, contentType: contentType);
-      return const RestResponse(data: true);
+      final Response<dynamic> response =
+          await route.submit(routeOptions: routeOptions, body: body, contentType: contentType);
+      return RestResponse(data: true, statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, isWeb, errorMap);
     }
@@ -64,7 +65,9 @@ class RequestHandler {
         throw StateError('Received response is not a list!');
       }
       fullRequest?.call(response.data.toString());
-      return RestResponse(data: (response.data as List<dynamic>).map((single) => mapper.call(single)).toList());
+      return RestResponse(
+          data: (response.data as List<dynamic>).map((single) => mapper.call(single)).toList(),
+          statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, isWeb, errorMap);
     }
@@ -80,7 +83,7 @@ class RequestHandler {
     final int? statusCode = ex.response?.statusCode;
     if (statusCode != null) {
       if (errorMap.containsKey(statusCode)) {
-        return errorMap[statusCode]!.toRestResponse();
+        return errorMap[statusCode]!.toRestResponse(statusCode: statusCode);
       }
       final RestrrError? err = switch (statusCode) {
         400 => RestrrError.badRequest,
@@ -89,15 +92,15 @@ class RequestHandler {
         _ => null
       };
       if (err != null) {
-        return err.toRestResponse();
+        return err.toRestResponse(statusCode: statusCode);
       }
     }
     // check timeout
     if (ex.type == DioExceptionType.connectionTimeout || ex.type == DioExceptionType.receiveTimeout) {
-      return RestrrError.serverUnreachable.toRestResponse();
+      return RestrrError.serverUnreachable.toRestResponse(statusCode: statusCode);
     }
     Restrr.log.warning('Unknown error occurred: ${ex.message}, ${ex.stackTrace}');
-    return RestrrError.unknown.toRestResponse();
+    return RestrrError.unknown.toRestResponse(statusCode: statusCode);
   }
 }
 
