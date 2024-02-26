@@ -4,6 +4,12 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 import '../../restrr.dart';
 
+class RouteOptions {
+  final Uri hostUri;
+  final int apiVersion;
+  const RouteOptions({required this.hostUri, this.apiVersion = -1});
+}
+
 class Route {
   /// The HTTP method of this route.
   final String method;
@@ -54,7 +60,6 @@ class CompiledRoute {
   final Route baseRoute;
   final String compiledRoute;
   final Map<String, String> parameters;
-  bool isWeb = false;
   Map<String, String>? queryParameters;
 
   CompiledRoute(this.baseRoute, this.compiledRoute, this.parameters, {this.queryParameters});
@@ -69,29 +74,29 @@ class CompiledRoute {
     return CompiledRoute(baseRoute, newRoute, parameters, queryParameters: queryParameters);
   }
 
-  Future<Response> submit({dynamic body, String contentType = 'application/json'}) {
-    if (!Restrr.hostInformation.hasHostUrl) {
-      throw StateError('Host URL is not set!');
+  Future<Response> submit(
+      {required RouteOptions routeOptions, dynamic body, bool isWeb = false, String contentType = 'application/json'}) {
+    if (baseRoute.isVersioned && routeOptions.apiVersion == -1) {
+      throw StateError('Cannot submit a versioned route without specifying the API version!');
     }
     Dio dio = Dio();
     if (!isWeb) {
       dio.interceptors.add(CookieManager(cookieJar));
     }
-    Map<String, dynamic> headers = {};
-    headers['Content-Type'] = contentType;
+    Map<String, dynamic> headers = {'Content-Type': contentType};
     return dio.fetch(RequestOptions(
         path: compiledRoute,
         headers: headers,
         data: body,
         method: baseRoute.method.toString(),
-        baseUrl: _buildBaseUrl(Restrr.hostInformation, baseRoute.isVersioned)));
+        baseUrl: _buildBaseUrl(routeOptions, baseRoute.isVersioned)));
   }
 
-  String _buildBaseUrl(HostInformation hostInformation, bool isVersioned) {
-    String effectiveHostUrl = hostInformation.hostUri!.toString();
+  String _buildBaseUrl(RouteOptions options, bool isVersioned) {
+    String effectiveHostUrl = options.hostUri.toString();
     if (effectiveHostUrl.endsWith('/')) {
       effectiveHostUrl = effectiveHostUrl.substring(0, effectiveHostUrl.length - 1);
     }
-    return isVersioned ? '$effectiveHostUrl/api/v${hostInformation.apiVersion}' : '$effectiveHostUrl/api';
+    return isVersioned ? '$effectiveHostUrl/api/v${options.apiVersion}' : '$effectiveHostUrl/api';
   }
 }
