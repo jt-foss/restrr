@@ -25,4 +25,16 @@ class EntityBuilder {
       isAdmin: json['is_admin'],
     );
   }
+
+  Currency buildCurrency(Map<String, dynamic> json) {
+    return CurrencyImpl(
+      api: api,
+      id: json['id'],
+      name: json['name'],
+      symbol: json['symbol'],
+      isoCode: json['iso_code'],
+      decimalPlaces: json['decimal_places'],
+      user: json['user'],
+    );
+  }
 }

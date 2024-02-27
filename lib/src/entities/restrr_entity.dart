@@ -5,13 +5,18 @@ import '../../restrr.dart';
 abstract class RestrrEntity {
   /// A reference to the Restrr instance.
   Restrr get api;
+
+  int get id;
 }
 
 class RestrrEntityImpl implements RestrrEntity {
   @override
   final Restrr api;
+  @override
+  final int id;
 
   const RestrrEntityImpl({
     required this.api,
+    required this.id,
   });
 }
