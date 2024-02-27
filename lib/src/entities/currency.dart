@@ -5,7 +5,7 @@ abstract class Currency implements RestrrEntity {
   String get symbol;
   String get isoCode;
   int get decimalPlaces;
-  int get user;
+  int? get user;
 }
 
 class CurrencyImpl extends RestrrEntityImpl implements Currency {
@@ -18,7 +18,7 @@ class CurrencyImpl extends RestrrEntityImpl implements Currency {
   @override
   final int decimalPlaces;
   @override
-  final int user;
+  final int? user;
 
   const CurrencyImpl({
     required super.api,
