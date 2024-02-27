@@ -15,7 +15,7 @@ class EntityBuilder {
   }
 
   User buildUser(Map<String, dynamic> json) {
-    return UserImpl(
+    final UserImpl user = UserImpl(
       api: api,
       id: json['id'],
       username: json['username'],
@@ -24,10 +24,12 @@ class EntityBuilder {
       createdAt: DateTime.parse(json['created_at']),
       isAdmin: json['is_admin'],
     );
+    api.userCache.cache(user);
+    return user;
   }
 
   Currency buildCurrency(Map<String, dynamic> json) {
-    return CurrencyImpl(
+    final CurrencyImpl currency = CurrencyImpl(
       api: api,
       id: json['id'],
       name: json['name'],
@@ -36,5 +38,7 @@ class EntityBuilder {
       decimalPlaces: json['decimal_places'],
       user: json['user'],
     );
+    api.currencyCache.cache(currency);
+    return currency;
   }
 }

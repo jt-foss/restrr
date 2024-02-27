@@ -151,8 +151,8 @@ class RestrrImpl implements Restrr {
 
   /* Caches */
 
-  late final RestrrEntityCacheView<User> _userCache = RestrrEntityCacheView();
-  late final RestrrEntityCacheView<Currency> _currencyCache = RestrrEntityCacheView();
+  late final RestrrEntityCacheView<User> userCache = RestrrEntityCacheView();
+  late final RestrrEntityCacheView<Currency> currencyCache = RestrrEntityCacheView();
 
   late final RestrrEntityBatchCacheView<Currency> _currencyBatchCache = RestrrEntityBatchCacheView();
 
@@ -168,7 +168,7 @@ class RestrrImpl implements Restrr {
   Future<User?> retrieveSelf({bool forceRetrieve = false}) async {
     return _getOrRetrieveSingle(
         key: selfUser.id,
-        cacheView: _userCache,
+        cacheView: userCache,
         retrieveFunction: (api) => api._userService.getSelf(),
         forceRetrieve: forceRetrieve);
   }
@@ -203,7 +203,7 @@ class RestrrImpl implements Restrr {
   Future<Currency?> retrieveCurrencyById(ID id, {bool forceRetrieve = false}) async {
     return _getOrRetrieveSingle(
         key: id,
-        cacheView: _currencyCache,
+        cacheView: currencyCache,
         retrieveFunction: (api) => api._currencyService.retrieveCurrencyById(id),
         forceRetrieve: forceRetrieve);
   }
@@ -231,10 +231,7 @@ class RestrrImpl implements Restrr {
       return cacheView.get(key)!;
     }
     final RestResponse<T> response = await retrieveFunction.call(this);
-    if (response.hasData) {
-      return cacheView.add(response.data!);
-    }
-    return null;
+    return response.hasData ? response.data : null;
   }
 
   Future<List<T>?> _getOrRetrieveMulti<T extends RestrrEntity>(

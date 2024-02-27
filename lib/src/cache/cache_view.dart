@@ -5,7 +5,7 @@ class RestrrEntityCacheView<T extends RestrrEntity> {
 
   T? get(ID id) => _cache[id];
 
-  T add(T value) => _cache[value.id] = value;
+  T cache(T value) => _cache[value.id] = value;
 
   T? remove(ID id) => _cache.remove(id);
 
