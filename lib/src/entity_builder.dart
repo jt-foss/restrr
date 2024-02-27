@@ -24,8 +24,7 @@ class EntityBuilder {
       createdAt: DateTime.parse(json['created_at']),
       isAdmin: json['is_admin'],
     );
-    api.userCache.cache(user);
-    return user;
+    return api.userCache.cache(user);
   }
 
   Currency buildCurrency(Map<String, dynamic> json) {
@@ -38,7 +37,6 @@ class EntityBuilder {
       decimalPlaces: json['decimal_places'],
       user: json['user'],
     );
-    api.currencyCache.cache(currency);
-    return currency;
+    return api.currencyCache.cache(currency);
   }
 }
