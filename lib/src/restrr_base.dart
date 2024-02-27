@@ -131,11 +131,11 @@ abstract class Restrr {
   Future<Currency?> createCurrency(
       {required String name, required String symbol, required String isoCode, required int decimalPlaces});
 
-  Future<Currency?> retrieveCurrencyById(int id, {bool forceRetrieve = false});
+  Future<Currency?> retrieveCurrencyById(ID id, {bool forceRetrieve = false});
 
-  Future<bool> deleteCurrencyById(int id);
+  Future<bool> deleteCurrencyById(ID id);
 
-  Future<Currency?> updateCurrencyById(int id, {String? name, String? symbol, String? isoCode, int? decimalPlaces});
+  Future<Currency?> updateCurrencyById(ID id, {String? name, String? symbol, String? isoCode, int? decimalPlaces});
 }
 
 class RestrrImpl implements Restrr {
@@ -200,7 +200,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Currency?> retrieveCurrencyById(int id, {bool forceRetrieve = false}) async {
+  Future<Currency?> retrieveCurrencyById(ID id, {bool forceRetrieve = false}) async {
     return _getOrRetrieveSingle(
         key: id,
         cacheView: _currencyCache,
@@ -209,13 +209,13 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<bool> deleteCurrencyById(int id) async {
+  Future<bool> deleteCurrencyById(ID id) async {
     final RestResponse<bool> response = await _currencyService.deleteCurrencyById(id);
     return response.hasData && response.data!;
   }
 
   @override
-  Future<Currency?> updateCurrencyById(int id,
+  Future<Currency?> updateCurrencyById(ID id,
       {String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
     final RestResponse<Currency> response = await _currencyService.updateCurrencyById(id,
         name: name, symbol: symbol, isoCode: isoCode, decimalPlaces: decimalPlaces);
@@ -223,7 +223,7 @@ class RestrrImpl implements Restrr {
   }
 
   Future<T?> _getOrRetrieveSingle<T extends RestrrEntity>(
-      {required int key,
+      {required ID key,
       required RestrrEntityCacheView<T> cacheView,
       required Future<RestResponse<T>> Function(RestrrImpl) retrieveFunction,
       bool forceRetrieve = false}) async {
