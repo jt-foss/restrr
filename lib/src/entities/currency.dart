@@ -6,6 +6,10 @@ abstract class Currency implements RestrrEntity {
   String get isoCode;
   int get decimalPlaces;
   int? get user;
+
+  bool get isCustom;
+
+  bool isCreatedBy(User user);
 }
 
 class CurrencyImpl extends RestrrEntityImpl implements Currency {
@@ -29,4 +33,10 @@ class CurrencyImpl extends RestrrEntityImpl implements Currency {
     required this.decimalPlaces,
     required this.user,
   });
+
+  @override
+  bool get isCustom => user != null;
+
+  @override
+  bool isCreatedBy(User user) => this.user == user.id;
 }
