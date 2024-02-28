@@ -11,7 +11,8 @@ import 'cache/cache_view.dart';
 
 class RestrrOptions {
   final bool isWeb;
-  const RestrrOptions({this.isWeb = false});
+  final bool disableLogging;
+  const RestrrOptions({this.isWeb = false, this.disableLogging = false});
 }
 
 enum RestrrInitType { login, register, savedSession }
@@ -47,8 +48,6 @@ class RestrrBuilder {
 
   /// Creates a new session with the given [uri].
   Future<RestResponse<Restrr>> create() async {
-    Restrr.log.info('Attempting to initialize a session (${initType.name}) with $uri');
-
     // check if the URI is valid
     final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     if (statusResponse.hasError) {
@@ -59,7 +58,7 @@ class RestrrBuilder {
           .toRestResponse(statusCode: statusResponse.statusCode);
     }
 
-    Restrr.log.info('Host: $uri, API v${statusResponse.data!.apiVersion}');
+    Restrr.log.config('Host: $uri, API v${statusResponse.data!.apiVersion}');
     final RestrrImpl apiImpl = RestrrImpl._(
         options: options,
         routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion),
@@ -67,19 +66,9 @@ class RestrrBuilder {
 
     // attempt to authenticate the user
     final RestResponse<RestrrImpl> apiResponse = await switch (initType) {
-      RestrrInitType.register => _handleAuthProcess(apiImpl,
-          authFunction: () =>
-              apiImpl._userService.register(username!, password!, email: email, displayName: displayName),
-          onError: () => Restrr.log.warning('Failed to register user $username'),
-          onSuccess: () => Restrr.log.info('Successfully registered & logged in as ${apiImpl.selfUser.username}')),
-      RestrrInitType.login => _handleAuthProcess(apiImpl,
-          authFunction: () => apiImpl._userService.login(username!, password!),
-          onError: () => Restrr.log.warning('Invalid credentials for user $username'),
-          onSuccess: () => Restrr.log.info('Successfully logged in as ${apiImpl.selfUser.username}')),
-      RestrrInitType.savedSession => _handleAuthProcess(apiImpl,
-          authFunction: () => apiImpl._userService.getSelf(),
-          onError: () => Restrr.log.warning('Failed to refresh session'),
-          onSuccess: () => Restrr.log.info('Successfully refreshed session for ${apiImpl.selfUser.username}')),
+      RestrrInitType.register => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.register(username!, password!, email: email, displayName: displayName)),
+      RestrrInitType.login => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.login(username!, password!)),
+      RestrrInitType.savedSession => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.getSelf()),
     };
 
     // fire [ReadyEvent] if the API is ready

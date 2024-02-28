@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:logging/logging.dart';
 import 'package:restrr/restrr.dart';
 
 import '../requests/route.dart';
@@ -166,6 +167,13 @@ abstract class ApiService {
   }
 
   Future<RestResponse<T>> _fireEvent<T>(CompiledRoute route, RestResponse<T> response) async {
+    if (!api.options.disableLogging) {
+      Restrr.log.log(response.statusCode != null && response.statusCode! >= 400 ? Level.WARNING : Level.INFO,
+          '[${DateTime.now().toIso8601String()}] ${route.baseRoute.method} '
+              '${api.routeOptions.hostUri}${route.baseRoute.isVersioned ? '/api/v${api.routeOptions.apiVersion}' : ''}'
+              '${route.compiledRoute} => ${response.statusCode} (${response.hasData ? 'OK' : response.error?.name})'
+      );
+    }
     api.eventHandler.fire(RequestEvent(api: api, route: route.compiledRoute, statusCode: response.statusCode));
     return response;
   }
