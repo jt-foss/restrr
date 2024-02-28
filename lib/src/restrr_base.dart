@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:restrr/src/cache/batch_cache_view.dart';
+import 'package:restrr/src/events/event_handler.dart';
 import 'package:restrr/src/requests/route.dart';
 import 'package:restrr/src/service/api_service.dart';
 import 'package:restrr/src/service/currency_service.dart';
@@ -18,6 +19,8 @@ enum RestrrInitType { login, register, savedSession }
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
 class RestrrBuilder {
+  final Map<Type, Function> _eventMap = const {};
+
   final RestrrInitType initType;
   final Uri uri;
   String? sessionId;
@@ -37,6 +40,10 @@ class RestrrBuilder {
 
   RestrrBuilder.savedSession({required this.uri}) : initType = RestrrInitType.savedSession;
 
+  void setEventHandler<T extends RestrrEvent>(void Function(T) func) {
+    _eventMap[T.runtimeType] = func;
+  }
+
   /// Creates a new session with the given [uri].
   Future<RestResponse<Restrr>> create() async {
     Restrr.log.info('Attempting to initialize a session (${initType.name}) with $uri');
@@ -51,13 +58,19 @@ class RestrrBuilder {
     }
     Restrr.log.info('Host: $uri, API v${statusResponse.data!.apiVersion}');
     final RestrrImpl apiImpl = RestrrImpl._(
-        options: options, routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion));
-    return switch (initType) {
+        options: options,
+        routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion),
+        eventMap: _eventMap);
+    final RestResponse<RestrrImpl> apiResponse = await switch (initType) {
       RestrrInitType.register =>
         _handleRegistration(apiImpl, username!, password!, email: email, displayName: displayName),
       RestrrInitType.login => _handleLogin(apiImpl, username!, password!),
       RestrrInitType.savedSession => _handleSavedSession(apiImpl),
     };
+    if (apiResponse.hasData) {
+      apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
+    }
+    return apiResponse;
   }
 
   /// Logs in with the given [username] and [password].
@@ -120,6 +133,8 @@ abstract class Restrr {
         routeOptions: RouteOptions(hostUri: uri));
   }
 
+  void setEventHandler<T extends RestrrEvent>(void Function(T) func);
+
   /// Retrieves the currently authenticated user.
   Future<User?> retrieveSelf({bool forceRetrieve = false});
 
@@ -144,6 +159,8 @@ class RestrrImpl implements Restrr {
   @override
   final RouteOptions routeOptions;
 
+  late final RestrrEventHandler eventHandler;
+
   /* Services */
 
   late final UserService _userService = UserService(api: this);
@@ -156,13 +173,17 @@ class RestrrImpl implements Restrr {
 
   late final RestrrEntityBatchCacheView<Currency> _currencyBatchCache = RestrrEntityBatchCacheView();
 
-  RestrrImpl._({required this.options, required this.routeOptions});
+  RestrrImpl._({required this.options, required this.routeOptions, required Map<Type, Function> eventMap})
+      : eventHandler = RestrrEventHandler(eventMap);
 
   @override
   late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
   @override
   late final User selfUser;
+
+  @override
+  void setEventHandler<T extends RestrrEvent>(void Function(T) func) => eventHandler.on(func);
 
   @override
   Future<User?> retrieveSelf({bool forceRetrieve = false}) async {
@@ -186,8 +207,8 @@ class RestrrImpl implements Restrr {
   @override
   Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false}) async {
     return _getOrRetrieveMulti(
-        batchCache: _currencyBatchCache,
-        retrieveFunction: (api) => api._currencyService.retrieveAllCurrencies(),
+      batchCache: _currencyBatchCache,
+      retrieveFunction: (api) => api._currencyService.retrieveAllCurrencies(),
     );
   }
 

@@ -10,6 +10,10 @@ export 'src/entities/health_response.dart';
 export 'src/entities/restrr_entity.dart';
 export 'src/entities/user.dart';
 
+/* [ /src/events ] */
+export 'src/events/ready_event.dart';
+export 'src/events/restrr_event.dart';
+
 /* [ /src/requests ] */
 export 'src/requests/route_definitions.dart';
 
