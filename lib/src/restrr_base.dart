@@ -66,8 +66,11 @@ class RestrrBuilder {
 
     // attempt to authenticate the user
     final RestResponse<RestrrImpl> apiResponse = await switch (initType) {
-      RestrrInitType.register => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.register(username!, password!, email: email, displayName: displayName)),
-      RestrrInitType.login => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.login(username!, password!)),
+      RestrrInitType.register => _handleAuthProcess(apiImpl,
+          authFunction: () =>
+              apiImpl._userService.register(username!, password!, email: email, displayName: displayName)),
+      RestrrInitType.login =>
+        _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.login(username!, password!)),
       RestrrInitType.savedSession => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.getSelf()),
     };
 
@@ -79,14 +82,12 @@ class RestrrBuilder {
   }
 
   Future<RestResponse<RestrrImpl>> _handleAuthProcess(RestrrImpl apiImpl,
-      {required Future<RestResponse<User>> Function() authFunction, Function()? onError, Function()? onSuccess}) async {
+      {required Future<RestResponse<User>> Function() authFunction}) async {
     final RestResponse<User> response = await authFunction();
     if (response.hasError) {
-      onError?.call();
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
     }
     apiImpl.selfUser = response.data!;
-    onSuccess?.call();
     return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 }
