@@ -40,7 +40,7 @@ class RestrrBuilder {
 
   RestrrBuilder.savedSession({required this.uri}) : initType = RestrrInitType.savedSession;
 
-  RestrrBuilder setEventHandler<T extends RestrrEvent>(void Function(T) func) {
+  RestrrBuilder on<T extends RestrrEvent>(void Function(T) func) {
     _eventMap[T.runtimeType] = func;
     return this;
   }
@@ -108,6 +108,8 @@ abstract class Restrr {
   /// Getter for the [EntityBuilder] of this [Restrr] instance.
   EntityBuilder get entityBuilder;
 
+  RestrrEventHandler get eventHandler;
+
   RestrrOptions get options;
   RouteOptions get routeOptions;
 
@@ -123,7 +125,7 @@ abstract class Restrr {
         routeOptions: RouteOptions(hostUri: uri));
   }
 
-  void setEventHandler<T extends RestrrEvent>(void Function(T) func);
+  void on<T extends RestrrEvent>(void Function(T) func);
 
   /// Retrieves the currently authenticated user.
   Future<User?> retrieveSelf({bool forceRetrieve = false});
@@ -149,6 +151,7 @@ class RestrrImpl implements Restrr {
   @override
   final RouteOptions routeOptions;
 
+  @override
   late final RestrrEventHandler eventHandler;
 
   /* Services */
@@ -173,7 +176,7 @@ class RestrrImpl implements Restrr {
   late final User selfUser;
 
   @override
-  void setEventHandler<T extends RestrrEvent>(void Function(T) func) => eventHandler.on(func);
+  void on<T extends RestrrEvent>(void Function(T) func) => eventHandler.on(func);
 
   @override
   Future<User?> retrieveSelf({bool forceRetrieve = false}) async {

@@ -1,7 +1,8 @@
 ## 0.6
-- Added `RestrrBuilder#addEventHandler`
-- Added `Restrr#addEventHandler`
+- Added `RestrrBuilder#on`
+- Added `Restrr#on`
 - Added `ReadyEvent`
+- Added `RequestEvent`
 
 ## 0.5
 - Added `Currency`
