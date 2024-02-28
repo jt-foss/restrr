@@ -13,6 +13,7 @@ export 'src/entities/user.dart';
 /* [ /src/events ] */
 export 'src/events/ready_event.dart';
 export 'src/events/restrr_event.dart';
+export 'src/events/self_user_refresh_event.dart';
 
 /* [ /src/requests ] */
 export 'src/requests/route_definitions.dart';

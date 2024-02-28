@@ -47,67 +47,56 @@ class RestrrBuilder {
   /// Creates a new session with the given [uri].
   Future<RestResponse<Restrr>> create() async {
     Restrr.log.info('Attempting to initialize a session (${initType.name}) with $uri');
+
     // check if the URI is valid
     final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     if (statusResponse.hasError) {
       Restrr.log.warning('Invalid financrr URI: $uri');
-      return statusResponse.error == RestrrError.unknown
-          ? RestrrError.invalidUri.toRestResponse()
-          : statusResponse.error?.toRestResponse(statusCode: statusResponse.statusCode) ??
-              RestrrError.invalidUri.toRestResponse();
+      return (statusResponse.error == RestrrError.unknown
+              ? RestrrError.invalidUri
+              : statusResponse.error ?? RestrrError.invalidUri)
+          .toRestResponse(statusCode: statusResponse.statusCode);
     }
+
     Restrr.log.info('Host: $uri, API v${statusResponse.data!.apiVersion}');
     final RestrrImpl apiImpl = RestrrImpl._(
         options: options,
         routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion),
         eventMap: _eventMap);
+
+    // attempt to authenticate the user
     final RestResponse<RestrrImpl> apiResponse = await switch (initType) {
-      RestrrInitType.register =>
-        _handleRegistration(apiImpl, username!, password!, email: email, displayName: displayName),
-      RestrrInitType.login => _handleLogin(apiImpl, username!, password!),
-      RestrrInitType.savedSession => _handleSavedSession(apiImpl),
+      RestrrInitType.register => _handleAuthProcess(apiImpl,
+          authFunction: () =>
+              apiImpl._userService.register(username!, password!, email: email, displayName: displayName),
+          onError: () => Restrr.log.warning('Failed to register user $username'),
+          onSuccess: () => Restrr.log.info('Successfully registered & logged in as ${apiImpl.selfUser.username}')),
+      RestrrInitType.login => _handleAuthProcess(apiImpl,
+          authFunction: () => apiImpl._userService.login(username!, password!),
+          onError: () => Restrr.log.warning('Invalid credentials for user $username'),
+          onSuccess: () => Restrr.log.info('Successfully logged in as ${apiImpl.selfUser.username}')),
+      RestrrInitType.savedSession => _handleAuthProcess(apiImpl,
+          authFunction: () => apiImpl._userService.getSelf(),
+          onError: () => Restrr.log.warning('Failed to refresh session'),
+          onSuccess: () => Restrr.log.info('Successfully refreshed session for ${apiImpl.selfUser.username}')),
     };
+
+    // fire [ReadyEvent] if the API is ready
     if (apiResponse.hasData) {
       apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     }
     return apiResponse;
   }
 
-  /// Logs in with the given [username] and [password].
-  Future<RestResponse<RestrrImpl>> _handleLogin(RestrrImpl apiImpl, String username, String password) async {
-    final RestResponse<User> response = await apiImpl._userService.login(username, password);
-    if (!response.hasData) {
-      Restrr.log.warning('Invalid credentials for user $username');
-      return RestrrError.invalidCredentials.toRestResponse(statusCode: response.statusCode);
-    }
-    apiImpl.selfUser = response.data!;
-    Restrr.log.info('Successfully logged in as ${apiImpl.selfUser.username}');
-    return RestResponse(data: apiImpl, statusCode: response.statusCode);
-  }
-
-  /// Registers a new user and logs in.
-  Future<RestResponse<RestrrImpl>> _handleRegistration(RestrrImpl apiImpl, String username, String password,
-      {String? email, String? displayName}) async {
-    final RestResponse<User> response =
-        await apiImpl._userService.register(username, password, email: email, displayName: displayName);
+  Future<RestResponse<RestrrImpl>> _handleAuthProcess(RestrrImpl apiImpl,
+      {required Future<RestResponse<User>> Function() authFunction, Function()? onError, Function()? onSuccess}) async {
+    final RestResponse<User> response = await authFunction();
     if (response.hasError) {
-      Restrr.log.warning('Failed to register user $username');
+      onError?.call();
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
     }
     apiImpl.selfUser = response.data!;
-    Restrr.log.info('Successfully registered & logged in as ${apiImpl.selfUser.username}');
-    return RestResponse(data: apiImpl, statusCode: response.statusCode);
-  }
-
-  /// Attempts to refresh the session with still saved credentials.
-  Future<RestResponse<RestrrImpl>> _handleSavedSession(RestrrImpl apiImpl) async {
-    final RestResponse<User> response = await apiImpl._userService.getSelf();
-    if (response.hasError) {
-      Restrr.log.warning('Failed to refresh session');
-      return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
-    }
-    apiImpl.selfUser = response.data!;
-    Restrr.log.info('Successfully refreshed session for ${apiImpl.selfUser.username}');
+    onSuccess?.call();
     return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 }
