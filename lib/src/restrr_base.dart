@@ -19,7 +19,7 @@ enum RestrrInitType { login, register, savedSession }
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
 class RestrrBuilder {
-  final Map<Type, Function> _eventMap = const {};
+  final Map<Type, Function> _eventMap = {};
 
   final RestrrInitType initType;
   final Uri uri;
@@ -40,8 +40,9 @@ class RestrrBuilder {
 
   RestrrBuilder.savedSession({required this.uri}) : initType = RestrrInitType.savedSession;
 
-  void setEventHandler<T extends RestrrEvent>(void Function(T) func) {
+  RestrrBuilder setEventHandler<T extends RestrrEvent>(void Function(T) func) {
     _eventMap[T.runtimeType] = func;
+    return this;
   }
 
   /// Creates a new session with the given [uri].

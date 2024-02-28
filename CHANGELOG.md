@@ -1,3 +1,8 @@
+## 0.6
+- Added `RestrrBuilder#addEventHandler`
+- Added `Restrr#addEventHandler`
+- Added `ReadyEvent`
+
 ## 0.5
 - Added `Currency`
 - Added `Restrr#retrieveAllCurrencies`
