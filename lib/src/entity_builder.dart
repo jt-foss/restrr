@@ -14,19 +14,6 @@ class EntityBuilder {
     );
   }
 
-  User buildUser(Map<String, dynamic> json) {
-    final UserImpl user = UserImpl(
-      api: api,
-      id: json['id'],
-      username: json['username'],
-      email: json['email'],
-      displayName: json['display_name'],
-      createdAt: DateTime.parse(json['created_at']),
-      isAdmin: json['is_admin'],
-    );
-    return api.userCache.cache(user);
-  }
-
   Currency buildCurrency(Map<String, dynamic> json) {
     final CurrencyImpl currency = CurrencyImpl(
       api: api,
@@ -38,5 +25,30 @@ class EntityBuilder {
       user: json['user'],
     );
     return api.currencyCache.cache(currency);
+  }
+
+  Session buildSession(Map<String, dynamic> json) {
+    final SessionImpl session = SessionImpl(
+      api: api,
+      id: json['id'],
+      token: json['token'],
+      name: json['name'],
+      expiredAt: DateTime.parse(json['expired_at']),
+      user: buildUser(json['user']),
+    );
+    return session;
+  }
+
+  User buildUser(Map<String, dynamic> json) {
+    final UserImpl user = UserImpl(
+      api: api,
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
+      displayName: json['display_name'],
+      createdAt: DateTime.parse(json['created_at']),
+      isAdmin: json['is_admin'],
+    );
+    return api.userCache.cache(user);
   }
 }

@@ -7,7 +7,7 @@ class CurrencyService extends ApiService {
 
   Future<RestResponse<List<Currency>>> retrieveAllCurrencies() async {
     return multiRequest(
-        route: CurrencyRoutes.retrieveAll.compile(),
+        route: CurrencyRoutes.getAll.compile(),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         errorMap: {
           401: RestrrError.notSignedIn,
@@ -32,7 +32,7 @@ class CurrencyService extends ApiService {
 
   Future<RestResponse<Currency>> retrieveCurrencyById(ID id) async {
     return request(
-        route: CurrencyRoutes.retrieveById.compile(params: [id]),
+        route: CurrencyRoutes.getById.compile(params: [id]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         errorMap: {
           401: RestrrError.notSignedIn,

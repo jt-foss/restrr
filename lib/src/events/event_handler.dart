@@ -1,15 +1,15 @@
 import 'package:restrr/src/events/restrr_event.dart';
 
 class RestrrEventHandler {
-  final Map<Type, Function> eventMap;
+  final Map<Type, Function> _eventMap;
 
-  const RestrrEventHandler(this.eventMap);
+  const RestrrEventHandler(this._eventMap);
 
   void on<T extends RestrrEvent>(Type type, Function(T) callback) {
-    eventMap[type] = callback;
+    _eventMap[type] = callback;
   }
 
   void fire<T extends RestrrEvent>(T event) {
-    eventMap[event.runtimeType]?.call(event);
+    _eventMap[event.runtimeType]?.call(event);
   }
 }

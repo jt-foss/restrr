@@ -1,4 +1,4 @@
-import '../../restrr.dart';
+import '../../../restrr.dart';
 
 abstract class User extends RestrrEntity {
   String get username;

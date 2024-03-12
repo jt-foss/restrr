@@ -15,7 +15,7 @@ class RestrrOptions {
   const RestrrOptions({this.isWeb = false, this.disableLogging = false});
 }
 
-enum RestrrInitType { login, register, savedSession }
+enum RestrrInitType { login, register, refresh }
 
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
@@ -24,7 +24,7 @@ class RestrrBuilder {
 
   final RestrrInitType initType;
   final Uri uri;
-  String? sessionId;
+  String? sessionToken;
   String? username;
   String? password;
   String? email;
@@ -39,7 +39,7 @@ class RestrrBuilder {
       {required this.uri, required this.username, required this.password, this.email, this.displayName})
       : initType = RestrrInitType.register;
 
-  RestrrBuilder.savedSession({required this.uri}) : initType = RestrrInitType.savedSession;
+  RestrrBuilder.refresh({required this.uri, required this.sessionToken}) : initType = RestrrInitType.refresh;
 
   RestrrBuilder on<T extends RestrrEvent>(Type type, void Function(T) func) {
     _eventMap[type] = func;
@@ -70,8 +70,8 @@ class RestrrBuilder {
           authFunction: () =>
               apiImpl._userService.register(username!, password!, email: email, displayName: displayName)),
       RestrrInitType.login =>
-        _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.login(username!, password!)),
-      RestrrInitType.savedSession => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.getSelf()),
+        _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.create(username!, password!)),
+      RestrrInitType.refresh => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.getSelf()),
     };
 
     // fire [ReadyEvent] if the API is ready

@@ -7,21 +7,32 @@ class StatusRoutes {
   static final Route coffee = Route.get('/status/coffee', isVersioned: false);
 }
 
+class SessionRoutes {
+  const SessionRoutes._();
+
+  static final Route getCurrent = Route.get('/session/current');
+  static final Route deleteCurrent = Route.post('/session/current');
+  static final Route getById = Route.get('/session/{sessionId}');
+  static final Route deleteById = Route.get('/session/{sessionId}');
+  static final Route getAll = Route.get('/session');
+  static final Route deleteAll = Route.delete('/session');
+  static final Route create = Route.post('/session');
+  static final Route refresh = Route.patch('/session/renew');
+}
+
 class UserRoutes {
   const UserRoutes._();
 
-  static final Route me = Route.get('/user/@me');
-  static final Route login = Route.post('/user/login');
-  static final Route logout = Route.delete('/user/logout');
-  static final Route register = Route.post('/user/register');
+  static final Route getSelf = Route.get('/user/@me');
+  static final Route create = Route.post('/user/register');
 }
 
 class CurrencyRoutes {
   const CurrencyRoutes._();
 
-  static final Route retrieveAll = Route.get('/currency');
+  static final Route getAll = Route.get('/currency');
   static final Route create = Route.post('/currency/{currencyId}');
-  static final Route retrieveById = Route.get('/currency/{currencyId}');
+  static final Route getById = Route.get('/currency/{currencyId}');
   static final Route deleteById = Route.delete('/currency/{currencyId}');
   static final Route updateById = Route.patch('/currency/{currencyId}');
 }

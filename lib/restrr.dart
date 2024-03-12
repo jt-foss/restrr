@@ -5,10 +5,11 @@ export 'src/entity_builder.dart';
 export 'src/restrr_base.dart';
 
 /* [ /src/entities ] */
-export 'src/entities/currency.dart';
+export 'src/entities/currencies/currency.dart';
+export 'src/entities/sessions/session.dart';
+export 'src/entities/users/user.dart';
 export 'src/entities/health_response.dart';
 export 'src/entities/restrr_entity.dart';
-export 'src/entities/user.dart';
 
 /* [ /src/events ] */
 export 'src/events/ready_event.dart';
