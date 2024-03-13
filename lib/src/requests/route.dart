@@ -84,7 +84,7 @@ class CompiledRoute {
         path: compiledRoute,
         headers: headers,
         data: body,
-        method: baseRoute.method.toString(),
+        method: baseRoute.method,
         baseUrl: _buildBaseUrl(routeOptions, baseRoute.isVersioned)));
   }
 

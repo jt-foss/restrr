@@ -13,6 +13,7 @@ class SessionService extends ApiService {
           'password': password,
           'session_name': sessionName,
         },
+        noAuth: true,
         mapper: (json) => api.entityBuilder.buildSession(json),
         errorMap: {
           404: RestrrError.invalidCredentials,
@@ -22,7 +23,7 @@ class SessionService extends ApiService {
 
   Future<RestResponse<Session>> refresh(String sessionToken) async {
     return request(
-        route: SessionRoutes.create.compile(),
+        route: SessionRoutes.refresh.compile(),
         customBearerToken: sessionToken,
         mapper: (json) => api.entityBuilder.buildSession(json),
         errorMap: {
