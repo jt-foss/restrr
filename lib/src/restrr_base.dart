@@ -36,8 +36,8 @@ class RestrrBuilder {
     return _handleAuthProcess(authFunction: (apiImpl) => apiImpl._sessionService.create(username, password));
   }
 
-  Future<RestResponse<Restrr>> refresh() async {
-    return _handleAuthProcess(authFunction: (apiImpl) => apiImpl._sessionService.refresh());
+  Future<RestResponse<Restrr>> refresh({required String sessionToken}) async {
+    return _handleAuthProcess(authFunction: (apiImpl) => apiImpl._sessionService.refresh(sessionToken));
   }
 
   Future<RestResponse<RestrrImpl>> _handleAuthProcess(

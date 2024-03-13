@@ -71,12 +71,15 @@ class CompiledRoute {
   }
 
   Future<Response> submit(
-      {required RouteOptions routeOptions, dynamic body, bool isWeb = false, String contentType = 'application/json'}) {
+      {required RouteOptions routeOptions, dynamic body, bool isWeb = false, String? bearerToken, String contentType = 'application/json'}) {
     if (baseRoute.isVersioned && routeOptions.apiVersion == -1) {
       throw StateError('Cannot submit a versioned route without specifying the API version!');
     }
     final Dio dio = Dio();
     Map<String, dynamic> headers = {'Content-Type': contentType};
+    if (bearerToken != null) {
+      headers['Authorization'] = 'Bearer $bearerToken';
+    }
     return dio.fetch(RequestOptions(
         path: compiledRoute,
         headers: headers,

@@ -20,9 +20,10 @@ class SessionService extends ApiService {
         });
   }
 
-  Future<RestResponse<Session>> refresh() async {
+  Future<RestResponse<Session>> refresh(String sessionToken) async {
     return request(
         route: SessionRoutes.create.compile(),
+        customBearerToken: sessionToken,
         mapper: (json) => api.entityBuilder.buildSession(json),
         errorMap: {
           404: RestrrError.invalidCredentials,

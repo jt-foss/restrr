@@ -19,12 +19,13 @@ class RequestHandler {
       required T Function(dynamic) mapper,
       required RouteOptions routeOptions,
       bool isWeb = false,
+      String? bearerToken,
       Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response =
-          await route.submit(routeOptions: routeOptions, body: body, isWeb: isWeb, contentType: contentType);
+      final Response<dynamic> response = await route.submit(
+          routeOptions: routeOptions, body: body, isWeb: isWeb, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: mapper.call(response.data), statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, isWeb, errorMap);
@@ -38,12 +39,13 @@ class RequestHandler {
       {required CompiledRoute route,
       required RouteOptions routeOptions,
       bool isWeb = false,
+      String? bearerToken,
       dynamic body,
       Map<int, RestrrError> errorMap = const {},
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response =
-          await route.submit(routeOptions: routeOptions, body: body, isWeb: isWeb, contentType: contentType);
+      final Response<dynamic> response = await route.submit(
+          routeOptions: routeOptions, body: body, isWeb: isWeb, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: true, statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, isWeb, errorMap);
@@ -58,14 +60,15 @@ class RequestHandler {
       {required CompiledRoute route,
       required RouteOptions routeOptions,
       bool isWeb = false,
+      String? bearerToken,
       required T Function(dynamic) mapper,
       Map<int, RestrrError> errorMap = const {},
       Function(String)? fullRequest,
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response =
-          await route.submit(routeOptions: routeOptions, body: body, isWeb: isWeb, contentType: contentType);
+      final Response<dynamic> response = await route.submit(
+          routeOptions: routeOptions, body: body, isWeb: isWeb, bearerToken: bearerToken, contentType: contentType);
       if (response.data is! List<dynamic>) {
         throw StateError('Received response is not a list!');
       }
@@ -118,6 +121,8 @@ abstract class ApiService {
   Future<RestResponse<T>> request<T>(
       {required CompiledRoute route,
       required T Function(dynamic) mapper,
+      String? customBearerToken,
+      bool noAuth = false,
       Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
@@ -125,6 +130,7 @@ abstract class ApiService {
             route: route,
             routeOptions: api.routeOptions,
             isWeb: api.options.isWeb,
+            bearerToken: customBearerToken ?? (noAuth ? null : api.session.token),
             mapper: mapper,
             errorMap: errorMap,
             body: body,
@@ -134,6 +140,8 @@ abstract class ApiService {
 
   Future<RestResponse<bool>> noResponseRequest<T>(
       {required CompiledRoute route,
+      String? customBearerToken,
+      bool noAuth = false,
       dynamic body,
       Map<int, RestrrError> errorMap = const {},
       String contentType = 'application/json'}) async {
@@ -141,6 +149,7 @@ abstract class ApiService {
             route: route,
             routeOptions: api.routeOptions,
             isWeb: api.options.isWeb,
+            bearerToken: customBearerToken ?? (noAuth ? null : api.session.token),
             body: body,
             errorMap: errorMap,
             contentType: contentType)
@@ -150,6 +159,8 @@ abstract class ApiService {
   Future<RestResponse<List<T>>> multiRequest<T>(
       {required CompiledRoute route,
       required T Function(dynamic) mapper,
+      String? customBearerToken,
+      bool noAuth = false,
       Map<int, RestrrError> errorMap = const {},
       Function(String)? fullRequest,
       dynamic body,
@@ -158,6 +169,7 @@ abstract class ApiService {
             route: route,
             routeOptions: api.routeOptions,
             isWeb: api.options.isWeb,
+            bearerToken: customBearerToken ?? (noAuth ? null : api.session.token),
             mapper: mapper,
             errorMap: errorMap,
             fullRequest: fullRequest,
