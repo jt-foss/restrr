@@ -4,6 +4,7 @@ import 'package:restrr/src/events/event_handler.dart';
 import 'package:restrr/src/requests/route.dart';
 import 'package:restrr/src/service/api_service.dart';
 import 'package:restrr/src/service/currency_service.dart';
+import 'package:restrr/src/service/session_service.dart';
 import 'package:restrr/src/service/user_service.dart';
 
 import '../restrr.dart';
@@ -15,40 +16,33 @@ class RestrrOptions {
   const RestrrOptions({this.isWeb = false, this.disableLogging = false});
 }
 
-enum RestrrInitType { login, register, refresh }
-
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
 class RestrrBuilder {
   final Map<Type, Function> _eventMap = {};
 
-  final RestrrInitType initType;
   final Uri uri;
-  String? sessionToken;
-  String? username;
-  String? password;
-  String? email;
-  String? displayName;
 
-  RestrrOptions options = RestrrOptions();
+  final RestrrOptions options;
 
-  RestrrBuilder.login({required this.uri, required this.username, required this.password})
-      : initType = RestrrInitType.login;
-
-  RestrrBuilder.register(
-      {required this.uri, required this.username, required this.password, this.email, this.displayName})
-      : initType = RestrrInitType.register;
-
-  RestrrBuilder.refresh({required this.uri, required this.sessionToken}) : initType = RestrrInitType.refresh;
+  RestrrBuilder({required this.uri, this.options = const RestrrOptions()});
 
   RestrrBuilder on<T extends RestrrEvent>(Type type, void Function(T) func) {
     _eventMap[type] = func;
     return this;
   }
 
-  /// Creates a new session with the given [uri].
-  Future<RestResponse<Restrr>> create() async {
-    // check if the URI is valid
+  Future<RestResponse<Restrr>> login({required String username, required String password}) async {
+    return _handleAuthProcess(authFunction: (apiImpl) => apiImpl._sessionService.create(username, password));
+  }
+
+  Future<RestResponse<Restrr>> refresh() async {
+    return _handleAuthProcess(authFunction: (apiImpl) => apiImpl._sessionService.refresh());
+  }
+
+  Future<RestResponse<RestrrImpl>> _handleAuthProcess(
+      {required Future<RestResponse<Session>> Function(RestrrImpl) authFunction}) async {
+    // check if the URI is valid and the API is healthy
     final RestResponse<HealthResponse> statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     if (statusResponse.hasError) {
       Restrr.log.warning('Invalid financrr URI: $uri');
@@ -57,37 +51,19 @@ class RestrrBuilder {
               : statusResponse.error ?? RestrrError.invalidUri)
           .toRestResponse(statusCode: statusResponse.statusCode);
     }
-
     Restrr.log.config('Host: $uri, API v${statusResponse.data!.apiVersion}');
+    // build api instance
     final RestrrImpl apiImpl = RestrrImpl._(
         options: options,
         routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.data!.apiVersion),
         eventMap: _eventMap);
-
-    // attempt to authenticate the user
-    final RestResponse<RestrrImpl> apiResponse = await switch (initType) {
-      RestrrInitType.register => _handleAuthProcess(apiImpl,
-          authFunction: () =>
-              apiImpl._userService.register(username!, password!, email: email, displayName: displayName)),
-      RestrrInitType.login =>
-        _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.create(username!, password!)),
-      RestrrInitType.refresh => _handleAuthProcess(apiImpl, authFunction: () => apiImpl._userService.getSelf()),
-    };
-
-    // fire [ReadyEvent] if the API is ready
-    if (apiResponse.hasData) {
-      apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
-    }
-    return apiResponse;
-  }
-
-  Future<RestResponse<RestrrImpl>> _handleAuthProcess(RestrrImpl apiImpl,
-      {required Future<RestResponse<User>> Function() authFunction}) async {
-    final RestResponse<User> response = await authFunction();
+    // call auth function
+    final RestResponse<Session> response = await authFunction(apiImpl);
     if (response.hasError) {
       return response.error?.toRestResponse(statusCode: response.statusCode) ?? RestrrError.unknown.toRestResponse();
     }
-    apiImpl.selfUser = response.data!;
+    apiImpl.session = response.data!;
+    apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return RestResponse(data: apiImpl, statusCode: response.statusCode);
   }
 }
@@ -103,8 +79,10 @@ abstract class Restrr {
   RestrrOptions get options;
   RouteOptions get routeOptions;
 
+  Session get session;
+
   /// The currently authenticated user.
-  User get selfUser;
+  User get selfUser => session.user;
 
   /// Checks whether the given [uri] is valid and the API is healthy.
   static Future<RestResponse<HealthResponse>> checkUri(Uri uri, {bool isWeb = false}) async {
@@ -128,11 +106,11 @@ abstract class Restrr {
   Future<Currency?> createCurrency(
       {required String name, required String symbol, required String isoCode, required int decimalPlaces});
 
-  Future<Currency?> retrieveCurrencyById(ID id, {bool forceRetrieve = false});
+  Future<Currency?> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
 
-  Future<bool> deleteCurrencyById(ID id);
+  Future<bool> deleteCurrencyById(Id id);
 
-  Future<Currency?> updateCurrencyById(ID id, {String? name, String? symbol, String? isoCode, int? decimalPlaces});
+  Future<Currency?> updateCurrencyById(Id id, {String? name, String? symbol, String? isoCode, int? decimalPlaces});
 }
 
 class RestrrImpl implements Restrr {
@@ -146,6 +124,7 @@ class RestrrImpl implements Restrr {
 
   /* Services */
 
+  late final SessionService _sessionService = SessionService(api: this);
   late final UserService _userService = UserService(api: this);
   late final CurrencyService _currencyService = CurrencyService(api: this);
 
@@ -156,14 +135,18 @@ class RestrrImpl implements Restrr {
 
   late final RestrrEntityBatchCacheView<Currency> _currencyBatchCache = RestrrEntityBatchCacheView();
 
-  RestrrImpl._({required this.options, required this.routeOptions, required Map<Type, Function> eventMap})
+  RestrrImpl._(
+      {required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
 
   @override
   late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
   @override
-  late final User selfUser;
+  late final Session session;
+
+  @override
+  User get selfUser => session.user;
 
   @override
   void on<T extends RestrrEvent>(Type type, void Function(T) func) => eventHandler.on(type, func);
@@ -179,12 +162,8 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> logout() async {
-    final RestResponse<bool> response = await _userService.logout();
-    if (response.hasData && response.data! && !options.isWeb) {
-      await CompiledRoute.cookieJar.deleteAll();
-      return true;
-    }
-    return false;
+    final RestResponse<bool> response = await _sessionService.delete();
+    return response.hasData && response.data!;
   }
 
   @override
@@ -204,7 +183,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Currency?> retrieveCurrencyById(ID id, {bool forceRetrieve = false}) async {
+  Future<Currency?> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
     return _getOrRetrieveSingle(
         key: id,
         cacheView: currencyCache,
@@ -213,13 +192,13 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<bool> deleteCurrencyById(ID id) async {
+  Future<bool> deleteCurrencyById(Id id) async {
     final RestResponse<bool> response = await _currencyService.deleteCurrencyById(id);
     return response.hasData && response.data!;
   }
 
   @override
-  Future<Currency?> updateCurrencyById(ID id,
+  Future<Currency?> updateCurrencyById(Id id,
       {String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
     final RestResponse<Currency> response = await _currencyService.updateCurrencyById(id,
         name: name, symbol: symbol, isoCode: isoCode, decimalPlaces: decimalPlaces);
@@ -227,7 +206,7 @@ class RestrrImpl implements Restrr {
   }
 
   Future<T?> _getOrRetrieveSingle<T extends RestrrEntity>(
-      {required ID key,
+      {required Id key,
       required RestrrEntityCacheView<T> cacheView,
       required Future<RestResponse<T>> Function(RestrrImpl) retrieveFunction,
       bool forceRetrieve = false}) async {

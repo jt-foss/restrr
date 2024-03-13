@@ -1,3 +1,8 @@
+## 0.7
+- Added `Session`-based authentication
+- Reworked `RestrrBuilder`
+- Added `RestrrBuilder#refresh`
+
 ## 0.6.2
 - Fixed `Restrr#on` (and similar methods)
 

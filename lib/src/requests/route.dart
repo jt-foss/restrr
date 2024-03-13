@@ -1,6 +1,4 @@
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 import '../../restrr.dart';
 
@@ -55,8 +53,6 @@ class Route {
 }
 
 class CompiledRoute {
-  static final CookieJar cookieJar = PersistCookieJar();
-
   final Route baseRoute;
   final String compiledRoute;
   final Map<String, String> parameters;
@@ -79,10 +75,7 @@ class CompiledRoute {
     if (baseRoute.isVersioned && routeOptions.apiVersion == -1) {
       throw StateError('Cannot submit a versioned route without specifying the API version!');
     }
-    Dio dio = Dio();
-    if (!isWeb) {
-      dio.interceptors.add(CookieManager(cookieJar));
-    }
+    final Dio dio = Dio();
     Map<String, dynamic> headers = {'Content-Type': contentType};
     return dio.fetch(RequestOptions(
         path: compiledRoute,

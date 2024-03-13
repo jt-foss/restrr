@@ -30,7 +30,7 @@ class CurrencyService extends ApiService {
         });
   }
 
-  Future<RestResponse<Currency>> retrieveCurrencyById(ID id) async {
+  Future<RestResponse<Currency>> retrieveCurrencyById(Id id) async {
     return request(
         route: CurrencyRoutes.getById.compile(params: [id]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
@@ -40,14 +40,14 @@ class CurrencyService extends ApiService {
         });
   }
 
-  Future<RestResponse<bool>> deleteCurrencyById(ID id) async {
+  Future<RestResponse<bool>> deleteCurrencyById(Id id) async {
     return noResponseRequest(route: CurrencyRoutes.deleteById.compile(params: [id]), errorMap: {
       401: RestrrError.notSignedIn,
       404: RestrrError.notFound,
     });
   }
 
-  Future<RestResponse<Currency>> updateCurrencyById(ID id,
+  Future<RestResponse<Currency>> updateCurrencyById(Id id,
       {String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
     if (name == null && symbol == null && isoCode == null && decimalPlaces == null) {
       throw ArgumentError('At least one field must be set');
