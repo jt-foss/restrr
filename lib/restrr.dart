@@ -1,28 +1,22 @@
 library;
 
-/* [ /src ] */
-export 'src/entity_builder.dart';
-export 'src/restrr_base.dart';
+/* [ /src/api ] */
+export 'src/api/restrr.dart';
+export 'src/api/server_info.dart';
 
-/* [ /src/entities ] */
-export 'src/entities/currencies/currency.dart';
-export 'src/entities/sessions/session.dart';
-export 'src/entities/users/user.dart';
-export 'src/entities/health_response.dart';
-export 'src/entities/restrr_entity.dart';
+/* [ /src/api/entities ] */
+export 'src/api/entities/currency.dart';
+export 'src/api/entities/session.dart';
+export 'src/api/entities/user.dart';
+export 'src/api/entities/restrr_entity.dart';
 
-/* [ /src/events ] */
-export 'src/events/ready_event.dart';
-export 'src/events/request_event.dart';
-export 'src/events/restrr_event.dart';
+/* [ /src/api/events ] */
+export 'src/api/events/ready_event.dart';
+export 'src/api/events/request_event.dart';
+export 'src/api/events/restrr_event.dart';
 
-/* [ /src/requests ] */
-export 'src/requests/route_definitions.dart';
-
-/* [ /src/requests/responses ] */
-export 'src/requests/responses/restrr_errors.dart';
-export 'src/requests/responses/rest_response.dart';
-
-/* [ /src/utils ] */
-export 'src/utils/io_utils.dart';
-export 'src/utils/string_utils.dart';
+/* [ /src/api/requests ] */
+export 'src/api/requests/request_handler.dart';
+export 'src/api/requests/restrr_errors.dart';
+export 'src/api/requests/route.dart';
+export 'src/api/requests/route_definitions.dart';
