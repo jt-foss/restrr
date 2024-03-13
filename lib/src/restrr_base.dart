@@ -103,6 +103,18 @@ abstract class Restrr {
 
   Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false});
 
+  /* Sessions */
+
+  Future<Session?> retrieveCurrent({bool forceRetrieve = false});
+
+  Future<Session?> retrieveById(Id id, {bool forceRetrieve = false});
+
+  Future<bool> deleteById(Id id);
+
+  Future<bool> deleteAll();
+
+  /* Currencies */
+
   Future<Currency?> createCurrency(
       {required String name, required String symbol, required String isoCode, required int decimalPlaces});
 
@@ -130,8 +142,9 @@ class RestrrImpl implements Restrr {
 
   /* Caches */
 
-  late final RestrrEntityCacheView<User> userCache = RestrrEntityCacheView();
   late final RestrrEntityCacheView<Currency> currencyCache = RestrrEntityCacheView();
+  late final RestrrEntityCacheView<Session> sessionCache = RestrrEntityCacheView();
+  late final RestrrEntityCacheView<User> userCache = RestrrEntityCacheView();
 
   late final RestrrEntityBatchCacheView<Currency> _currencyBatchCache = RestrrEntityBatchCacheView();
 
@@ -162,9 +175,43 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> logout() async {
-    final RestResponse<bool> response = await _sessionService.delete();
+    final RestResponse<bool> response = await _sessionService.deleteCurrent();
     return response.hasData && response.data!;
   }
+
+  /* Sessions */
+
+  @override
+  Future<Session?> retrieveCurrent({bool forceRetrieve = false}) async {
+    return _getOrRetrieveSingle(
+        key: session.id,
+        cacheView: sessionCache,
+        retrieveFunction: (api) => api._sessionService.retrieveCurrent(),
+        forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Session?> retrieveById(Id id, {bool forceRetrieve = false}) async {
+    return _getOrRetrieveSingle(
+        key: id,
+        cacheView: sessionCache,
+        retrieveFunction: (api) => api._sessionService.retrieveById(id),
+        forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<bool> deleteById(Id id) async {
+    final RestResponse<bool> response = await _sessionService.deleteById(id);
+    return response.hasData && response.data!;
+  }
+
+  @override
+  Future<bool> deleteAll() async {
+    final RestResponse<bool> response = await _sessionService.deleteAll();
+    return response.hasData && response.data!;
+  }
+
+  /* Currencies */
 
   @override
   Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false}) async {

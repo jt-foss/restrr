@@ -1,3 +1,5 @@
+import 'package:restrr/src/service/session_service.dart';
+
 import '../../../restrr.dart';
 
 abstract class Session implements RestrrEntity {

@@ -10,6 +10,10 @@ abstract class Currency implements RestrrEntity {
   bool get isCustom;
 
   bool isCreatedBy(User user);
+
+  Future<bool> delete();
+
+  Future<Currency?> update({String? name, String? symbol, String? isoCode, int? decimalPlaces});
 }
 
 class CurrencyImpl extends RestrrEntityImpl implements Currency {
@@ -39,4 +43,12 @@ class CurrencyImpl extends RestrrEntityImpl implements Currency {
 
   @override
   bool isCreatedBy(User user) => this.user == user.id;
+
+  @override
+  Future<bool> delete() => api.deleteCurrencyById(id);
+
+  @override
+  Future<Currency?> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) {
+    return api.updateCurrencyById(id, name: name, symbol: symbol, isoCode: isoCode, decimalPlaces: decimalPlaces);
+  }
 }
