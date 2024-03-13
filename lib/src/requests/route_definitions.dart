@@ -17,7 +17,7 @@ class SessionRoutes {
   static final Route getAll = Route.get('/session');
   static final Route deleteAll = Route.delete('/session');
   static final Route create = Route.post('/session');
-  static final Route refresh = Route.patch('/session/renew');
+  static final Route refresh = Route.patch('/session/refresh');
 }
 
 class UserRoutes {
