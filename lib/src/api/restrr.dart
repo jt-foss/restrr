@@ -41,8 +41,9 @@ abstract class Restrr {
   /// Retrieves the currently authenticated user.
   Future<User?> retrieveSelf({bool forceRetrieve = false});
 
-  /// Logs out the current user.
-  Future<bool> logout();
+  /// Deletes the current session, effectively logging out the user.
+  ///
+  Future<bool> deleteCurrentSession();
 
   Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false});
 
@@ -52,8 +53,6 @@ abstract class Restrr {
 
   Future<Session?> retrieveSessionById(Id id, {bool forceRetrieve = false});
 
-  Future<bool> deleteSessionById(Id id);
-
   Future<bool> deleteAllSessions();
 
   /* Currencies */
@@ -62,8 +61,4 @@ abstract class Restrr {
       {required String name, required String symbol, required String isoCode, required int decimalPlaces});
 
   Future<Currency?> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
-
-  Future<bool> deleteCurrencyById(Id id);
-
-  Future<Currency?> updateCurrencyById(Id id, {String? name, String? symbol, String? isoCode, int? decimalPlaces});
 }

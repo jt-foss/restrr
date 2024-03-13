@@ -5,4 +5,6 @@ abstract class Session extends RestrrEntity {
   String? get name;
   DateTime get expiredAt;
   User get user;
+
+  Future<bool> delete();
 }

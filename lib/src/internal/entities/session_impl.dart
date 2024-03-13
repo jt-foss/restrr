@@ -20,4 +20,10 @@ class SessionImpl extends RestrrEntityImpl implements Session {
     required this.expiredAt,
     required this.user,
   });
+
+  @override
+  Future<bool> delete() async {
+    final response = await api.requestHandler.noResponseApiRequest(route: SessionRoutes.getById.compile(params: [id]));
+    return response.hasData && response.data!;
+  }
 }

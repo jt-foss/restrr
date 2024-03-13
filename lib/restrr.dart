@@ -16,6 +16,7 @@ export 'src/api/entities/restrr_entity.dart';
 export 'src/api/events/ready_event.dart';
 export 'src/api/events/request_event.dart';
 export 'src/api/events/restrr_event.dart';
+export 'src/api/events/session_delete_event.dart';
 
 /* [ /src/api/requests ] */
 export 'src/api/requests/request_handler.dart';

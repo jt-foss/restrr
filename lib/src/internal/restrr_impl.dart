@@ -1,3 +1,4 @@
+import 'package:restrr/src/api/events/session_delete_event.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
@@ -15,6 +16,7 @@ class RestrrImpl implements Restrr {
 
   late final RestrrEventHandler eventHandler;
   late final RequestHandler requestHandler = RequestHandler(this);
+  late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
   /* Caches */
 
@@ -26,8 +28,6 @@ class RestrrImpl implements Restrr {
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
-
-  late final EntityBuilder entityBuilder = EntityBuilder(api: this);
 
   @override
   late final Session session;
@@ -49,12 +49,16 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<bool> logout() async {
+  Future<bool> deleteCurrentSession() async {
     final RestResponse<bool> response =
         await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile(), errorMap: {
       401: RestrrError.notSignedIn,
     });
-    return response.hasData && response.data!;
+    if (response.hasData && response.data!) {
+      eventHandler.fire(SessionDeleteEvent(api: this));
+      return true;
+    }
+    return false;
   }
 
   /* Sessions */
@@ -77,12 +81,6 @@ class RestrrImpl implements Restrr {
         compiledRoute: SessionRoutes.getById.compile(params: [id]),
         mapper: (json) => entityBuilder.buildSession(json),
         forceRetrieve: forceRetrieve);
-  }
-
-  @override
-  Future<bool> deleteSessionById(Id id) async {
-    final response = await requestHandler.noResponseApiRequest(route: SessionRoutes.getById.compile(params: [id]));
-    return response.hasData && response.data!;
   }
 
   @override
@@ -129,37 +127,5 @@ class RestrrImpl implements Restrr {
         compiledRoute: CurrencyRoutes.getById.compile(params: [id]),
         mapper: (json) => entityBuilder.buildCurrency(json),
         forceRetrieve: forceRetrieve);
-  }
-
-  @override
-  Future<bool> deleteCurrencyById(Id id) async {
-    final response =
-        await requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]), errorMap: {
-      401: RestrrError.notSignedIn,
-      404: RestrrError.notFound,
-    });
-    return response.hasData && response.data!;
-  }
-
-  @override
-  Future<Currency?> updateCurrencyById(Id id,
-      {String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
-    if (name == null && symbol == null && isoCode == null && decimalPlaces == null) {
-      throw ArgumentError('At least one field must be set');
-    }
-    final RestResponse<Currency> response = await requestHandler.apiRequest(
-        route: CurrencyRoutes.updateById.compile(params: [id]),
-        mapper: (json) => entityBuilder.buildCurrency(json),
-        body: {
-          if (name != null) 'name': name,
-          if (symbol != null) 'symbol': symbol,
-          if (isoCode != null) 'iso_code': isoCode,
-          if (decimalPlaces != null) 'decimal_places': decimalPlaces,
-        },
-        errorMap: {
-          401: RestrrError.notSignedIn,
-          404: RestrrError.notFound,
-        });
-    return response.data;
   }
 }
