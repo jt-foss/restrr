@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:restrr/restrr.dart';
+import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
@@ -36,16 +37,16 @@ const String currencyJson = '''
 ''';
 
 void main() {
-  late Restrr api;
+  late RestrrImpl api;
 
   setUp(() async {
     // log in, get api instance
-    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')).data!;
+    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')).data! as RestrrImpl;
   });
 
   group('[EntityBuilder] ', () {
     test('.buildHealthResponse', () {
-      final HealthResponse healthResponse = EntityBuilder.buildHealthResponse(jsonDecode(healthJson));
+      final ServerInfo healthResponse = ServerInfo.fromJson(jsonDecode(healthJson));
       expect(healthResponse.healthy, true);
       expect(healthResponse.apiVersion, 1);
       expect(healthResponse.details, null);
@@ -67,7 +68,6 @@ void main() {
       expect(currency.symbol, '\$');
       expect(currency.isoCode, 'USD');
       expect(currency.decimalPlaces, 2);
-      expect(currency.user, 1);
     });
   });
 }
