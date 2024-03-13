@@ -3,7 +3,6 @@ import 'package:restrr/src/internal/restrr_impl.dart';
 
 import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
-import 'entities/server_info_impl.dart';
 import 'entities/session_impl.dart';
 import 'entities/user_impl.dart';
 
@@ -12,14 +11,6 @@ class EntityBuilder {
   final RestrrImpl api;
 
   const EntityBuilder({required this.api});
-
-  static ServerInfo buildServerInfo(Map<String, dynamic> json) {
-    return ServerInfoImpl(
-      healthy: json['healthy'],
-      apiVersion: json['api_version'],
-      details: json.keys.contains('details') ? json['details'] : null,
-    );
-  }
 
   Currency buildCurrency(Map<String, dynamic> json) {
     CurrencyImpl currency = CurrencyImpl(

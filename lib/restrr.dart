@@ -2,6 +2,7 @@ library;
 
 /* [ /src/api ] */
 export 'src/api/restrr.dart';
+export 'src/api/restrr_builder.dart';
 export 'src/api/server_info.dart';
 
 /* [ /src/api/entities ] */

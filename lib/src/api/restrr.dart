@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
+import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
 import '../../restrr.dart';
-import 'events/event_handler.dart';
 
 class RestrrOptions {
   final bool isWeb;
@@ -26,6 +26,16 @@ abstract class Restrr {
   /// The currently authenticated user.
   User get selfUser => session.user;
 
+  /// Checks whether the specified URI is valid and points to a valid
+  /// financrr API.
+  static Future<RestResponse<ServerInfo>> checkUri(Uri uri, {bool isWeb = false}) async {
+    return await RequestHandler.request(
+      route: StatusRoutes.health.compile(),
+      mapper: (json) => ServerInfo.fromJson(json),
+      routeOptions: RouteOptions(hostUri: uri),
+    );
+  }
+
   void on<T extends RestrrEvent>(Type type, void Function(T) func);
 
   /// Retrieves the currently authenticated user.
@@ -38,13 +48,13 @@ abstract class Restrr {
 
   /* Sessions */
 
-  Future<Session?> retrieveCurrent({bool forceRetrieve = false});
+  Future<Session?> retrieveCurrentSession({bool forceRetrieve = false});
 
-  Future<Session?> retrieveById(Id id, {bool forceRetrieve = false});
+  Future<Session?> retrieveSessionById(Id id, {bool forceRetrieve = false});
 
-  Future<bool> deleteById(Id id);
+  Future<bool> deleteSessionById(Id id);
 
-  Future<bool> deleteAll();
+  Future<bool> deleteAllSessions();
 
   /* Currencies */
 

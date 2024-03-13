@@ -14,6 +14,7 @@ class RestrrImpl implements Restrr {
   final RouteOptions routeOptions;
 
   late final RestrrEventHandler eventHandler;
+  late final RequestHandler requestHandler = RequestHandler(this);
 
   /* Caches */
 
@@ -44,20 +45,22 @@ class RestrrImpl implements Restrr {
         cacheView: userCache,
         compiledRoute: UserRoutes.getSelf.compile(),
         mapper: (json) => entityBuilder.buildUser(json),
-        forceRetrieve: forceRetrieve
-    );
+        forceRetrieve: forceRetrieve);
   }
 
   @override
   Future<bool> logout() async {
-    final RestResponse<bool> response = await _sessionService.deleteCurrent();
+    final RestResponse<bool> response =
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile(), errorMap: {
+      401: RestrrError.notSignedIn,
+    });
     return response.hasData && response.data!;
   }
 
   /* Sessions */
 
   @override
-  Future<Session?> retrieveCurrent({bool forceRetrieve = false}) async {
+  Future<Session?> retrieveCurrentSession({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: session.id,
         cacheView: sessionCache,
@@ -67,7 +70,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Session?> retrieveById(Id id, {bool forceRetrieve = false}) async {
+  Future<Session?> retrieveSessionById(Id id, {bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: id,
         cacheView: sessionCache,
@@ -77,14 +80,18 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<bool> deleteById(Id id) async {
-    final RestResponse<bool> response = await _sessionService.deleteById(id);
+  Future<bool> deleteSessionById(Id id) async {
+    final response = await requestHandler.noResponseApiRequest(route: SessionRoutes.getById.compile(params: [id]));
     return response.hasData && response.data!;
   }
 
   @override
-  Future<bool> deleteAll() async {
-    final RestResponse<bool> response = await _sessionService.deleteAll();
+  Future<bool> deleteAllSessions() async {
+    final RestResponse<bool> response =
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile(), errorMap: {
+      401: RestrrError.notSignedIn,
+      404: RestrrError.notFound,
+    });
     return response.hasData && response.data!;
   }
 
@@ -93,18 +100,24 @@ class RestrrImpl implements Restrr {
   @override
   Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveMulti(
-      batchCache: currencyBatchCache,
-      compiledRoute: CurrencyRoutes.getAll.compile(),
-      mapper: (json) => entityBuilder.buildCurrency(json),
-      forceRetrieve: forceRetrieve
-    );
+        batchCache: currencyBatchCache,
+        compiledRoute: CurrencyRoutes.getAll.compile(),
+        mapper: (json) => entityBuilder.buildCurrency(json),
+        forceRetrieve: forceRetrieve);
   }
 
   @override
   Future<Currency?> createCurrency(
       {required String name, required String symbol, required String isoCode, required int decimalPlaces}) async {
-    final RestResponse<Currency> response = await _currencyService.createCurrency(
-        name: name, symbol: symbol, isoCode: isoCode, decimalPlaces: decimalPlaces);
+    final response = await requestHandler
+        .apiRequest(route: CurrencyRoutes.create.compile(), mapper: (json) => entityBuilder.buildCurrency(json), body: {
+      'name': name,
+      'symbol': symbol,
+      'iso_code': isoCode,
+      'decimal_places': decimalPlaces,
+    }, errorMap: {
+      401: RestrrError.notSignedIn,
+    });
     return response.data;
   }
 
@@ -120,15 +133,33 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> deleteCurrencyById(Id id) async {
-    final RestResponse<bool> response = await _currencyService.deleteCurrencyById(id);
+    final response =
+        await requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]), errorMap: {
+      401: RestrrError.notSignedIn,
+      404: RestrrError.notFound,
+    });
     return response.hasData && response.data!;
   }
 
   @override
   Future<Currency?> updateCurrencyById(Id id,
       {String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
-    final RestResponse<Currency> response = await _currencyService.updateCurrencyById(id,
-        name: name, symbol: symbol, isoCode: isoCode, decimalPlaces: decimalPlaces);
+    if (name == null && symbol == null && isoCode == null && decimalPlaces == null) {
+      throw ArgumentError('At least one field must be set');
+    }
+    final RestResponse<Currency> response = await requestHandler.apiRequest(
+        route: CurrencyRoutes.updateById.compile(params: [id]),
+        mapper: (json) => entityBuilder.buildCurrency(json),
+        body: {
+          if (name != null) 'name': name,
+          if (symbol != null) 'symbol': symbol,
+          if (isoCode != null) 'iso_code': isoCode,
+          if (decimalPlaces != null) 'decimal_places': decimalPlaces,
+        },
+        errorMap: {
+          401: RestrrError.notSignedIn,
+          404: RestrrError.notFound,
+        });
     return response.data;
   }
 }

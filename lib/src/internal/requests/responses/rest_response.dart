@@ -12,4 +12,8 @@ class RestResponse<T> {
   bool get hasData => data != null;
   bool get hasError => error != null;
   bool get hasStatusCode => statusCode != null;
+
+  factory RestResponse.fromError(RestrrError error, {int? statusCode}) {
+    return RestResponse(error: error, statusCode: statusCode);
+  }
 }

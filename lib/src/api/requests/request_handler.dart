@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:restrr/src/internal/requests/responses/paginated_response.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
-import 'package:restrr/src/api/requests/route.dart';
 
 import '../../../restrr.dart';
-import 'restrr_errors.dart';
 
 /// Utility class for handling requests.
 class RequestHandler {
-  const RequestHandler._();
+  final Restrr api;
+
+  const RequestHandler(this.api);
 
   /// Tries to execute a request, using the [CompiledRoute] and maps the received data using the
   /// specified [mapper] function, ultimately returning the entity in an [RestResponse].
@@ -16,12 +16,12 @@ class RequestHandler {
   /// If this fails, this will return an [RestResponse] containing an error.
   static Future<RestResponse<T>> request<T>(
       {required CompiledRoute route,
-        required T Function(dynamic) mapper,
-        required RouteOptions routeOptions,
-        String? bearerToken,
-        Map<int, RestrrError> errorMap = const {},
-        dynamic body,
-        String contentType = 'application/json'}) async {
+      required T Function(dynamic) mapper,
+      required RouteOptions routeOptions,
+      String? bearerToken,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
     try {
       final Response<dynamic> response = await route.submit(
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
@@ -31,16 +31,34 @@ class RequestHandler {
     }
   }
 
+  Future<RestResponse<T>> apiRequest<T>(
+      {required CompiledRoute route,
+      required T Function(dynamic) mapper,
+      String? bearerTokenOverride,
+      bool noAuth = false,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
+    return RequestHandler.request(
+        route: route,
+        routeOptions: api.routeOptions,
+        bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
+        mapper: mapper,
+        errorMap: errorMap,
+        body: body,
+        contentType: contentType);
+  }
+
   /// Tries to execute a request, using the [CompiledRoute], without expecting any response.
   ///
   /// If this fails, this will return an [RestResponse] containing an error.
   static Future<RestResponse<bool>> noResponseRequest<T>(
       {required CompiledRoute route,
-        required RouteOptions routeOptions,
-        String? bearerToken,
-        dynamic body,
-        Map<int, RestrrError> errorMap = const {},
-        String contentType = 'application/json'}) async {
+      required RouteOptions routeOptions,
+      String? bearerToken,
+      dynamic body,
+      Map<int, RestrrError> errorMap = const {},
+      String contentType = 'application/json'}) async {
     try {
       final Response<dynamic> response = await route.submit(
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
@@ -50,18 +68,34 @@ class RequestHandler {
     }
   }
 
+  Future<RestResponse<bool>> noResponseApiRequest<T>(
+      {required CompiledRoute route,
+      String? bearerTokenOverride,
+      bool noAuth = false,
+      dynamic body,
+      Map<int, RestrrError> errorMap = const {},
+      String contentType = 'application/json'}) async {
+    return RequestHandler.noResponseRequest(
+        route: route,
+        routeOptions: api.routeOptions,
+        bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
+        body: body,
+        errorMap: errorMap,
+        contentType: contentType);
+  }
+
   /// Tries to execute a request, using the [CompiledRoute] and maps the received list of data using the
   /// specified [mapper] function, ultimately returning the list of entities in an [RestResponse].
   ///
   /// If this fails, this will return an [RestResponse] containing an error.
   static Future<RestResponse<List<T>>> multiRequest<T>(
       {required CompiledRoute route,
-        required RouteOptions routeOptions,
-        String? bearerToken,
-        required T Function(dynamic) mapper,
-        Map<int, RestrrError> errorMap = const {},
-        dynamic body,
-        String contentType = 'application/json'}) async {
+      required RouteOptions routeOptions,
+      String? bearerToken,
+      required T Function(dynamic) mapper,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
     try {
       final Response<dynamic> response = await route.submit(
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
@@ -76,14 +110,32 @@ class RequestHandler {
     }
   }
 
+  Future<RestResponse<List<T>>> multiApiRequest<T>(
+      {required CompiledRoute route,
+      required T Function(dynamic) mapper,
+      String? bearerTokenOverride,
+      bool noAuth = false,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
+    return RequestHandler.multiRequest(
+        route: route,
+        routeOptions: api.routeOptions,
+        bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
+        mapper: mapper,
+        errorMap: errorMap,
+        body: body,
+        contentType: contentType);
+  }
+
   static Future<RestResponse<List<T>>> paginatedRequest<T>(
       {required CompiledRoute route,
-        required RouteOptions routeOptions,
-        String? bearerToken,
-        required T Function(dynamic) mapper,
-        Map<int, RestrrError> errorMap = const {},
-        dynamic body,
-        String contentType = 'application/json'}) async {
+      required RouteOptions routeOptions,
+      String? bearerToken,
+      required T Function(dynamic) mapper,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
     try {
       final Response<dynamic> response = await route.submit(
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
@@ -93,11 +145,28 @@ class RequestHandler {
       return PaginatedResponse(
           metadata: PaginatedResponseMetadata.fromJson(response.data['_metadata']),
           data: (response.data['data'] as List<dynamic>).map((single) => mapper.call(single)).toList(),
-          statusCode: response.statusCode
-      );
+          statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e, errorMap);
     }
+  }
+
+  Future<RestResponse<List<T>>> paginatedApiRequest<T>(
+      {required CompiledRoute route,
+      required T Function(dynamic) mapper,
+      String? bearerTokenOverride,
+      bool noAuth = false,
+      Map<int, RestrrError> errorMap = const {},
+      dynamic body,
+      String contentType = 'application/json'}) async {
+    return RequestHandler.paginatedRequest(
+        route: route,
+        routeOptions: api.routeOptions,
+        bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
+        mapper: mapper,
+        errorMap: errorMap,
+        body: body,
+        contentType: contentType);
   }
 
   static Future<RestResponse<T>> _handleDioException<T>(DioException ex, Map<int, RestrrError> errorMap) async {
