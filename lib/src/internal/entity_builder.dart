@@ -1,7 +1,8 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 
-import 'entities/currency_impl.dart';
+import 'entities/currency/currency_impl.dart';
+import 'entities/currency/custom_currency_impl.dart';
 import 'entities/server_info_impl.dart';
 import 'entities/session_impl.dart';
 import 'entities/user_impl.dart';
@@ -21,15 +22,27 @@ class EntityBuilder {
   }
 
   Currency buildCurrency(Map<String, dynamic> json) {
-    final CurrencyImpl currency = CurrencyImpl(
+    CurrencyImpl currency = CurrencyImpl(
       api: api,
       id: json['id'],
       name: json['name'],
       symbol: json['symbol'],
       isoCode: json['iso_code'],
       decimalPlaces: json['decimal_places'],
-      user: json['user'],
     );
+    // check if user is present
+    // if so, this must be a custom currency
+    if (json['user'] != null) {
+      currency = CustomCurrencyImpl(
+        api: api,
+        id: currency.id,
+        name: currency.name,
+        symbol: currency.symbol,
+        isoCode: currency.isoCode,
+        decimalPlaces: currency.decimalPlaces,
+        user: json['user'],
+      );
+    }
     return api.currencyCache.cache(currency);
   }
 

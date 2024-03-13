@@ -5,7 +5,8 @@ export 'src/api/restrr.dart';
 export 'src/api/server_info.dart';
 
 /* [ /src/api/entities ] */
-export 'src/api/entities/currency.dart';
+export 'src/api/entities/currency/currency.dart';
+export 'src/api/entities/currency/custom_currency.dart';
 export 'src/api/entities/session.dart';
 export 'src/api/entities/user.dart';
 export 'src/api/entities/restrr_entity.dart';
