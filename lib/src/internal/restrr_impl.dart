@@ -1,6 +1,4 @@
-import 'package:restrr/src/api/events/session_delete_event.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
-import 'package:restrr/src/internal/requests/restrr_errors.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
 import '../../restrr.dart';
@@ -63,7 +61,7 @@ class RestrrImpl implements Restrr {
   /* Sessions */
 
   @override
-  Future<Session?> retrieveCurrentSession({bool forceRetrieve = false}) async {
+  Future<Session> retrieveCurrentSession({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: session.id,
         cacheView: sessionCache,
@@ -73,7 +71,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Session?> retrieveSessionById(Id id, {bool forceRetrieve = false}) async {
+  Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: id,
         cacheView: sessionCache,
@@ -91,7 +89,7 @@ class RestrrImpl implements Restrr {
   /* Currencies */
 
   @override
-  Future<List<Currency>?> retrieveAllCurrencies({bool forceRetrieve = false}) async {
+  Future<List<Currency>> retrieveAllCurrencies({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveMulti(
         batchCache: currencyBatchCache,
         compiledRoute: CurrencyRoutes.getAll.compile(),
@@ -100,20 +98,23 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Currency?> createCurrency(
+  Future<Currency> createCurrency(
       {required String name, required String symbol, required String isoCode, required int decimalPlaces}) async {
-    final response = await requestHandler
+    final RestResponse<Currency> response = await requestHandler
         .apiRequest(route: CurrencyRoutes.create.compile(), mapper: (json) => entityBuilder.buildCurrency(json), body: {
       'name': name,
       'symbol': symbol,
       'iso_code': isoCode,
       'decimal_places': decimalPlaces,
     });
-    return response.data;
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
   }
 
   @override
-  Future<Currency?> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
+  Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: id,
         cacheView: currencyCache,
