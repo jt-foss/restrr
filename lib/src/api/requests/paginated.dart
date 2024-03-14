@@ -1,14 +1,14 @@
 import '../../../restrr.dart';
 
-class Page<T> {
+class Paginated<T> {
   final int pageNumber;
   final int limit;
   final int total;
   final List<T> items;
-  final Future<Page<T>> Function(Restrr)? nextPage;
-  final Future<Page<T>> Function(Restrr)? previousPage;
+  final Future<Paginated<T>> Function(Restrr)? nextPage;
+  final Future<Paginated<T>> Function(Restrr)? previousPage;
 
-  const Page({
+  const Paginated({
     required this.pageNumber,
     required this.limit,
     required this.total,

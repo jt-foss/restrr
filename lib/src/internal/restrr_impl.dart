@@ -72,7 +72,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Page<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
+  Future<Paginated<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrievePage(
         pageCache: sessionPageCache,
         compiledRoute: SessionRoutes.getAll.compile(),
@@ -129,7 +129,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Page<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+  Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrievePage(
         pageCache: currencyPageCache,
         compiledRoute: CurrencyRoutes.getAll.compile(),

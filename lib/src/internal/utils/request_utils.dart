@@ -51,7 +51,7 @@ class RequestUtils {
     return remote;
   }
 
-  static Future<Page<T>> getOrRetrievePage<T extends RestrrEntity>(
+  static Future<Paginated<T>> getOrRetrievePage<T extends RestrrEntity>(
       {required PageCacheView<T> pageCache,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
@@ -72,7 +72,7 @@ class RequestUtils {
     if (response.hasError) {
       throw response.error!;
     }
-    final Page<T> remote = (response as PaginatedResponse<T>).toPage();
+    final Paginated<T> remote = (response as PaginatedResponse<T>).toPage();
     pageCache.cache(remote);
     return remote;
   }

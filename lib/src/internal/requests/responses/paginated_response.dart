@@ -56,11 +56,11 @@ class PaginatedResponse<T> extends RestResponse<List<T>> {
     required this.mapper,
   });
 
-  Page<T> toPage() {
+  Paginated<T> toPage() {
     if (hasError) {
       throw error!;
     }
-    return Page<T>(
+    return Paginated<T>(
       pageNumber: metadata.page,
       limit: metadata.limit,
       total: metadata.total,
@@ -70,7 +70,7 @@ class PaginatedResponse<T> extends RestResponse<List<T>> {
     );
   }
 
-  Future<Page<T>> _fetchPage(Restrr api, String url) {
+  Future<Paginated<T>> _fetchPage(Restrr api, String url) {
     final Uri uri = Uri.parse(url);
     return RequestHandler(api)
         .paginatedApiRequest(

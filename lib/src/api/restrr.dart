@@ -53,7 +53,7 @@ abstract class Restrr {
 
   Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false});
 
-  Future<Page<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
+  Future<Paginated<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
 
   /// Deletes the current session, effectively logging out the user.
   Future<bool> deleteCurrentSession();
@@ -67,5 +67,5 @@ abstract class Restrr {
 
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
 
-  Future<Page<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
+  Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
 }
