@@ -1,4 +1,4 @@
-import 'package:restrr/src/internal/cache/map_cache_view.dart';
+import 'package:restrr/src/internal/cache/cache_view.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
