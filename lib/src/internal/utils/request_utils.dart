@@ -1,10 +1,9 @@
 
-import 'package:restrr/src/internal/cache/page_cache_view.dart';
+import 'package:restrr/src/internal/cache/map_cache_view.dart';
 import 'package:restrr/src/internal/requests/responses/paginated_response.dart';
 
 import '../../../restrr.dart';
 import '../cache/batch_cache_view.dart';
-import '../cache/cache_view.dart';
 import '../requests/responses/rest_response.dart';
 
 class RequestUtils {
@@ -12,7 +11,7 @@ class RequestUtils {
 
   static Future<T> getOrRetrieveSingle<T extends RestrrEntity>(
       {required Id key,
-      required IdCacheView<T> cacheView,
+      required EntityCacheView<T> cacheView,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       bool forceRetrieve = false,
@@ -61,8 +60,8 @@ class RequestUtils {
         required int limit,
         bool forceRetrieve = false,
         bool noAuth = false}) async {
-    if (!forceRetrieve && pageCache.contains(page, limit)) {
-      return pageCache.get(page, limit)!;
+    if (!forceRetrieve && pageCache.contains((page, limit))) {
+      return pageCache.get((page, limit))!;
     }
     final RestResponse<List<T>> response = await RequestHandler.paginatedRequest(
         route: compiledRoute,
