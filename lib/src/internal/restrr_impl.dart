@@ -1,5 +1,6 @@
 import 'package:restrr/src/api/events/session_delete_event.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
+import 'package:restrr/src/internal/requests/restrr_errors.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
 import '../../restrr.dart';
@@ -39,7 +40,7 @@ class RestrrImpl implements Restrr {
   void on<T extends RestrrEvent>(Type type, void Function(T) func) => eventHandler.on(type, func);
 
   @override
-  Future<User?> retrieveSelf({bool forceRetrieve = false}) async {
+  Future<User> retrieveSelf({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: selfUser.id,
         cacheView: userCache,
@@ -51,9 +52,7 @@ class RestrrImpl implements Restrr {
   @override
   Future<bool> deleteCurrentSession() async {
     final RestResponse<bool> response =
-        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile(), errorMap: {
-      401: RestrrError.notSignedIn,
-    });
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
     if (response.hasData && response.data!) {
       eventHandler.fire(SessionDeleteEvent(api: this));
       return true;
@@ -85,11 +84,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> deleteAllSessions() async {
-    final RestResponse<bool> response =
-        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile(), errorMap: {
-      401: RestrrError.notSignedIn,
-      404: RestrrError.notFound,
-    });
+    final RestResponse<bool> response = await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
     return response.hasData && response.data!;
   }
 
@@ -113,8 +108,6 @@ class RestrrImpl implements Restrr {
       'symbol': symbol,
       'iso_code': isoCode,
       'decimal_places': decimalPlaces,
-    }, errorMap: {
-      401: RestrrError.notSignedIn,
     });
     return response.data;
   }

@@ -41,7 +41,7 @@ void main() {
 
   setUp(() async {
     // log in, get api instance
-    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')).data! as RestrrImpl;
+    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')) as RestrrImpl;
   });
 
   group('[EntityBuilder] ', () {

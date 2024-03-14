@@ -7,5 +7,5 @@ abstract class CustomCurrency extends Currency {
 
   Future<bool> delete();
 
-  Future<Currency?> update({String? name, String? symbol, String? isoCode, int? decimalPlaces});
+  Future<Currency> update({String? name, String? symbol, String? isoCode, int? decimalPlaces});
 }

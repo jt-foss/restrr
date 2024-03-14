@@ -1,3 +1,5 @@
+import 'package:restrr/src/api/exceptions/restrr_exception.dart';
+
 import '../../../restrr.dart';
 import '../cache/batch_cache_view.dart';
 import '../cache/cache_view.dart';
@@ -6,7 +8,7 @@ import '../requests/responses/rest_response.dart';
 class RequestUtils {
   const RequestUtils._();
 
-  static Future<T?> getOrRetrieveSingle<T extends RestrrEntity>(
+  static Future<T> getOrRetrieveSingle<T extends RestrrEntity>(
       {required Id key,
       required RestrrEntityCacheView<T> cacheView,
       required CompiledRoute compiledRoute,
@@ -21,10 +23,13 @@ class RequestUtils {
         routeOptions: cacheView.api.routeOptions,
         bearerToken: noAuth ? null : cacheView.api.session.token,
         mapper: mapper);
-    return response.hasData ? response.data : null;
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
   }
 
-  static Future<List<T>?> getOrRetrieveMulti<T extends RestrrEntity>(
+  static Future<List<T>> getOrRetrieveMulti<T extends RestrrEntity>(
       {required RestrrEntityBatchCacheView<T> batchCache,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
@@ -38,11 +43,11 @@ class RequestUtils {
         routeOptions: batchCache.api.routeOptions,
         bearerToken: noAuth ? null : batchCache.api.session.token,
         mapper: mapper);
-    if (response.hasData) {
-      final List<T> remote = response.data!;
-      batchCache.update(remote);
-      return remote;
+    if (response.hasError) {
+      throw response.error!;
     }
-    return null;
+    final List<T> remote = response.data!;
+    batchCache.update(remote);
+    return remote;
   }
 }

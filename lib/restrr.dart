@@ -18,8 +18,12 @@ export 'src/api/events/request_event.dart';
 export 'src/api/events/restrr_event.dart';
 export 'src/api/events/session_delete_event.dart';
 
+/* [ /src/api/exceptions ] */
+export 'src/api/exceptions/client_exception.dart';
+export 'src/api/exceptions/restrr_exception.dart';
+export 'src/api/exceptions/server_exception.dart';
+
 /* [ /src/api/requests ] */
 export 'src/api/requests/request_handler.dart';
-export 'src/api/requests/restrr_errors.dart';
 export 'src/api/requests/route.dart';
 export 'src/api/requests/route_definitions.dart';

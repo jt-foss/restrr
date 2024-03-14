@@ -1,10 +1,12 @@
-import '../../../api/requests/restrr_errors.dart';
+import 'package:restrr/restrr.dart';
+
+import '../restrr_errors.dart';
 
 /// Represents a response from a REST request.
 /// This can either hold data, [T], or an [ErrorResponse].
 class RestResponse<T> {
   final T? data;
-  final RestrrError? error;
+  final RestrrException? error;
   final int? statusCode;
 
   const RestResponse({this.data, this.error, required this.statusCode});
@@ -12,8 +14,4 @@ class RestResponse<T> {
   bool get hasData => data != null;
   bool get hasError => error != null;
   bool get hasStatusCode => statusCode != null;
-
-  factory RestResponse.fromError(RestrrError error, {int? statusCode}) {
-    return RestResponse(error: error, statusCode: statusCode);
-  }
 }

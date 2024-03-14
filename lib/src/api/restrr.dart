@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
 import '../../restrr.dart';
+import 'exceptions/restrr_exception.dart';
 
 class RestrrOptions {
   final bool isWeb;
@@ -28,12 +29,16 @@ abstract class Restrr {
 
   /// Checks whether the specified URI is valid and points to a valid
   /// financrr API.
-  static Future<RestResponse<ServerInfo>> checkUri(Uri uri, {bool isWeb = false}) async {
-    return await RequestHandler.request(
+  static Future<ServerInfo> checkUri(Uri uri, {bool isWeb = false}) async {
+    final RestResponse<ServerInfo> response = await RequestHandler.request(
       route: StatusRoutes.health.compile(),
       mapper: (json) => ServerInfo.fromJson(json),
       routeOptions: RouteOptions(hostUri: uri),
     );
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
   }
 
   void on<T extends RestrrEvent>(Type type, void Function(T) func);

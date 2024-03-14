@@ -46,7 +46,6 @@ class PaginatedResponse<T> extends RestResponse<List<T>> {
   const PaginatedResponse({
     required super.statusCode,
     super.data,
-    super.error,
     this.metadata,
   });
 }

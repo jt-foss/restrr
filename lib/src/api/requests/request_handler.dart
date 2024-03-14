@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:restrr/src/internal/requests/client_errors.dart';
+import 'package:restrr/src/internal/requests/responses/error_response.dart';
 import 'package:restrr/src/internal/requests/responses/paginated_response.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
 import '../../../restrr.dart';
+import '../../internal/requests/restrr_errors.dart';
 
 /// Utility class for handling requests.
 class RequestHandler {
@@ -19,7 +22,6 @@ class RequestHandler {
       required T Function(dynamic) mapper,
       required RouteOptions routeOptions,
       String? bearerToken,
-      Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
@@ -27,7 +29,7 @@ class RequestHandler {
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: mapper.call(response.data), statusCode: response.statusCode);
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e);
     }
   }
 
@@ -44,7 +46,6 @@ class RequestHandler {
         routeOptions: api.routeOptions,
         bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
         mapper: mapper,
-        errorMap: errorMap,
         body: body,
         contentType: contentType);
   }
@@ -64,7 +65,7 @@ class RequestHandler {
           routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: true, statusCode: response.statusCode);
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e);
     }
   }
 
@@ -93,7 +94,6 @@ class RequestHandler {
       required RouteOptions routeOptions,
       String? bearerToken,
       required T Function(dynamic) mapper,
-      Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
@@ -106,7 +106,7 @@ class RequestHandler {
           data: (response.data as List<dynamic>).map((single) => mapper.call(single)).toList(),
           statusCode: response.statusCode);
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e);
     }
   }
 
@@ -115,7 +115,6 @@ class RequestHandler {
       required T Function(dynamic) mapper,
       String? bearerTokenOverride,
       bool noAuth = false,
-      Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     return RequestHandler.multiRequest(
@@ -123,7 +122,6 @@ class RequestHandler {
         routeOptions: api.routeOptions,
         bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
         mapper: mapper,
-        errorMap: errorMap,
         body: body,
         contentType: contentType);
   }
@@ -133,7 +131,6 @@ class RequestHandler {
       required RouteOptions routeOptions,
       String? bearerToken,
       required T Function(dynamic) mapper,
-      Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
@@ -147,7 +144,7 @@ class RequestHandler {
           data: (response.data['data'] as List<dynamic>).map((single) => mapper.call(single)).toList(),
           statusCode: response.statusCode);
     } on DioException catch (e) {
-      return _handleDioException(e, errorMap);
+      return _handleDioException(e);
     }
   }
 
@@ -156,7 +153,6 @@ class RequestHandler {
       required T Function(dynamic) mapper,
       String? bearerTokenOverride,
       bool noAuth = false,
-      Map<int, RestrrError> errorMap = const {},
       dynamic body,
       String contentType = 'application/json'}) async {
     return RequestHandler.paginatedRequest(
@@ -164,37 +160,37 @@ class RequestHandler {
         routeOptions: api.routeOptions,
         bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
         mapper: mapper,
-        errorMap: errorMap,
         body: body,
         contentType: contentType);
   }
 
-  static Future<RestResponse<T>> _handleDioException<T>(DioException ex, Map<int, RestrrError> errorMap) async {
-    // check status code
+  static Future<RestResponse<T>> _handleDioException<T>(DioException ex) async {
+    // check if error response is present
+    final ErrorResponse? errorResponse = ErrorResponse.tryFromJson(ex.response?.data);
+    if (errorResponse != null) {
+      if (errorResponse.error != null) {
+        return errorResponse.error!.toResponse(statusCode: ex.response?.statusCode);
+      }
+      Restrr.log.warning('Encountered unknown ErrorResponse: ${errorResponse.details}');
+    }
+    // if not, check status code
     final int? statusCode = ex.response?.statusCode;
     if (statusCode != null) {
-      if (errorMap.containsKey(statusCode)) {
-        return _errorToRestResponse(errorMap[statusCode]!, statusCode: statusCode);
-      }
-      final RestrrError? err = switch (statusCode) {
-        400 => RestrrError.badRequest,
-        500 => RestrrError.internalServerError,
-        503 => RestrrError.serviceUnavailable,
+      final RestrrException? ex = switch (statusCode) {
+        400 => ClientError.badRequest.toException(),
+        500 => RestrrError.internalServerError.toException(),
+        503 => RestrrError.serviceUnavailable.toException(),
         _ => null
       };
-      if (err != null) {
-        return _errorToRestResponse(err, statusCode: statusCode);
+      if (ex != null) {
+         return RestResponse(error: ex, statusCode: statusCode);
       }
     }
-    // check timeout
+    // if this also fails, check timeout
     if (ex.type == DioExceptionType.connectionTimeout || ex.type == DioExceptionType.receiveTimeout) {
-      return _errorToRestResponse(RestrrError.serverUnreachable, statusCode: statusCode);
+      return ClientError.serverUnreachable.toResponse(statusCode: statusCode);
     }
     Restrr.log.warning('Unknown error occurred: ${ex.message}, ${ex.stackTrace}');
-    return _errorToRestResponse(RestrrError.unknown, statusCode: statusCode);
-  }
-
-  static RestResponse<T> _errorToRestResponse<T>(RestrrError error, {int? statusCode}) {
-    return RestResponse(error: error, statusCode: statusCode);
+    return RestrrError.unknown.toResponse(statusCode: statusCode);
   }
 }

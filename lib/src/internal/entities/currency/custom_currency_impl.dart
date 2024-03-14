@@ -22,16 +22,12 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
 
   @override
   Future<bool> delete() async {
-    final RestResponse<bool> response =
-    await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]), errorMap: {
-      401: RestrrError.notSignedIn,
-      404: RestrrError.notFound,
-    });
+    final RestResponse<bool> response = await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]));
     return response.hasData && response.data!;
   }
 
   @override
-  Future<Currency?> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
+  Future<Currency> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
     if (name == null && symbol == null && isoCode == null && decimalPlaces == null) {
       throw ArgumentError('At least one field must be set');
     }
@@ -43,11 +39,10 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
           if (symbol != null) 'symbol': symbol,
           if (isoCode != null) 'iso_code': isoCode,
           if (decimalPlaces != null) 'decimal_places': decimalPlaces,
-        },
-        errorMap: {
-          401: RestrrError.notSignedIn,
-          404: RestrrError.notFound,
         });
-    return response.data;
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
   }
 }
