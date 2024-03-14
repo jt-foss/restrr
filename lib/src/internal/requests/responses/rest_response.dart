@@ -1,6 +1,5 @@
 import 'package:restrr/restrr.dart';
 
-
 /// Represents a response from a REST request.
 /// This can either hold data, [T], or an [ErrorResponse].
 class RestResponse<T> {

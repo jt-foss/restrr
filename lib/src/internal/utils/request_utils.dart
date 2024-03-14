@@ -1,4 +1,3 @@
-
 import 'package:restrr/src/internal/cache/map_cache_view.dart';
 import 'package:restrr/src/internal/requests/responses/paginated_response.dart';
 
@@ -54,12 +53,12 @@ class RequestUtils {
 
   static Future<Page<T>> getOrRetrievePage<T extends RestrrEntity>(
       {required PageCacheView<T> pageCache,
-        required CompiledRoute compiledRoute,
-        required T Function(dynamic) mapper,
-        required int page,
-        required int limit,
-        bool forceRetrieve = false,
-        bool noAuth = false}) async {
+      required CompiledRoute compiledRoute,
+      required T Function(dynamic) mapper,
+      required int page,
+      required int limit,
+      bool forceRetrieve = false,
+      bool noAuth = false}) async {
     if (!forceRetrieve && pageCache.contains((page, limit))) {
       return pageCache.get((page, limit))!;
     }
@@ -69,8 +68,7 @@ class RequestUtils {
         page: page,
         limit: limit,
         bearerToken: noAuth ? null : pageCache.api.session.token,
-        mapper: mapper
-    );
+        mapper: mapper);
     if (response.hasError) {
       throw response.error!;
     }

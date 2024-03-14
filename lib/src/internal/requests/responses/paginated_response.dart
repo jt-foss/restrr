@@ -1,5 +1,4 @@
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
-import 'package:restrr/src/internal/restrr_impl.dart';
 
 import '../../../../restrr.dart';
 

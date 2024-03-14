@@ -79,14 +79,13 @@ class RestrrImpl implements Restrr {
         page: page,
         limit: limit,
         mapper: (json) => entityBuilder.buildSession(json),
-        forceRetrieve: forceRetrieve
-    );
+        forceRetrieve: forceRetrieve);
   }
 
   @override
   Future<bool> deleteCurrentSession() async {
     final RestResponse<bool> response =
-    await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
     if (response.hasData && response.data!) {
       eventHandler.fire(SessionDeleteEvent(api: this));
       return true;
@@ -137,7 +136,6 @@ class RestrrImpl implements Restrr {
         page: page,
         limit: limit,
         mapper: (json) => entityBuilder.buildCurrency(json),
-        forceRetrieve: forceRetrieve
-    );
+        forceRetrieve: forceRetrieve);
   }
 }
