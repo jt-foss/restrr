@@ -175,7 +175,6 @@ class RequestHandler {
   }
 
   static Future<RestResponse<T>> _handleDioException<T>(DioException ex) async {
-    print(ex.type);
     // check if error response is present
     final ErrorResponse? errorResponse = ErrorResponse.tryFromJson(ex.response?.data);
     if (errorResponse != null) {

@@ -71,7 +71,6 @@ class PaginatedResponse<T> extends RestResponse<List<T>> {
   }
 
   Future<Page<T>> _fetchPage(Restrr api, String url) {
-    print(url);
     final Uri uri = Uri.parse(url);
     return RequestHandler(api)
         .paginatedApiRequest(
