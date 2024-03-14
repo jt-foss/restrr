@@ -175,6 +175,7 @@ class RequestHandler {
   }
 
   static Future<RestResponse<T>> _handleDioException<T>(DioException ex) async {
+    print(ex.type);
     // check if error response is present
     final ErrorResponse? errorResponse = ErrorResponse.tryFromJson(ex.response?.data);
     if (errorResponse != null) {
@@ -196,9 +197,12 @@ class RequestHandler {
         return RestResponse(error: ex, statusCode: statusCode);
       }
     }
-    // if this also fails, check timeout
+    // if this also fails, check timeout or if the server is unreachable
     if (ex.type == DioExceptionType.connectionTimeout || ex.type == DioExceptionType.receiveTimeout) {
       return ClientError.serverUnreachable.toResponse(statusCode: statusCode);
+    }
+    if (ex.type == DioExceptionType.connectionError) {
+      return ClientError.invalidUri.toResponse(statusCode: statusCode);
     }
     Restrr.log.warning('Unknown error occurred: ${ex.message}, ${ex.stackTrace}');
     return RestrrError.unknown.toResponse(statusCode: statusCode);
