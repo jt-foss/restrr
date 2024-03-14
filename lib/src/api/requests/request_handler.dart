@@ -126,23 +126,29 @@ class RequestHandler {
         contentType: contentType);
   }
 
-  static Future<RestResponse<List<T>>> paginatedRequest<T>(
-      {required CompiledRoute route,
-      required RouteOptions routeOptions,
-      String? bearerToken,
-      required T Function(dynamic) mapper,
-      dynamic body,
-      String contentType = 'application/json'}) async {
+  static Future<RestResponse<List<T>>> paginatedRequest<T>({
+    required CompiledRoute route,
+    required RouteOptions routeOptions,
+    required int? page,
+    required int? limit,
+    String? bearerToken,
+    required T Function(dynamic) mapper,
+    dynamic body,
+    String contentType = 'application/json',
+  }) async {
     try {
-      final Response<dynamic> response = await route.submit(
-          routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
+      final Response<dynamic> response = await route
+          .withQueryParams({'page': page.toString(), 'limit': limit.toString()}).submit(
+              routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       if (response.data['data'] is! List<dynamic>) {
         throw StateError('Received response is not a list!');
       }
       return PaginatedResponse(
           metadata: PaginatedResponseMetadata.fromJson(response.data['_metadata']),
           data: (response.data['data'] as List<dynamic>).map((single) => mapper.call(single)).toList(),
-          statusCode: response.statusCode);
+          statusCode: response.statusCode,
+          mapper: mapper,
+          baseRoute: route.baseRoute);
     } on DioException catch (e) {
       return _handleDioException(e);
     }
@@ -150,6 +156,8 @@ class RequestHandler {
 
   Future<RestResponse<List<T>>> paginatedApiRequest<T>(
       {required CompiledRoute route,
+      required int? page,
+      required int? limit,
       required T Function(dynamic) mapper,
       String? bearerTokenOverride,
       bool noAuth = false,
@@ -158,6 +166,8 @@ class RequestHandler {
     return RequestHandler.paginatedRequest(
         route: route,
         routeOptions: api.routeOptions,
+        page: page,
+        limit: limit,
         bearerToken: bearerTokenOverride ?? (noAuth ? null : api.session.token),
         mapper: mapper,
         body: body,

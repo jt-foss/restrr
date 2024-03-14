@@ -2,10 +2,10 @@ import 'package:restrr/src/internal/restrr_impl.dart';
 
 import '../../../restrr.dart';
 
-class RestrrEntityBatchCacheView<T extends RestrrEntity> {
+class BatchCacheView<T extends RestrrEntity> {
   final RestrrImpl api;
 
-  RestrrEntityBatchCacheView(this.api);
+  BatchCacheView(this.api);
 
   List<T>? _lastSnapshot;
 

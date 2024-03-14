@@ -1,10 +1,10 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 
-class RestrrEntityCacheView<T extends RestrrEntity> {
+class IdCacheView<T extends RestrrEntity> {
   final RestrrImpl api;
 
-  RestrrEntityCacheView(this.api);
+  IdCacheView(this.api);
 
   final Map<Id, T> _cache = {};
 

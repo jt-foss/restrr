@@ -1,4 +1,7 @@
 
+import 'package:restrr/src/internal/cache/page_cache_view.dart';
+import 'package:restrr/src/internal/requests/responses/paginated_response.dart';
+
 import '../../../restrr.dart';
 import '../cache/batch_cache_view.dart';
 import '../cache/cache_view.dart';
@@ -9,7 +12,7 @@ class RequestUtils {
 
   static Future<T> getOrRetrieveSingle<T extends RestrrEntity>(
       {required Id key,
-      required RestrrEntityCacheView<T> cacheView,
+      required IdCacheView<T> cacheView,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       bool forceRetrieve = false,
@@ -29,7 +32,7 @@ class RequestUtils {
   }
 
   static Future<List<T>> getOrRetrieveMulti<T extends RestrrEntity>(
-      {required RestrrEntityBatchCacheView<T> batchCache,
+      {required BatchCacheView<T> batchCache,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       bool forceRetrieve = false,
@@ -47,6 +50,33 @@ class RequestUtils {
     }
     final List<T> remote = response.data!;
     batchCache.update(remote);
+    return remote;
+  }
+
+  static Future<Page<T>> getOrRetrievePage<T extends RestrrEntity>(
+      {required PageCacheView<T> pageCache,
+        required CompiledRoute compiledRoute,
+        required T Function(dynamic) mapper,
+        required int page,
+        required int limit,
+        bool forceRetrieve = false,
+        bool noAuth = false}) async {
+    if (!forceRetrieve && pageCache.contains(page, limit)) {
+      return pageCache.get(page, limit)!;
+    }
+    final RestResponse<List<T>> response = await RequestHandler.paginatedRequest(
+        route: compiledRoute,
+        routeOptions: pageCache.api.routeOptions,
+        page: page,
+        limit: limit,
+        bearerToken: noAuth ? null : pageCache.api.session.token,
+        mapper: mapper
+    );
+    if (response.hasError) {
+      throw response.error!;
+    }
+    final Page<T> remote = (response as PaginatedResponse<T>).toPage();
+    pageCache.cache(remote);
     return remote;
   }
 }

@@ -1,8 +1,11 @@
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
+import 'package:restrr/src/internal/restrr_impl.dart';
+
+import '../../../../restrr.dart';
 
 class PaginatedResponseMetadataLinks {
-  final String prev;
-  final String next;
+  final String? prev;
+  final String? next;
 
   const PaginatedResponseMetadataLinks({
     required this.prev,
@@ -41,11 +44,47 @@ class PaginatedResponseMetadata {
 }
 
 class PaginatedResponse<T> extends RestResponse<List<T>> {
-  final PaginatedResponseMetadata? metadata;
+  final PaginatedResponseMetadata metadata;
+  final Route baseRoute;
+  final T Function(dynamic) mapper;
 
   const PaginatedResponse({
-    required super.statusCode,
     super.data,
-    this.metadata,
+    super.error,
+    required super.statusCode,
+    required this.metadata,
+    required this.baseRoute,
+    required this.mapper,
   });
+
+  Page<T> toPage() {
+    if (hasError) {
+      throw error!;
+    }
+    return Page<T>(
+      pageNumber: metadata.page,
+      limit: metadata.limit,
+      total: metadata.total,
+      items: data!,
+      nextPage: metadata.links.next != null ? (api) => _fetchPage(api, metadata.links.next!) : null,
+      previousPage: metadata.links.prev != null ? (api) => _fetchPage(api, metadata.links.prev!) : null,
+    );
+  }
+
+  Future<Page<T>> _fetchPage(Restrr api, String url) {
+    print(url);
+    final Uri uri = Uri.parse(url);
+    return RequestHandler(api)
+        .paginatedApiRequest(
+            route: baseRoute.compile(),
+            page: int.parse(uri.queryParameters['page']!),
+            limit: int.parse(uri.queryParameters['limit']!),
+            mapper: mapper)
+        .then((response) {
+      if (response.hasError) {
+        throw error!;
+      }
+      return (response as PaginatedResponse<T>).toPage();
+    });
+  }
 }

@@ -24,6 +24,7 @@ export 'src/api/exceptions/restrr_exception.dart';
 export 'src/api/exceptions/server_exception.dart';
 
 /* [ /src/api/requests ] */
+export 'src/api/requests/page.dart';
 export 'src/api/requests/request_handler.dart';
 export 'src/api/requests/route.dart';
 export 'src/api/requests/route_definitions.dart';

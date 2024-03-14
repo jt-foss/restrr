@@ -1,9 +1,9 @@
+import 'package:restrr/src/internal/cache/page_cache_view.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
 import '../../restrr.dart';
 import '../api/events/event_handler.dart';
-import 'cache/batch_cache_view.dart';
 import 'cache/cache_view.dart';
 import 'entity_builder.dart';
 
@@ -19,11 +19,12 @@ class RestrrImpl implements Restrr {
 
   /* Caches */
 
-  late final RestrrEntityCacheView<Currency> currencyCache = RestrrEntityCacheView(this);
-  late final RestrrEntityCacheView<Session> sessionCache = RestrrEntityCacheView(this);
-  late final RestrrEntityCacheView<User> userCache = RestrrEntityCacheView(this);
+  late final IdCacheView<Currency> currencyCache = IdCacheView(this);
+  late final IdCacheView<Session> sessionCache = IdCacheView(this);
+  late final IdCacheView<User> userCache = IdCacheView(this);
 
-  late final RestrrEntityBatchCacheView<Currency> currencyBatchCache = RestrrEntityBatchCacheView(this);
+  late final PageCacheView<Currency> currencyPageCache = PageCacheView(this);
+  late final PageCacheView<Session> sessionPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
@@ -37,6 +38,8 @@ class RestrrImpl implements Restrr {
   @override
   void on<T extends RestrrEvent>(Type type, void Function(T) func) => eventHandler.on(type, func);
 
+  /* Users */
+
   @override
   Future<User> retrieveSelf({bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
@@ -47,21 +50,10 @@ class RestrrImpl implements Restrr {
         forceRetrieve: forceRetrieve);
   }
 
-  @override
-  Future<bool> deleteCurrentSession() async {
-    final RestResponse<bool> response =
-        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
-    if (response.hasData && response.data!) {
-      eventHandler.fire(SessionDeleteEvent(api: this));
-      return true;
-    }
-    return false;
-  }
-
   /* Sessions */
 
   @override
-  Future<Session> retrieveCurrentSession({bool forceRetrieve = false}) async {
+  Future<Session> retrieveCurrentSession({bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
         key: session.id,
         cacheView: sessionCache,
@@ -71,13 +63,36 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false}) async {
+  Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
         key: id,
         cacheView: sessionCache,
         compiledRoute: SessionRoutes.getById.compile(params: [id]),
         mapper: (json) => entityBuilder.buildSession(json),
         forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Page<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: sessionPageCache,
+        compiledRoute: SessionRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildSession(json),
+        forceRetrieve: forceRetrieve
+    );
+  }
+
+  @override
+  Future<bool> deleteCurrentSession() async {
+    final RestResponse<bool> response =
+    await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
+    if (response.hasData && response.data!) {
+      eventHandler.fire(SessionDeleteEvent(api: this));
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -88,15 +103,6 @@ class RestrrImpl implements Restrr {
   }
 
   /* Currencies */
-
-  @override
-  Future<List<Currency>> retrieveAllCurrencies({bool forceRetrieve = false}) async {
-    return RequestUtils.getOrRetrieveMulti(
-        batchCache: currencyBatchCache,
-        compiledRoute: CurrencyRoutes.getAll.compile(),
-        mapper: (json) => entityBuilder.buildCurrency(json),
-        forceRetrieve: forceRetrieve);
-  }
 
   @override
   Future<Currency> createCurrency(
@@ -122,5 +128,17 @@ class RestrrImpl implements Restrr {
         compiledRoute: CurrencyRoutes.getById.compile(params: [id]),
         mapper: (json) => entityBuilder.buildCurrency(json),
         forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Page<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: currencyPageCache,
+        compiledRoute: CurrencyRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildCurrency(json),
+        forceRetrieve: forceRetrieve
+    );
   }
 }

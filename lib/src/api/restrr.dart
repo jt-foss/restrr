@@ -42,20 +42,21 @@ abstract class Restrr {
 
   void on<T extends RestrrEvent>(Type type, void Function(T) func);
 
+  /* Users */
+
   /// Retrieves the currently authenticated user.
   Future<User> retrieveSelf({bool forceRetrieve = false});
-
-  /// Deletes the current session, effectively logging out the user.
-  ///
-  Future<bool> deleteCurrentSession();
-
-  Future<List<Currency>> retrieveAllCurrencies({bool forceRetrieve = false});
 
   /* Sessions */
 
   Future<Session> retrieveCurrentSession({bool forceRetrieve = false});
 
   Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false});
+
+  Future<Page<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /// Deletes the current session, effectively logging out the user.
+  Future<bool> deleteCurrentSession();
 
   Future<bool> deleteAllSessions();
 
@@ -65,4 +66,6 @@ abstract class Restrr {
       {required String name, required String symbol, required String isoCode, required int decimalPlaces});
 
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
+
+  Future<Page<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
 }
