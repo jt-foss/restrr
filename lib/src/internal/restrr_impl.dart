@@ -82,7 +82,8 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> deleteAllSessions() async {
-    final RestResponse<bool> response = await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
+    final RestResponse<bool> response =
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
     return response.hasData && response.data!;
   }
 

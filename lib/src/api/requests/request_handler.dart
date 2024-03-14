@@ -183,7 +183,7 @@ class RequestHandler {
         _ => null
       };
       if (ex != null) {
-         return RestResponse(error: ex, statusCode: statusCode);
+        return RestResponse(error: ex, statusCode: statusCode);
       }
     }
     // if this also fails, check timeout

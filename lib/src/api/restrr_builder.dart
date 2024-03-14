@@ -41,8 +41,7 @@ class RestrrBuilder {
     });
   }
 
-  Future<Restrr> _handleAuthProcess(
-      {required Future<RestResponse<Session>> Function(RestrrImpl) authFunction}) async {
+  Future<Restrr> _handleAuthProcess({required Future<RestResponse<Session>> Function(RestrrImpl) authFunction}) async {
     // check if the URI is valid and the API is healthy
     final ServerInfo statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     Restrr.log.config('Host: $uri, API v${statusResponse.apiVersion}');

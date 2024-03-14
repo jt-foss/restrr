@@ -2,7 +2,6 @@ import 'package:logging/logging.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
 import '../../restrr.dart';
-import 'exceptions/restrr_exception.dart';
 
 class RestrrOptions {
   final bool isWeb;

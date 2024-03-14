@@ -1,4 +1,3 @@
-import 'package:restrr/src/api/exceptions/restrr_exception.dart';
 
 import '../../../restrr.dart';
 import '../cache/batch_cache_view.dart';

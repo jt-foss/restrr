@@ -22,7 +22,8 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
 
   @override
   Future<bool> delete() async {
-    final RestResponse<bool> response = await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]));
+    final RestResponse<bool> response =
+        await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]));
     return response.hasData && response.data!;
   }
 
