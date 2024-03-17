@@ -115,6 +115,8 @@ class RestrrImpl implements Restrr {
     if (response.hasError) {
       throw response.error!;
     }
+    // invalidate cache
+    currencyCache.clear();
     return response.data!;
   }
 
