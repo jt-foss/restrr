@@ -31,7 +31,7 @@ class CurrencyRoutes {
   const CurrencyRoutes._();
 
   static final Route getAll = Route.get('/currency');
-  static final Route create = Route.post('/currency/{currencyId}');
+  static final Route create = Route.post('/currency');
   static final Route getById = Route.get('/currency/{currencyId}');
   static final Route deleteById = Route.delete('/currency/{currencyId}');
   static final Route updateById = Route.patch('/currency/{currencyId}');
