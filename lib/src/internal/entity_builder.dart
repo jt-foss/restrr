@@ -18,8 +18,8 @@ class EntityBuilder {
       id: json['id'],
       name: json['name'],
       symbol: json['symbol'],
-      isoCode: json['iso_code'],
       decimalPlaces: json['decimal_places'],
+      isoCode: json['iso_code'],
     );
     // check if user is present
     // if so, this must be a custom currency
