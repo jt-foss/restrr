@@ -8,5 +8,3 @@ pubspec.lock
 
 .idea/
 .cookies/
-
-*.exclude.dart

@@ -104,13 +104,13 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Currency> createCurrency(
-      {required String name, required String symbol, required String isoCode, required int decimalPlaces}) async {
+      {required String name, required String symbol, required int decimalPlaces, String? isoCode}) async {
     final RestResponse<Currency> response = await requestHandler
         .apiRequest(route: CurrencyRoutes.create.compile(), mapper: (json) => entityBuilder.buildCurrency(json), body: {
       'name': name,
       'symbol': symbol,
-      'iso_code': isoCode,
       'decimal_places': decimalPlaces,
+      if (isoCode != null) 'iso_code': isoCode
     });
     if (response.hasError) {
       throw response.error!;
