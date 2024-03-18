@@ -3,7 +3,8 @@ import 'package:restrr/src/internal/restrr_impl.dart';
 
 import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
-import 'entities/session_impl.dart';
+import 'entities/session/partial_session_impl.dart';
+import 'entities/session/session_impl.dart';
 import 'entities/user_impl.dart';
 
 /// Defines how to build entities from JSON responses.
@@ -37,15 +38,24 @@ class EntityBuilder {
     return api.currencyCache.cache(currency);
   }
 
-  Session buildSession(Map<String, dynamic> json) {
-    final SessionImpl session = SessionImpl(
+  PartialSession buildSession(Map<String, dynamic> json) {
+    PartialSessionImpl session = PartialSessionImpl(
       api: api,
       id: json['id'],
-      token: json['token'],
       name: json['name'],
       expiredAt: DateTime.parse(json['expired_at']),
       user: buildUser(json['user']),
     );
+    if (json['token'] != null) {
+      session = SessionImpl(
+        api: api,
+        id: session.id,
+        name: session.name,
+        expiredAt: session.expiredAt,
+        user: session.user,
+        token: json['token'],
+      );
+    }
     return session;
   }
 

@@ -1,10 +1,8 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
-import '../../../restrr.dart';
+import '../../../../restrr.dart';
 
-class SessionImpl extends RestrrEntityImpl implements Session {
-  @override
-  final String token;
+class PartialSessionImpl extends RestrrEntityImpl implements PartialSession {
   @override
   final String? name;
   @override
@@ -12,10 +10,9 @@ class SessionImpl extends RestrrEntityImpl implements Session {
   @override
   final User user;
 
-  const SessionImpl({
+  const PartialSessionImpl({
     required super.api,
     required super.id,
-    required this.token,
     required this.name,
     required this.expiredAt,
     required this.user,

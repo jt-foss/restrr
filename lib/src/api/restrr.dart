@@ -49,11 +49,11 @@ abstract class Restrr {
 
   /* Sessions */
 
-  Future<Session> retrieveCurrentSession({bool forceRetrieve = false});
+  Future<PartialSession> retrieveCurrentSession({bool forceRetrieve = false});
 
-  Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false});
+  Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false});
 
-  Future<Paginated<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
+  Future<Paginated<PartialSession>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
 
   /// Deletes the current session, effectively logging out the user.
   Future<bool> deleteCurrentSession();

@@ -41,7 +41,7 @@ class RestrrBuilder {
     });
   }
 
-  Future<Restrr> _handleAuthProcess({required Future<RestResponse<Session>> Function(RestrrImpl) authFunction}) async {
+  Future<Restrr> _handleAuthProcess({required Future<RestResponse<PartialSession>> Function(RestrrImpl) authFunction}) async {
     // check if the URI is valid and the API is healthy
     final ServerInfo statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     Restrr.log.config('Host: $uri, API v${statusResponse.apiVersion}');
@@ -51,11 +51,14 @@ class RestrrBuilder {
         routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.apiVersion),
         eventMap: _eventMap);
     // call auth function
-    final RestResponse<Session> response = await authFunction(apiImpl);
+    final RestResponse<PartialSession> response = await authFunction(apiImpl);
     if (response.hasError) {
       throw response.error!;
     }
-    apiImpl.session = response.data!;
+    if (response.data is! Session) {
+      throw ArgumentError('The response data is not a session');
+    }
+    apiImpl.session = response.data! as Session;
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return apiImpl;
   }

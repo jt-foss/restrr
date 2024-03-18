@@ -52,7 +52,7 @@ class RestrrImpl implements Restrr {
   /* Sessions */
 
   @override
-  Future<Session> retrieveCurrentSession({bool forceRetrieve = false}) {
+  Future<PartialSession> retrieveCurrentSession({bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
         key: session.id,
         cacheView: sessionCache,
@@ -62,7 +62,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Session> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
+  Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
         key: id,
         cacheView: sessionCache,
@@ -72,7 +72,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Paginated<Session>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
+  Future<Paginated<PartialSession>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrievePage(
         pageCache: sessionPageCache,
         compiledRoute: SessionRoutes.getAll.compile(),
