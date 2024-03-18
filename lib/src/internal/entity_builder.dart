@@ -1,4 +1,3 @@
-import 'dart:indexed_db';
 
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
