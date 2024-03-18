@@ -19,11 +19,11 @@ class RestrrImpl implements Restrr {
   /* Caches */
 
   late final EntityCacheView<Currency> currencyCache = EntityCacheView(this);
-  late final EntityCacheView<Session> sessionCache = EntityCacheView(this);
+  late final EntityCacheView<PartialSession> sessionCache = EntityCacheView(this);
   late final EntityCacheView<User> userCache = EntityCacheView(this);
 
   late final PageCacheView<Currency> currencyPageCache = PageCacheView(this);
-  late final PageCacheView<Session> sessionPageCache = PageCacheView(this);
+  late final PageCacheView<PartialSession> sessionPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
