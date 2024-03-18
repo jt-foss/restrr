@@ -1,3 +1,15 @@
+## 0.8
+- Added `Account`
+  - Added `AccountRoutes`
+  - Added `Account#delete`
+  - Added `Account#update`
+  - Added `Restrr#createAccount`
+  - Added `Restrr#retrieveAccountById`
+  - Added `Restrr#retrieveAllAccounts`
+- Fixed `Session#delete` using a wrong route
+- Implemented actual `RestrrError` error codes
+  - Added `ErrorResponse#apiCode` 
+
 ## 0.7
 - Restructured package (many breaking changes!)
   - Split package into `api` (abstraction) and `internal` (implementation)
