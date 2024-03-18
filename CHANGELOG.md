@@ -6,6 +6,13 @@
   - Added `Restrr#createAccount`
   - Added `Restrr#retrieveAccountById`
   - Added `Restrr#retrieveAllAccounts`
+- Added `Transaction`
+  - Added `TransactionRoutes`
+  - Added `Transaction#delete`
+  - Added `Transaction#update`
+  - Added `Restrr#createTransaction`
+  - Added `Restrr#retrieveTransactionById`
+  - Added `Restrr#retrieveAllTransactions`
 - Fixed `Session#delete` using a wrong route
 - Implemented actual `RestrrError` error codes
   - Added `ErrorResponse#apiCode` 
