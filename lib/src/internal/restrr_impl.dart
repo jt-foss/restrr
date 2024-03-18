@@ -213,7 +213,7 @@ class RestrrImpl implements Restrr {
         body: {
           'amount': amount,
           'currency_id': currency,
-          'executed_at': executedAt.toIso8601String(),
+          'executed_at': executedAt.toUtc().toIso8601String(),
           if (description != null) 'description': description,
           if (source != null) 'source': source,
           if (destination != null) 'destination': destination,
