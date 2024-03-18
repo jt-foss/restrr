@@ -11,6 +11,5 @@ abstract class Account extends RestrrEntity {
 
   Future<bool> delete();
 
-  Future<Account> update(
-      {String? name, String? description, String? iban, int? originalBalance, Id? currency});
+  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currency});
 }

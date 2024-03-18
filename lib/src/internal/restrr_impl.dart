@@ -21,11 +21,13 @@ class RestrrImpl implements Restrr {
   late final EntityCacheView<Currency> currencyCache = EntityCacheView(this);
   late final EntityCacheView<PartialSession> sessionCache = EntityCacheView(this);
   late final EntityCacheView<Account> accountCache = EntityCacheView(this);
+  late final EntityCacheView<Transaction> transactionCache = EntityCacheView(this);
   late final EntityCacheView<User> userCache = EntityCacheView(this);
 
   late final PageCacheView<Currency> currencyPageCache = PageCacheView(this);
   late final PageCacheView<PartialSession> sessionPageCache = PageCacheView(this);
   late final PageCacheView<Account> accountPageCache = PageCacheView(this);
+  late final PageCacheView<Transaction> transactionPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
@@ -106,7 +108,11 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currency, String? description, String? iban}) async {
+      {required String name,
+      required int originalBalance,
+      required Id currency,
+      String? description,
+      String? iban}) async {
     final RestResponse<Account> response = await requestHandler
         .apiRequest(route: AccountRoutes.create.compile(), mapper: (json) => entityBuilder.buildAccount(json), body: {
       'name': name,
@@ -184,6 +190,62 @@ class RestrrImpl implements Restrr {
         page: page,
         limit: limit,
         mapper: (json) => entityBuilder.buildCurrency(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  /* Transactions */
+
+  @override
+  Future<Transaction> createTransaction(
+      {required int amount,
+      required Id currency,
+      required DateTime executedAt,
+      String? description,
+      Id? source,
+      Id? destination,
+      Id? budget}) async {
+    if (source == null && destination == null) {
+      throw ArgumentError('Either source or destination must be set!');
+    }
+    final RestResponse<Transaction> response = await requestHandler.apiRequest(
+        route: TransactionRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildTransaction(json),
+        body: {
+          'amount': amount,
+          'currency_id': currency,
+          'executed_at': executedAt.toIso8601String(),
+          if (description != null) 'description': description,
+          if (source != null) 'source': source,
+          if (destination != null) 'destination': destination,
+          if (budget != null) 'budget': budget
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    transactionCache.clear();
+    return response.data!;
+  }
+
+  @override
+  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrieveSingle(
+        key: id,
+        cacheView: transactionCache,
+        compiledRoute: TransactionRoutes.getById.compile(params: [id]),
+        mapper: (json) => entityBuilder.buildTransaction(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<Transaction>> retrieveAllTransactions(
+      {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: transactionPageCache,
+        compiledRoute: TransactionRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
   }
 }

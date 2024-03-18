@@ -46,3 +46,13 @@ class CurrencyRoutes {
   static final Route deleteById = Route.delete('/currency/{currencyId}');
   static final Route patchById = Route.patch('/currency/{currencyId}');
 }
+
+class TransactionRoutes {
+  const TransactionRoutes._();
+
+  static final Route getAll = Route.get('/transaction');
+  static final Route getById = Route.get('/transaction/{transactionId}');
+  static final Route deleteById = Route.delete('/transaction/{transactionId}');
+  static final Route patchById = Route.patch('/transaction/{transactionId}');
+  static final Route create = Route.post('/transaction');
+}

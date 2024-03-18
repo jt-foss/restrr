@@ -77,4 +77,19 @@ abstract class Restrr {
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /* Transactions */
+
+  Future<Transaction> createTransaction(
+      {required int amount,
+      required Id currency,
+      required DateTime executedAt,
+      String? description,
+      Id? source,
+      Id? destination,
+      Id? budget});
+
+  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
 }

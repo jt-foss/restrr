@@ -39,13 +39,8 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   }
 
   @override
-  Future<Account> update(
-      {String? name, String? description, String? iban, int? originalBalance, Id? currency}) async {
-    if (name == null &&
-        description == null &&
-        iban == null &&
-        originalBalance == null &&
-        currency == null) {
+  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currency}) async {
+    if (name == null && description == null && iban == null && originalBalance == null && currency == null) {
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Account> response = await api.requestHandler.apiRequest(

@@ -12,6 +12,7 @@ export 'src/api/entities/session/partial_session.dart';
 export 'src/api/entities/session/session.dart';
 export 'src/api/entities/account.dart';
 export 'src/api/entities/restrr_entity.dart';
+export 'src/api/entities/transaction.dart';
 export 'src/api/entities/user.dart';
 
 /* [ /src/api/events ] */

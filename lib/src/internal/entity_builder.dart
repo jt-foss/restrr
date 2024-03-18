@@ -1,3 +1,5 @@
+import 'dart:indexed_db';
+
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 
@@ -6,6 +8,7 @@ import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
 import 'entities/session/partial_session_impl.dart';
 import 'entities/session/session_impl.dart';
+import 'entities/transaction_impl.dart';
 import 'entities/user_impl.dart';
 
 /// Defines how to build entities from JSON responses.
@@ -75,6 +78,22 @@ class EntityBuilder {
       createdAt: DateTime.parse(json['created_at']),
     );
     return api.accountCache.cache(account);
+  }
+
+  Transaction buildTransaction(Map<String, dynamic> json) {
+    final TransactionImpl transaction = TransactionImpl(
+      api: api,
+      id: json['id'],
+      source: json['source'],
+      destination: json['destination'],
+      amount: json['amount'],
+      currency: json['currency'],
+      description: json['description'],
+      budget: json['budget'],
+      createdAt: DateTime.parse(json['created_at']),
+      executedAt: DateTime.parse(json['executed_at']),
+    );
+    return api.transactionCache.cache(transaction);
   }
 
   User buildUser(Map<String, dynamic> json) {
