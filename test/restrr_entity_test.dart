@@ -1,18 +1,11 @@
 import 'dart:convert';
 
 import 'package:restrr/restrr.dart';
+import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-final Uri _validUri = Uri.parse('https://financrr-stage.denux.dev');
-
-const String healthJson = '''
-{
-  "healthy": true,
-  "api_version": 1,
-  "details": null
-}
-''';
+final Uri _validUri = Uri.parse('https://api-stage.financrr.app');
 
 const String userJson = '''
 {
@@ -35,22 +28,25 @@ const String currencyJson = '''
 }
 ''';
 
+const String sessionJson = '''
+{
+  "id": 1,
+  "token": "abc",
+  "user": $userJson,
+  "created_at": "+002024-02-17T20:48:43.391176000Z",
+  "expires_at": "+002024-02-17T20:48:43.391176000Z"
+}
+''';
+
 void main() {
-  late Restrr api;
+  late RestrrImpl api;
 
   setUp(() async {
     // log in, get api instance
-    api = (await RestrrBuilder.login(uri: _validUri, username: 'admin', password: 'Financrr123').create()).data!;
+    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')) as RestrrImpl;
   });
 
   group('[EntityBuilder] ', () {
-    test('.buildHealthResponse', () {
-      final HealthResponse healthResponse = EntityBuilder.buildHealthResponse(jsonDecode(healthJson));
-      expect(healthResponse.healthy, true);
-      expect(healthResponse.apiVersion, 1);
-      expect(healthResponse.details, null);
-    });
-
     test('.buildUser', () async {
       final User user = api.entityBuilder.buildUser(jsonDecode(userJson));
       expect(user.id, 1);
@@ -67,7 +63,15 @@ void main() {
       expect(currency.symbol, '\$');
       expect(currency.isoCode, 'USD');
       expect(currency.decimalPlaces, 2);
-      expect(currency.user, 1);
+    });
+
+    test('.buildSession', () {
+      final Session session = api.entityBuilder.buildSession(jsonDecode(sessionJson)) as Session;
+      expect(session.id, 1);
+      expect(session.token, 'abc');
+      expect(session.user.id, 1);
+      expect(session.createdAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
+      expect(session.expiresAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
     });
   });
 }

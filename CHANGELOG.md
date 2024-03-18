@@ -1,3 +1,11 @@
+## 0.7
+- Restructured package (many breaking changes!)
+  - Split package into `api` (abstraction) and `internal` (implementation)
+- Added `Session`-based authentication
+- Reworked `RestrrBuilder` to support new `Session`s
+  - Added `RestrrBuilder#refresh`
+- Implemented Pagination (see `Paginated<T>`)
+
 ## 0.6.2
 - Fixed `Restrr#on` (and similar methods)
 
