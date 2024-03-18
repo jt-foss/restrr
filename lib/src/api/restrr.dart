@@ -60,6 +60,15 @@ abstract class Restrr {
 
   Future<bool> deleteAllSessions();
 
+  /* Accounts */
+
+  Future<Account> createAccount(
+      {required String name, required int originalBalance, required Id currency, String? description, String? iban});
+
+  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false});
+
   /* Currencies */
 
   Future<Currency> createCurrency(

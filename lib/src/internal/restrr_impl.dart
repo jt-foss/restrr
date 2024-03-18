@@ -20,10 +20,12 @@ class RestrrImpl implements Restrr {
 
   late final EntityCacheView<Currency> currencyCache = EntityCacheView(this);
   late final EntityCacheView<PartialSession> sessionCache = EntityCacheView(this);
+  late final EntityCacheView<Account> accountCache = EntityCacheView(this);
   late final EntityCacheView<User> userCache = EntityCacheView(this);
 
   late final PageCacheView<Currency> currencyPageCache = PageCacheView(this);
   late final PageCacheView<PartialSession> sessionPageCache = PageCacheView(this);
+  late final PageCacheView<Account> accountPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
@@ -98,6 +100,48 @@ class RestrrImpl implements Restrr {
     final RestResponse<bool> response =
         await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
     return response.hasData && response.data!;
+  }
+
+  /* Accounts */
+
+  @override
+  Future<Account> createAccount(
+      {required String name, required int originalBalance, required Id currency, String? description, String? iban}) async {
+    final RestResponse<Account> response = await requestHandler
+        .apiRequest(route: AccountRoutes.create.compile(), mapper: (json) => entityBuilder.buildAccount(json), body: {
+      'name': name,
+      'original_balance': originalBalance,
+      'currency_id': currency,
+      if (description != null) 'description': description,
+      if (iban != null) 'iban': iban
+    });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    accountCache.clear();
+    return response.data!;
+  }
+
+  @override
+  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrieveSingle(
+        key: id,
+        cacheView: accountCache,
+        compiledRoute: AccountRoutes.getById.compile(params: [id]),
+        mapper: (json) => entityBuilder.buildAccount(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: accountPageCache,
+        compiledRoute: AccountRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildAccount(json),
+        forceRetrieve: forceRetrieve);
   }
 
   /* Currencies */

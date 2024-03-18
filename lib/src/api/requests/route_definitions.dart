@@ -27,6 +27,16 @@ class UserRoutes {
   static final Route create = Route.post('/user/register');
 }
 
+class AccountRoutes {
+  const AccountRoutes._();
+
+  static final Route getAll = Route.get('/account');
+  static final Route getById = Route.get('/account/{accountId}');
+  static final Route deleteById = Route.delete('/account/{accountId}');
+  static final Route patchById = Route.patch('/account/{accountId}');
+  static final Route create = Route.post('/account');
+}
+
 class CurrencyRoutes {
   const CurrencyRoutes._();
 
@@ -34,5 +44,5 @@ class CurrencyRoutes {
   static final Route create = Route.post('/currency');
   static final Route getById = Route.get('/currency/{currencyId}');
   static final Route deleteById = Route.delete('/currency/{currencyId}');
-  static final Route updateById = Route.patch('/currency/{currencyId}');
+  static final Route patchById = Route.patch('/currency/{currencyId}');
 }

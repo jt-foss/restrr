@@ -1,6 +1,7 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../restrr.dart';
+import '../requests/responses/rest_response.dart';
 
 class AccountImpl extends RestrrEntityImpl implements Account {
   @override
@@ -10,9 +11,9 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   @override
   final String? iban;
   @override
-  final double balance;
+  final int balance;
   @override
-  final double originalBalance;
+  final int originalBalance;
   @override
   final Id currency;
   @override
@@ -31,14 +32,35 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   });
 
   @override
-  Future<bool> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<bool> delete() async {
+    final RestResponse<bool> response =
+        await api.requestHandler.noResponseApiRequest(route: AccountRoutes.deleteById.compile(params: [id]));
+    return response.hasData && response.data!;
   }
 
   @override
-  Future<Account> update({String? name, String? description, String? iban, double? balance, double? originalBalance, Id? currency}) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Account> update(
+      {String? name, String? description, String? iban, int? originalBalance, Id? currency}) async {
+    if (name == null &&
+        description == null &&
+        iban == null &&
+        originalBalance == null &&
+        currency == null) {
+      throw ArgumentError('At least one field must be set');
+    }
+    final RestResponse<Account> response = await api.requestHandler.apiRequest(
+        route: AccountRoutes.patchById.compile(params: [id]),
+        mapper: (json) => api.entityBuilder.buildAccount(json),
+        body: {
+          if (name != null) 'name': name,
+          if (description != null) 'description': description,
+          if (iban != null) 'iban': iban,
+          if (originalBalance != null) 'original_balance': originalBalance,
+          if (currency != null) 'currency': currency,
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
   }
 }

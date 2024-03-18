@@ -1,6 +1,7 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 
+import 'entities/account_impl.dart';
 import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
 import 'entities/session/partial_session_impl.dart';
@@ -59,6 +60,21 @@ class EntityBuilder {
       );
     }
     return session;
+  }
+
+  Account buildAccount(Map<String, dynamic> json) {
+    final AccountImpl account = AccountImpl(
+      api: api,
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      iban: json['iban'],
+      balance: json['balance'],
+      originalBalance: json['original_balance'],
+      currency: json['currency'],
+      createdAt: DateTime.parse(json['created_at']),
+    );
+    return api.accountCache.cache(account);
   }
 
   User buildUser(Map<String, dynamic> json) {
