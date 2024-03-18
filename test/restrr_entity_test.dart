@@ -33,7 +33,8 @@ const String sessionJson = '''
   "id": 1,
   "token": "abc",
   "user": $userJson,
-  "expired_at": "+002024-02-17T20:48:43.391176000Z"
+  "created_at": "+002024-02-17T20:48:43.391176000Z",
+  "expires_at": "+002024-02-17T20:48:43.391176000Z"
 }
 ''';
 
@@ -69,6 +70,7 @@ void main() {
       expect(session.id, 1);
       expect(session.token, 'abc');
       expect(session.user.id, 1);
+      expect(session.createdAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
       expect(session.expiresAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
     });
   });
