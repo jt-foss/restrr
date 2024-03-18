@@ -6,7 +6,9 @@ class PartialSessionImpl extends RestrrEntityImpl implements PartialSession {
   @override
   final String? name;
   @override
-  final DateTime expiredAt;
+  final DateTime createdAt;
+  @override
+  final DateTime expiresAt;
   @override
   final User user;
 
@@ -14,7 +16,8 @@ class PartialSessionImpl extends RestrrEntityImpl implements PartialSession {
     required super.api,
     required super.id,
     required this.name,
-    required this.expiredAt,
+    required this.createdAt,
+    required this.expiresAt,
     required this.user,
   });
 

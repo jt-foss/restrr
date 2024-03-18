@@ -69,7 +69,7 @@ void main() {
       expect(session.id, 1);
       expect(session.token, 'abc');
       expect(session.user.id, 1);
-      expect(session.expiredAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
+      expect(session.expiresAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
     });
   });
 }

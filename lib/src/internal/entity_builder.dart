@@ -43,7 +43,8 @@ class EntityBuilder {
       api: api,
       id: json['id'],
       name: json['name'],
-      expiredAt: DateTime.parse(json['expired_at']),
+      createdAt: DateTime.parse(json['created_at']),
+      expiresAt: DateTime.parse(json['expires_at']),
       user: buildUser(json['user']),
     );
     if (json['token'] != null) {
@@ -51,7 +52,8 @@ class EntityBuilder {
         api: api,
         id: session.id,
         name: session.name,
-        expiredAt: session.expiredAt,
+        createdAt: session.createdAt,
+        expiresAt: session.expiresAt,
         user: session.user,
         token: json['token'],
       );
