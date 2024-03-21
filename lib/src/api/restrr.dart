@@ -65,6 +65,8 @@ abstract class Restrr {
   Future<Account> createAccount(
       {required String name, required int originalBalance, required Id currency, String? description, String? iban});
 
+  List<Account> getAccounts();
+
   Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false});

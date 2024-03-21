@@ -130,6 +130,9 @@ class RestrrImpl implements Restrr {
   }
 
   @override
+  List<Account> getAccounts() => accountCache.getAll();
+
+  @override
   Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrieveSingle(
         key: id,

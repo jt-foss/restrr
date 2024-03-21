@@ -1,6 +1,7 @@
 import '../../restrr.dart';
 import '../internal/requests/responses/rest_response.dart';
 import '../internal/restrr_impl.dart';
+import '../internal/utils/request_utils.dart';
 
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
@@ -60,6 +61,11 @@ class RestrrBuilder {
       throw ArgumentError('The response data is not a session');
     }
     apiImpl.session = response.data! as Session;
+
+    /// Retrieve all accounts to make them available in the cache
+    final List<Account> accounts = await RequestUtils.fetchAllPaginated(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
+    Restrr.log.info('Retrieved ${accounts.length} account(s)');
+
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return apiImpl;
   }
