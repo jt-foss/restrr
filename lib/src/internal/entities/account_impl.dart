@@ -52,7 +52,7 @@ class AccountImpl extends RestrrEntityImpl implements Account {
           if (description != null) 'description': description,
           if (iban != null) 'iban': iban,
           if (originalBalance != null) 'original_balance': originalBalance,
-          if (currency != null) 'currency': currency,
+          if (currency != null) 'currency_id': currency,
         });
     if (response.hasError) {
       throw response.error!;
