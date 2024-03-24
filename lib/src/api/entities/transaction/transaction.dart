@@ -10,6 +10,8 @@ abstract class Transaction extends RestrrEntity {
   DateTime get createdAt;
   DateTime get executedAt;
 
+  TransactionType get type;
+
   Future<bool> delete();
 
   Future<Transaction> update({

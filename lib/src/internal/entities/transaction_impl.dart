@@ -35,6 +35,17 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
   }) : assert(source != null || destination != null);
 
   @override
+  TransactionType get type {
+    if (source != null && destination != null) {
+      return TransactionType.transfer;
+    }
+    if (source != null) {
+      return TransactionType.withdrawal;
+    }
+    return TransactionType.deposit;
+  }
+
+  @override
   Future<bool> delete() async {
     final RestResponse<bool> response =
         await api.requestHandler.noResponseApiRequest(route: TransactionRoutes.deleteById.compile(params: [id]));
