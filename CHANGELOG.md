@@ -3,6 +3,7 @@
   - Added `AccountRoutes`
   - Added `Account#delete`
   - Added `Account#update`
+  - Added `Account#retrieveTransactions`
   - Added `Restrr#createAccount`
   - Added `Restrr#retrieveAccountById`
   - Added `Restrr#retrieveAllAccounts`

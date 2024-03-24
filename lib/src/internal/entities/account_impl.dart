@@ -2,6 +2,7 @@ import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../restrr.dart';
 import '../requests/responses/rest_response.dart';
+import '../utils/request_utils.dart';
 
 class AccountImpl extends RestrrEntityImpl implements Account {
   @override
@@ -57,5 +58,16 @@ class AccountImpl extends RestrrEntityImpl implements Account {
       throw response.error!;
     }
     return response.data!;
+  }
+
+  @override
+  Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: api.transactionPageCache,
+        compiledRoute: AccountRoutes.getTransactions.compile(params: [id]),
+        page: page,
+        limit: limit,
+        mapper: (json) => api.entityBuilder.buildTransaction(json),
+        forceRetrieve: forceRetrieve);
   }
 }

@@ -34,6 +34,7 @@ class AccountRoutes {
   static final Route getById = Route.get('/account/{accountId}');
   static final Route deleteById = Route.delete('/account/{accountId}');
   static final Route patchById = Route.patch('/account/{accountId}');
+  static final Route getTransactions = Route.get('/account/{accountId}/transactions');
   static final Route create = Route.post('/account');
 }
 
