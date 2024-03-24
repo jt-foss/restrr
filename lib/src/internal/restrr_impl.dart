@@ -215,7 +215,7 @@ class RestrrImpl implements Restrr {
         mapper: (json) => entityBuilder.buildTransaction(json),
         body: {
           'amount': amount,
-          'currency_id': currency,
+          'currency': currency,
           'executed_at': executedAt.toUtc().toIso8601String(),
           if (description != null) 'description': description,
           if (source != null) 'source': source,
