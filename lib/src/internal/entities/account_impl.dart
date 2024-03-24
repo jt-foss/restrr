@@ -70,4 +70,12 @@ class AccountImpl extends RestrrEntityImpl implements Account {
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
   }
+
+  @override
+  Currency? getCurrency() => api.currencyCache.get(currency);
+
+  @override
+  Future<Currency> retrieveCurrency({bool forceRetrieve = false}) {
+    return api.retrieveCurrencyById(currency, forceRetrieve: forceRetrieve);
+  }
 }

@@ -14,4 +14,8 @@ abstract class Account extends RestrrEntity {
   Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currency});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  Currency? getCurrency();
+
+  Future<Currency> retrieveCurrency({bool forceRetrieve = false});
 }

@@ -2,7 +2,7 @@
 - Cache accounts & currencies on startup
 - Added `Account`
   - Added `AccountRoutes`
-  - Added `Account` methods: `delete`, `update`, `retrieveTransactions`
+  - Added `Account` methods: `delete`, `update`, `retrieveTransactions`, `getCurrency`, `retrieveCurrency`
   - Added `Restrr` methods: `createAccount`, `getAccounts`, `retrieveAccountById`, `retrieveAllAccounts`
 - Added `Transaction`
   - Added `TransactionRoutes`
