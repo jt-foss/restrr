@@ -84,4 +84,26 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
         });
     return response.data!;
   }
+
+  @override
+  Account? getSourceAccount() => source == null ? null : api.accountCache.get(source!);
+
+  @override
+  Future<Account>? retrieveSourceAccount({bool forceRetrieve = false}) {
+    if (source == null) {
+      return null;
+    }
+    return api.retrieveAccountById(source!, forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Account? getDestinationAccount() => destination == null ? null : api.accountCache.get(destination!);
+
+  @override
+  Future<Account>? retrieveDestinationAccount({bool forceRetrieve = false}) {
+    if (destination == null) {
+      return null;
+    }
+    return api.retrieveAccountById(destination!, forceRetrieve: forceRetrieve);
+  }
 }

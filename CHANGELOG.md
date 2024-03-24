@@ -6,7 +6,7 @@
   - Added `Restrr` methods: `createAccount`, `getAccounts`, `retrieveAccountById`, `retrieveAllAccounts`
 - Added `Transaction`
   - Added `TransactionRoutes`
-  - Added `Transaction` methods: `delete`, `update`
+  - Added `Transaction` methods: `delete`, `update`, `getSourceAccount`, `getDestinationAccount`, `retrieveSourceAccount`, `retrieveDestinationAccount`
   - Added `Restrr` methods: `createTransaction`, `retrieveTransactionById`, `retrieveAllTransactions`
 - Added `Restrr#getCurrencies`
 - Fixed `Session#delete` using a wrong route

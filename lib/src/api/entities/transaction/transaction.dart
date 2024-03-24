@@ -23,4 +23,12 @@ abstract class Transaction extends RestrrEntity {
     Id? budget,
     DateTime? executedAt,
   });
+
+  Account? getSourceAccount();
+
+  Future<Account>? retrieveSourceAccount({bool forceRetrieve = false});
+
+  Account? getDestinationAccount();
+
+  Future<Account>? retrieveDestinationAccount({bool forceRetrieve = false});
 }
