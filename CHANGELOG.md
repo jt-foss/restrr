@@ -1,19 +1,14 @@
 ## 0.8
+- Cache accounts & currencies on startup
 - Added `Account`
   - Added `AccountRoutes`
-  - Added `Account#delete`
-  - Added `Account#update`
-  - Added `Account#retrieveTransactions`
-  - Added `Restrr#createAccount`
-  - Added `Restrr#retrieveAccountById`
-  - Added `Restrr#retrieveAllAccounts`
+  - Added `Account` methods: `delete`, `update`, `retrieveTransactions`
+  - Added `Restrr` methods: `createAccount`, `getAccounts`, `retrieveAccountById`, `retrieveAllAccounts`
 - Added `Transaction`
   - Added `TransactionRoutes`
-  - Added `Transaction#delete`
-  - Added `Transaction#update`
-  - Added `Restrr#createTransaction`
-  - Added `Restrr#retrieveTransactionById`
-  - Added `Restrr#retrieveAllTransactions`
+  - Added `Transaction` methods: `delete`, `update`
+  - Added `Restrr` methods: `createTransaction`, `retrieveTransactionById`, `retrieveAllTransactions`
+- Added `Restrr#getCurrencies`
 - Fixed `Session#delete` using a wrong route
 - Implemented actual `RestrrError` error codes
   - Added `ErrorResponse#apiCode` 
