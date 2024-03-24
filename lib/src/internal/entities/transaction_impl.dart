@@ -80,7 +80,7 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
           if (currency != null) 'currency': currency,
           if (description != null) 'description': description,
           if (budget != null) 'budget': budget,
-          if (executedAt != null) 'executed_at': executedAt.toIso8601String(),
+          if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;
   }
