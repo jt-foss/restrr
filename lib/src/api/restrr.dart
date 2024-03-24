@@ -76,6 +76,8 @@ abstract class Restrr {
   Future<Currency> createCurrency(
       {required String name, required String symbol, required int decimalPlaces, String? isoCode});
 
+  List<Currency> getCurrencies();
+
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});

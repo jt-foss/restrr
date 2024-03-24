@@ -124,9 +124,7 @@ class RestrrImpl implements Restrr {
     if (response.hasError) {
       throw response.error!;
     }
-    // invalidate cache
-    accountCache.clear();
-    return response.data!;
+    return accountCache.cache(response.data!);
   }
 
   @override
@@ -171,9 +169,11 @@ class RestrrImpl implements Restrr {
       throw response.error!;
     }
     // invalidate cache
-    currencyCache.clear();
-    return response.data!;
+    return currencyCache.cache(response.data!);
   }
+
+  @override
+  List<Currency> getCurrencies() => currencyCache.getAll();
 
   @override
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
