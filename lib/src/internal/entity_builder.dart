@@ -73,7 +73,7 @@ class EntityBuilder {
       iban: json['iban'],
       balance: json['balance'],
       originalBalance: json['original_balance'],
-      currency: json['currency'],
+      currencyId: json['currency_id'],
       createdAt: DateTime.parse(json['created_at']),
     );
     return api.accountCache.cache(account);
@@ -83,12 +83,12 @@ class EntityBuilder {
     final TransactionImpl transaction = TransactionImpl(
       api: api,
       id: json['id'],
-      source: json['source'],
-      destination: json['destination'],
+      sourceId: json['source_id'],
+      destinationId: json['destination_id'],
       amount: json['amount'],
-      currency: json['currency'],
+      currencyId: json['currency'],
       description: json['description'],
-      budget: json['budget'],
+      budgetId: json['budget_id'],
       createdAt: DateTime.parse(json['created_at']),
       executedAt: DateTime.parse(json['executed_at']),
     );

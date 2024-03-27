@@ -16,7 +16,7 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   @override
   final int originalBalance;
   @override
-  final Id currency;
+  final Id currencyId;
   @override
   final DateTime createdAt;
 
@@ -28,7 +28,7 @@ class AccountImpl extends RestrrEntityImpl implements Account {
     required this.iban,
     required this.balance,
     required this.originalBalance,
-    required this.currency,
+    required this.currencyId,
     required this.createdAt,
   });
 
@@ -40,8 +40,8 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   }
 
   @override
-  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currency}) async {
-    if (name == null && description == null && iban == null && originalBalance == null && currency == null) {
+  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
+    if (name == null && description == null && iban == null && originalBalance == null && currencyId == null) {
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Account> response = await api.requestHandler.apiRequest(
@@ -52,7 +52,7 @@ class AccountImpl extends RestrrEntityImpl implements Account {
           if (description != null) 'description': description,
           if (iban != null) 'iban': iban,
           if (originalBalance != null) 'original_balance': originalBalance,
-          if (currency != null) 'currency_id': currency,
+          if (currencyId != null) 'currency_id': currencyId,
         });
     if (response.hasError) {
       throw response.error!;
@@ -72,10 +72,10 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   }
 
   @override
-  Currency? getCurrency() => api.currencyCache.get(currency);
+  Currency? getCurrency() => api.currencyCache.get(currencyId);
 
   @override
   Future<Currency> retrieveCurrency({bool forceRetrieve = false}) {
-    return api.retrieveCurrencyById(currency, forceRetrieve: forceRetrieve);
+    return api.retrieveCurrencyById(currencyId, forceRetrieve: forceRetrieve);
   }
 }

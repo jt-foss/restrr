@@ -1,12 +1,12 @@
 import 'package:restrr/restrr.dart';
 
 abstract class Transaction extends RestrrEntity {
-  int? get source;
-  int? get destination;
+  int? get sourceId;
+  int? get destinationId;
   int get amount;
-  Id get currency;
+  Id get currencyId;
   String? get description;
-  Id? get budget;
+  Id? get budgetId;
   DateTime get createdAt;
   DateTime get executedAt;
 
@@ -15,12 +15,12 @@ abstract class Transaction extends RestrrEntity {
   Future<bool> delete();
 
   Future<Transaction> update({
-    int? source,
-    int? destination,
+    int? sourceId,
+    int? destinationId,
     int? amount,
-    Id? currency,
+    Id? currencyId,
     String? description,
-    Id? budget,
+    Id? budgetId,
     DateTime? executedAt,
   });
 

@@ -86,12 +86,12 @@ abstract class Restrr {
 
   Future<Transaction> createTransaction(
       {required int amount,
-      required Id currency,
+      required Id currencyId,
       required DateTime executedAt,
       String? description,
-      Id? source,
-      Id? destination,
-      Id? budget});
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId});
 
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 

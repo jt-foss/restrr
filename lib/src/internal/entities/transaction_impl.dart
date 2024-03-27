@@ -5,17 +5,17 @@ import '../requests/responses/rest_response.dart';
 
 class TransactionImpl extends RestrrEntityImpl implements Transaction {
   @override
-  final int? source;
+  final int? sourceId;
   @override
-  final int? destination;
+  final int? destinationId;
   @override
   final int amount;
   @override
-  final Id currency;
+  final Id currencyId;
   @override
   final String? description;
   @override
-  final Id? budget;
+  final Id? budgetId;
   @override
   final DateTime createdAt;
   @override
@@ -24,22 +24,22 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
   const TransactionImpl({
     required super.api,
     required super.id,
-    required this.source,
-    required this.destination,
+    required this.sourceId,
+    required this.destinationId,
     required this.amount,
-    required this.currency,
+    required this.currencyId,
     required this.description,
-    required this.budget,
+    required this.budgetId,
     required this.createdAt,
     required this.executedAt,
-  }) : assert(source != null || destination != null);
+  }) : assert(sourceId != null || destinationId != null);
 
   @override
   TransactionType get type {
-    if (source != null && destination != null) {
+    if (sourceId != null && destinationId != null) {
       return TransactionType.transfer;
     }
-    if (source != null) {
+    if (sourceId != null) {
       return TransactionType.withdrawal;
     }
     return TransactionType.deposit;
@@ -54,19 +54,19 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
 
   @override
   Future<Transaction> update(
-      {int? source,
-      int? destination,
+      {int? sourceId,
+      int? destinationId,
       int? amount,
-      int? currency,
+      int? currencyId,
       String? description,
-      Id? budget,
+      Id? budgetId,
       DateTime? executedAt}) async {
-    if (source == null &&
-        destination == null &&
+    if (sourceId == null &&
+        destinationId == null &&
         amount == null &&
-        currency == null &&
+        currencyId == null &&
         description == null &&
-        budget == null &&
+        budgetId == null &&
         executedAt == null) {
       throw ArgumentError('At least one field must be set');
     }
@@ -74,36 +74,36 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
         route: TransactionRoutes.patchById.compile(params: [id]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         body: {
-          if (source != null) 'source': source,
-          if (destination != null) 'destination': destination,
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
           if (amount != null) 'amount': amount,
-          if (currency != null) 'currency': currency,
+          if (currencyId != null) 'currency': currencyId,
           if (description != null) 'description': description,
-          if (budget != null) 'budget': budget,
+          if (budgetId != null) 'budget_id': budgetId,
           if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;
   }
 
   @override
-  Account? getSourceAccount() => source == null ? null : api.accountCache.get(source!);
+  Account? getSourceAccount() => sourceId == null ? null : api.accountCache.get(sourceId!);
 
   @override
   Future<Account>? retrieveSourceAccount({bool forceRetrieve = false}) {
-    if (source == null) {
+    if (sourceId == null) {
       return null;
     }
-    return api.retrieveAccountById(source!, forceRetrieve: forceRetrieve);
+    return api.retrieveAccountById(sourceId!, forceRetrieve: forceRetrieve);
   }
 
   @override
-  Account? getDestinationAccount() => destination == null ? null : api.accountCache.get(destination!);
+  Account? getDestinationAccount() => destinationId == null ? null : api.accountCache.get(destinationId!);
 
   @override
   Future<Account>? retrieveDestinationAccount({bool forceRetrieve = false}) {
-    if (destination == null) {
+    if (destinationId == null) {
       return null;
     }
-    return api.retrieveAccountById(destination!, forceRetrieve: forceRetrieve);
+    return api.retrieveAccountById(destinationId!, forceRetrieve: forceRetrieve);
   }
 }

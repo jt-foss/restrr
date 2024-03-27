@@ -201,13 +201,13 @@ class RestrrImpl implements Restrr {
   @override
   Future<Transaction> createTransaction(
       {required int amount,
-      required Id currency,
+      required Id currencyId,
       required DateTime executedAt,
       String? description,
-      Id? source,
-      Id? destination,
-      Id? budget}) async {
-    if (source == null && destination == null) {
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId}) async {
+    if (sourceId == null && destinationId == null) {
       throw ArgumentError('Either source or destination must be set!');
     }
     final RestResponse<Transaction> response = await requestHandler.apiRequest(
@@ -215,12 +215,12 @@ class RestrrImpl implements Restrr {
         mapper: (json) => entityBuilder.buildTransaction(json),
         body: {
           'amount': amount,
-          'currency': currency,
+          'currency_id': currencyId,
           'executed_at': executedAt.toUtc().toIso8601String(),
           if (description != null) 'description': description,
-          if (source != null) 'source': source,
-          if (destination != null) 'destination': destination,
-          if (budget != null) 'budget': budget
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
+          if (budgetId != null) 'budget_id': budgetId
         });
     if (response.hasError) {
       throw response.error!;
