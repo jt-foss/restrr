@@ -4,7 +4,26 @@ import '../../../restrr.dart';
 import '../requests/responses/rest_response.dart';
 import '../utils/request_utils.dart';
 
-class AccountImpl extends RestrrEntityImpl implements Account {
+class AccountIdImpl extends IdImpl<Account> implements AccountId {
+  const AccountIdImpl({required super.api, required super.value});
+
+  @override
+  Account? get() {
+    return api.accountCache.get(value);
+  }
+
+  @override
+  Future<Account> retrieve({forceRetrieve = false}) {
+    return RequestUtils.getOrRetrieveSingle(
+        key: this,
+        cacheView: api.accountCache,
+        compiledRoute: AccountRoutes.getById.compile(params: [value]),
+        mapper: (json) => api.entityBuilder.buildAccount(json),
+        forceRetrieve: forceRetrieve);
+  }
+}
+
+class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Account {
   @override
   final String name;
   @override
@@ -16,7 +35,7 @@ class AccountImpl extends RestrrEntityImpl implements Account {
   @override
   final int originalBalance;
   @override
-  final Id currencyId;
+  final CurrencyId currencyId;
   @override
   final DateTime createdAt;
 
@@ -69,13 +88,5 @@ class AccountImpl extends RestrrEntityImpl implements Account {
         limit: limit,
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
-  }
-
-  @override
-  Currency? getCurrency() => api.currencyCache.get(currencyId);
-
-  @override
-  Future<Currency> retrieveCurrency({bool forceRetrieve = false}) {
-    return api.retrieveCurrencyById(currencyId, forceRetrieve: forceRetrieve);
   }
 }

@@ -1,12 +1,17 @@
 import 'package:restrr/restrr.dart';
 
-abstract class Transaction extends RestrrEntity {
-  int? get sourceId;
-  int? get destinationId;
+abstract class TransactionId extends EntityId<Transaction> {}
+
+abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
+  @override
+  TransactionId get id;
+
+  AccountId? get sourceId;
+  AccountId? get destinationId;
   int get amount;
-  Id get currencyId;
+  CurrencyId get currencyId;
   String? get description;
-  Id? get budgetId;
+  EntityId? get budgetId;
   DateTime get createdAt;
   DateTime get executedAt;
 
@@ -15,20 +20,12 @@ abstract class Transaction extends RestrrEntity {
   Future<bool> delete();
 
   Future<Transaction> update({
-    int? sourceId,
-    int? destinationId,
+    Id? sourceId,
+    Id? destinationId,
     int? amount,
     Id? currencyId,
     String? description,
     Id? budgetId,
     DateTime? executedAt,
   });
-
-  Account? getSourceAccount();
-
-  Future<Account>? retrieveSourceAccount({bool forceRetrieve = false});
-
-  Account? getDestinationAccount();
-
-  Future<Account>? retrieveDestinationAccount({bool forceRetrieve = false});
 }

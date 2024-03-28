@@ -1,12 +1,17 @@
 import '../../../restrr.dart';
 
-abstract class Account extends RestrrEntity {
+abstract class AccountId extends EntityId<Account> {}
+
+abstract class Account extends RestrrEntity<Account, AccountId> {
+  @override
+  AccountId get id;
+
   String get name;
   String? get description;
   String? get iban;
   int get balance;
   int get originalBalance;
-  Id get currencyId;
+  CurrencyId get currencyId;
   DateTime get createdAt;
 
   Future<bool> delete();
@@ -14,8 +19,4 @@ abstract class Account extends RestrrEntity {
   Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
-
-  Currency? getCurrency();
-
-  Future<Currency> retrieveCurrency({bool forceRetrieve = false});
 }

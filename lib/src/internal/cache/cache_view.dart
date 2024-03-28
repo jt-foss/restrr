@@ -1,11 +1,11 @@
 import '../../../restrr.dart';
 import '../restrr_impl.dart';
 
-class EntityCacheView<E extends RestrrEntity> extends MapCacheView<Id, E> {
-  EntityCacheView(RestrrImpl api) : super(api, valueFunction: (entity) => entity.id);
+class EntityCacheView<E extends RestrrEntity<E, ID>, ID extends EntityId<E>> extends MapCacheView<int, E> {
+  EntityCacheView(RestrrImpl api) : super(api, valueFunction: (entity) => entity.id.value);
 }
 
-class PageCacheView<T extends RestrrEntity> extends MapCacheView<(int, int), Paginated<T>> {
+class PageCacheView<E extends RestrrEntity<E, ID>, ID extends EntityId<E>> extends MapCacheView<(int, int), Paginated<E>> {
   PageCacheView(RestrrImpl api) : super(api, valueFunction: (page) => (page.pageNumber, page.limit));
 }
 

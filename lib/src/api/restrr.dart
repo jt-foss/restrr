@@ -63,7 +63,7 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currency, String? description, String? iban});
+      {required String name, required int originalBalance, required Id currencyId, String? description, String? iban});
 
   List<Account> getAccounts();
 
@@ -73,8 +73,7 @@ abstract class Restrr {
 
   /* Currencies */
 
-  Future<Currency> createCurrency(
-      {required String name, required String symbol, required int decimalPlaces, String? isoCode});
+  Future<Currency> createCurrency({required String name, required String symbol, required int decimalPlaces, String? isoCode});
 
   List<Currency> getCurrencies();
 
