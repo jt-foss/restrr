@@ -60,11 +60,11 @@ class RestrrBuilder {
     apiImpl.session = response.data! as Session;
 
     /// Retrieve all accounts & currencies to make them available in the cache
-    final List<Account> accounts = await RequestUtils.fetchAllPaginated<AccountId, Account>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
+    final List<Account> accounts = await RequestUtils.fetchAllPaginated<Account, AccountId>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
     Restrr.log.info('Cached ${accounts.length} account(s)');
 
     final List<Currency> currencies =
-        await RequestUtils.fetchAllPaginated<CurrencyId, Currency>(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
+        await RequestUtils.fetchAllPaginated<Currency, CurrencyId>(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
     Restrr.log.info('Cached ${currencies.length} currencies');
 
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));

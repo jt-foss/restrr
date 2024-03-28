@@ -8,32 +8,32 @@ import '../requests/responses/rest_response.dart';
 class RequestUtils {
   const RequestUtils._();
 
-  static Future<List<T>> fetchAllPaginated<E extends Id<T>, T extends RestrrEntity<T, E>>(Restrr api, Paginated<T> firstBatch,
+  static Future<List<E>> fetchAllPaginated<E extends RestrrEntity<E, ID>, ID extends Id<E>>(Restrr api, Paginated<E> firstBatch,
       {Duration? delay}) async {
-    final List<T> all = [...firstBatch.items];
-    Paginated<T> current = firstBatch;
+    final List<E> all = [...firstBatch.items];
+    Paginated<E> current = firstBatch;
     while (current.hasNext) {
       if (delay != null) {
         await Future.delayed(delay);
       }
-      final Paginated<T> next = await current.nextPage!.call(api);
+      final Paginated<E> next = await current.nextPage!.call(api);
       current = next;
       all.addAll(next.items);
     }
     return all;
   }
 
-  static Future<T> getOrRetrieveSingle<E extends Id<T>, T extends RestrrEntity<T, E>>(
+  static Future<E> getOrRetrieveSingle<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
       {required Id key,
-      required EntityCacheView<E, T> cacheView,
+      required EntityCacheView<E, ID> cacheView,
       required CompiledRoute compiledRoute,
-      required T Function(dynamic) mapper,
+      required E Function(dynamic) mapper,
       bool forceRetrieve = false,
       bool noAuth = false}) async {
     if (!forceRetrieve && cacheView.contains(key.id)) {
       return cacheView.get(key.id)!;
     }
-    final RestResponse<T> response = await RequestHandler.request(
+    final RestResponse<E> response = await RequestHandler.request(
         route: compiledRoute,
         routeOptions: cacheView.api.routeOptions,
         bearerToken: noAuth ? null : cacheView.api.session.token,
@@ -44,16 +44,16 @@ class RequestUtils {
     return response.data!;
   }
 
-  static Future<List<T>> getOrRetrieveMulti<E extends Id<T>, T extends RestrrEntity<T, E>>(
-      {required BatchCacheView<E, T> batchCache,
+  static Future<List<E>> getOrRetrieveMulti<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
+      {required BatchCacheView<E, ID> batchCache,
       required CompiledRoute compiledRoute,
-      required T Function(dynamic) mapper,
+      required E Function(dynamic) mapper,
       bool forceRetrieve = false,
       bool noAuth = false}) async {
     if (!forceRetrieve && batchCache.hasSnapshot) {
       return batchCache.get()!;
     }
-    final RestResponse<List<T>> response = await RequestHandler.multiRequest(
+    final RestResponse<List<E>> response = await RequestHandler.multiRequest(
         route: compiledRoute,
         routeOptions: batchCache.api.routeOptions,
         bearerToken: noAuth ? null : batchCache.api.session.token,
@@ -61,15 +61,15 @@ class RequestUtils {
     if (response.hasError) {
       throw response.error!;
     }
-    final List<T> remote = response.data!;
+    final List<E> remote = response.data!;
     batchCache.update(remote);
     return remote;
   }
 
-  static Future<Paginated<T>> getOrRetrievePage<E extends Id<T>, T extends RestrrEntity<T, E>>(
-      {required PageCacheView<E, T> pageCache,
+  static Future<Paginated<E>> getOrRetrievePage<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
+      {required PageCacheView<E, ID> pageCache,
       required CompiledRoute compiledRoute,
-      required T Function(dynamic) mapper,
+      required E Function(dynamic) mapper,
       required int page,
       required int limit,
       bool forceRetrieve = false,
@@ -77,7 +77,7 @@ class RequestUtils {
     if (!forceRetrieve && pageCache.contains((page, limit))) {
       return pageCache.get((page, limit))!;
     }
-    final RestResponse<List<T>> response = await RequestHandler.paginatedRequest(
+    final RestResponse<List<E>> response = await RequestHandler.paginatedRequest(
         route: compiledRoute,
         routeOptions: pageCache.api.routeOptions,
         page: page,
@@ -87,7 +87,7 @@ class RequestUtils {
     if (response.hasError) {
       throw response.error!;
     }
-    final Paginated<T> remote = (response as PaginatedResponse<T>).toPage();
+    final Paginated<E> remote = (response as PaginatedResponse<E>).toPage();
     pageCache.cache(remote);
     return remote;
   }

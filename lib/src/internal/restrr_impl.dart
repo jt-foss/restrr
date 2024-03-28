@@ -23,16 +23,16 @@ class RestrrImpl implements Restrr {
 
   /* Caches */
 
-  late final EntityCacheView<CurrencyId, Currency> currencyCache = EntityCacheView(this);
-  late final EntityCacheView<PartialSessionId, PartialSession> sessionCache = EntityCacheView(this);
-  late final EntityCacheView<AccountId, Account> accountCache = EntityCacheView(this);
-  late final EntityCacheView<TransactionId, Transaction> transactionCache = EntityCacheView(this);
-  late final EntityCacheView<UserId, User> userCache = EntityCacheView(this);
+  late final EntityCacheView<Currency, CurrencyId> currencyCache = EntityCacheView(this);
+  late final EntityCacheView<PartialSession, PartialSessionId> sessionCache = EntityCacheView(this);
+  late final EntityCacheView<Account, AccountId> accountCache = EntityCacheView(this);
+  late final EntityCacheView<Transaction, TransactionId> transactionCache = EntityCacheView(this);
+  late final EntityCacheView<User, UserId> userCache = EntityCacheView(this);
 
-  late final PageCacheView<CurrencyId, Currency> currencyPageCache = PageCacheView(this);
-  late final PageCacheView<PartialSessionId, PartialSession> sessionPageCache = PageCacheView(this);
-  late final PageCacheView<AccountId, Account> accountPageCache = PageCacheView(this);
-  late final PageCacheView<TransactionId, Transaction> transactionPageCache = PageCacheView(this);
+  late final PageCacheView<Currency, CurrencyId> currencyPageCache = PageCacheView(this);
+  late final PageCacheView<PartialSession, PartialSessionId> sessionPageCache = PageCacheView(this);
+  late final PageCacheView<Account, AccountId> accountPageCache = PageCacheView(this);
+  late final PageCacheView<Transaction, TransactionId> transactionPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
