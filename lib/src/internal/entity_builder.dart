@@ -18,7 +18,7 @@ class EntityBuilder {
   Currency buildCurrency(Map<String, dynamic> json) {
     CurrencyImpl currency = CurrencyImpl(
       api: api,
-      id: json['id'],
+      id: CurrencyIdImpl(api: api, value: json['id']),
       name: json['name'],
       symbol: json['symbol'],
       decimalPlaces: json['decimal_places'],
@@ -43,7 +43,7 @@ class EntityBuilder {
   PartialSession buildSession(Map<String, dynamic> json) {
     PartialSessionImpl session = PartialSessionImpl(
       api: api,
-      id: json['id'],
+      id: PartialSessionIdImpl(api: api, value: json['id']),
       name: json['name'],
       createdAt: DateTime.parse(json['created_at']),
       expiresAt: DateTime.parse(json['expires_at']),
@@ -66,13 +66,13 @@ class EntityBuilder {
   Account buildAccount(Map<String, dynamic> json) {
     final AccountImpl account = AccountImpl(
       api: api,
-      id: json['id'],
+      id: AccountIdImpl(api: api, value: json['id']),
       name: json['name'],
       description: json['description'],
       iban: json['iban'],
       balance: json['balance'],
       originalBalance: json['original_balance'],
-      currencyId: json['currency_id'],
+      currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       createdAt: DateTime.parse(json['created_at']),
     );
     return api.accountCache.cache(account);
@@ -81,13 +81,13 @@ class EntityBuilder {
   Transaction buildTransaction(Map<String, dynamic> json) {
     final TransactionImpl transaction = TransactionImpl(
       api: api,
-      id: json['id'],
-      sourceId: json['source_id'],
-      destinationId: json['destination_id'],
+      id: TransactionIdImpl(api: api, value: json['id']),
+      sourceId: json['source_id'] != null ? AccountIdImpl(api: api, value: json['source_id']) : null,
+      destinationId: json['destination_id'] != null ? AccountIdImpl(api: api, value: json['destination_id']) : null,
       amount: json['amount'],
-      currencyId: json['currency'],
+      currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       description: json['description'],
-      budgetId: json['budget_id'],
+      budgetId: null, // TODO: implement budgets
       createdAt: DateTime.parse(json['created_at']),
       executedAt: DateTime.parse(json['executed_at']),
     );
@@ -97,7 +97,7 @@ class EntityBuilder {
   User buildUser(Map<String, dynamic> json) {
     final UserImpl user = UserImpl(
       api: api,
-      id: json['id'],
+      id: UserIdImpl(api: api, value: json['id']),
       username: json['username'],
       email: json['email'],
       displayName: json['display_name'],
