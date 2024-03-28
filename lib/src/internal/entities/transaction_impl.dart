@@ -74,12 +74,12 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
 
   @override
   Future<Transaction> update(
-      {AccountId? sourceId,
-      AccountId? destinationId,
+      {Id? sourceId,
+      Id? destinationId,
       int? amount,
-      CurrencyId? currencyId,
+      Id? currencyId,
       String? description,
-      EntityId? budgetId,
+      Id? budgetId,
       DateTime? executedAt}) async {
     if (sourceId == null &&
         destinationId == null &&
@@ -94,12 +94,12 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
         route: TransactionRoutes.patchById.compile(params: [id]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         body: {
-          if (sourceId != null) 'source_id': sourceId.id,
-          if (destinationId != null) 'destination_id': destinationId.id,
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
           if (amount != null) 'amount': amount,
-          if (currencyId != null) 'currency': currencyId.id,
+          if (currencyId != null) 'currency': currencyId,
           if (description != null) 'description': description,
-          if (budgetId != null) 'budget_id': budgetId.id,
+          if (budgetId != null) 'budget_id': budgetId,
           if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;

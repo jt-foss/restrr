@@ -16,7 +16,7 @@ abstract class Account extends RestrrEntity<Account, AccountId> {
 
   Future<bool> delete();
 
-  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, EntityId? currencyId});
+  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
 }

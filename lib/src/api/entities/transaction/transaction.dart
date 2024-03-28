@@ -20,12 +20,12 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   Future<bool> delete();
 
   Future<Transaction> update({
-    AccountId? sourceId,
-    AccountId? destinationId,
+    Id? sourceId,
+    Id? destinationId,
     int? amount,
-    CurrencyId? currencyId,
+    Id? currencyId,
     String? description,
-    EntityId? budgetId,
+    Id? budgetId,
     DateTime? executedAt,
   });
 }
