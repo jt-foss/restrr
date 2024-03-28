@@ -2,7 +2,7 @@ import 'package:restrr/src/internal/requests/restrr_errors.dart';
 
 class ErrorResponse {
   final String details;
-  final String? reference;
+  final dynamic reference;
   final RestrrError? error;
   final ApiCode apiCode;
 
