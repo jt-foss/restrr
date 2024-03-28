@@ -8,7 +8,8 @@ import '../requests/responses/rest_response.dart';
 class RequestUtils {
   const RequestUtils._();
 
-  static Future<List<T>> fetchAllPaginated<T extends RestrrEntity>(Restrr api, Paginated<T> firstBatch, {Duration? delay}) async {
+  static Future<List<T>> fetchAllPaginated<E extends Id<T>, T extends RestrrEntity<T, E>>(Restrr api, Paginated<T> firstBatch,
+      {Duration? delay}) async {
     final List<T> all = [...firstBatch.items];
     Paginated<T> current = firstBatch;
     while (current.hasNext) {
@@ -22,15 +23,15 @@ class RequestUtils {
     return all;
   }
 
-  static Future<T> getOrRetrieveSingle<T extends RestrrEntity>(
+  static Future<T> getOrRetrieveSingle<E extends Id<T>, T extends RestrrEntity<T, E>>(
       {required Id key,
-      required EntityCacheView<T> cacheView,
+      required EntityCacheView<E, T> cacheView,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       bool forceRetrieve = false,
       bool noAuth = false}) async {
-    if (!forceRetrieve && cacheView.contains(key)) {
-      return cacheView.get(key)!;
+    if (!forceRetrieve && cacheView.contains(key.id)) {
+      return cacheView.get(key.id)!;
     }
     final RestResponse<T> response = await RequestHandler.request(
         route: compiledRoute,
@@ -43,8 +44,8 @@ class RequestUtils {
     return response.data!;
   }
 
-  static Future<List<T>> getOrRetrieveMulti<T extends RestrrEntity>(
-      {required BatchCacheView<T> batchCache,
+  static Future<List<T>> getOrRetrieveMulti<E extends Id<T>, T extends RestrrEntity<T, E>>(
+      {required BatchCacheView<E, T> batchCache,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       bool forceRetrieve = false,
@@ -65,8 +66,8 @@ class RequestUtils {
     return remote;
   }
 
-  static Future<Paginated<T>> getOrRetrievePage<T extends RestrrEntity>(
-      {required PageCacheView<T> pageCache,
+  static Future<Paginated<T>> getOrRetrievePage<E extends Id<T>, T extends RestrrEntity<T, E>>(
+      {required PageCacheView<E, T> pageCache,
       required CompiledRoute compiledRoute,
       required T Function(dynamic) mapper,
       required int page,

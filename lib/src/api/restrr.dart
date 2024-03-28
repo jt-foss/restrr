@@ -51,7 +51,7 @@ abstract class Restrr {
 
   Future<PartialSession> retrieveCurrentSession({bool forceRetrieve = false});
 
-  Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false});
+  Future<PartialSession> retrieveSessionById(IdPrimitive id, {bool forceRetrieve = false});
 
   Future<Paginated<PartialSession>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
 
@@ -63,22 +63,21 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currency, String? description, String? iban});
+      {required String name, required int originalBalance, required IdPrimitive currencyId, String? description, String? iban});
 
   List<Account> getAccounts();
 
-  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false});
+  Future<Account> retrieveAccountById(IdPrimitive id, {bool forceRetrieve = false});
 
   Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false});
 
   /* Currencies */
 
-  Future<Currency> createCurrency(
-      {required String name, required String symbol, required int decimalPlaces, String? isoCode});
+  Future<Currency> createCurrency({required String name, required String symbol, required int decimalPlaces, String? isoCode});
 
   List<Currency> getCurrencies();
 
-  Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
+  Future<Currency> retrieveCurrencyById(IdPrimitive id, {bool forceRetrieve = false});
 
   Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
 
@@ -86,14 +85,14 @@ abstract class Restrr {
 
   Future<Transaction> createTransaction(
       {required int amount,
-      required Id currencyId,
+      required IdPrimitive currencyId,
       required DateTime executedAt,
       String? description,
-      Id? sourceId,
-      Id? destinationId,
-      Id? budgetId});
+      IdPrimitive? sourceId,
+      IdPrimitive? destinationId,
+      IdPrimitive? budgetId});
 
-  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
+  Future<Transaction> retrieveTransactionById(IdPrimitive id, {bool forceRetrieve = false});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
 }

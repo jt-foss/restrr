@@ -2,7 +2,7 @@ import 'package:restrr/src/internal/restrr_impl.dart';
 
 import '../../../restrr.dart';
 
-class BatchCacheView<T extends RestrrEntity> {
+class BatchCacheView<E extends Id<T>, T extends RestrrEntity<T, E>> {
   final RestrrImpl api;
 
   BatchCacheView(this.api);

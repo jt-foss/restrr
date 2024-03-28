@@ -42,16 +42,13 @@ class RestrrBuilder {
     });
   }
 
-  Future<Restrr> _handleAuthProcess(
-      {required Future<RestResponse<PartialSession>> Function(RestrrImpl) authFunction}) async {
+  Future<Restrr> _handleAuthProcess({required Future<RestResponse<PartialSession>> Function(RestrrImpl) authFunction}) async {
     // check if the URI is valid and the API is healthy
     final ServerInfo statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     Restrr.log.config('Host: $uri, API v${statusResponse.apiVersion}');
     // build api instance
     final RestrrImpl apiImpl = RestrrImpl(
-        options: options,
-        routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.apiVersion),
-        eventMap: _eventMap);
+        options: options, routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.apiVersion), eventMap: _eventMap);
     // call auth function
     final RestResponse<PartialSession> response = await authFunction(apiImpl);
     if (response.hasError) {
@@ -63,10 +60,11 @@ class RestrrBuilder {
     apiImpl.session = response.data! as Session;
 
     /// Retrieve all accounts & currencies to make them available in the cache
-    final List<Account> accounts = await RequestUtils.fetchAllPaginated(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
+    final List<Account> accounts = await RequestUtils.fetchAllPaginated<AccountId, Account>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
     Restrr.log.info('Cached ${accounts.length} account(s)');
 
-    final List<Currency> currencies = await RequestUtils.fetchAllPaginated(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
+    final List<Currency> currencies =
+        await RequestUtils.fetchAllPaginated<CurrencyId, Currency>(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
     Restrr.log.info('Cached ${currencies.length} currencies');
 
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));

@@ -25,8 +25,8 @@ class RequestHandler {
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response = await route.submit(
-          routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
+      final Response<dynamic> response =
+          await route.submit(routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: mapper.call(response.data), statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e);
@@ -61,8 +61,8 @@ class RequestHandler {
       Map<int, RestrrError> errorMap = const {},
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response = await route.submit(
-          routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
+      final Response<dynamic> response =
+          await route.submit(routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       return RestResponse(data: true, statusCode: response.statusCode);
     } on DioException catch (e) {
       return _handleDioException(e);
@@ -97,8 +97,8 @@ class RequestHandler {
       dynamic body,
       String contentType = 'application/json'}) async {
     try {
-      final Response<dynamic> response = await route.submit(
-          routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
+      final Response<dynamic> response =
+          await route.submit(routeOptions: routeOptions, body: body, bearerToken: bearerToken, contentType: contentType);
       if (response.data is! List<dynamic>) {
         throw StateError('Received response is not a list!');
       }

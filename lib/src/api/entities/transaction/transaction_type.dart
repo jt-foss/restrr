@@ -1,5 +1,1 @@
-enum TransactionType {
-  deposit,
-  withdrawal,
-  transfer
-}
+enum TransactionType { deposit, withdrawal, transfer }

@@ -2,16 +2,36 @@ import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../restrr.dart';
 import '../requests/responses/rest_response.dart';
+import '../utils/request_utils.dart';
 
-class TransactionImpl extends RestrrEntityImpl implements Transaction {
+class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
+  const TransactionIdImpl({required super.api, required super.id});
+
   @override
-  final int? sourceId;
+  Transaction? get() {
+    return api.transactionCache.get(id);
+  }
+
   @override
-  final int? destinationId;
+  Future<Transaction> retrieve({forceRetrieve = false}) {
+    return RequestUtils.getOrRetrieveSingle(
+        key: this,
+        cacheView: api.transactionCache,
+        compiledRoute: TransactionRoutes.getById.compile(params: [id]),
+        mapper: (json) => api.entityBuilder.buildTransaction(json),
+        forceRetrieve: forceRetrieve);
+  }
+}
+
+class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> implements Transaction {
+  @override
+  final AccountId? sourceId;
+  @override
+  final AccountId? destinationId;
   @override
   final int amount;
   @override
-  final Id currencyId;
+  final CurrencyId currencyId;
   @override
   final String? description;
   @override
@@ -54,10 +74,10 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
 
   @override
   Future<Transaction> update(
-      {int? sourceId,
-      int? destinationId,
+      {AccountId? sourceId,
+      AccountId? destinationId,
       int? amount,
-      int? currencyId,
+      CurrencyId? currencyId,
       String? description,
       Id? budgetId,
       DateTime? executedAt}) async {
@@ -74,36 +94,14 @@ class TransactionImpl extends RestrrEntityImpl implements Transaction {
         route: TransactionRoutes.patchById.compile(params: [id]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         body: {
-          if (sourceId != null) 'source_id': sourceId,
-          if (destinationId != null) 'destination_id': destinationId,
+          if (sourceId != null) 'source_id': sourceId.id,
+          if (destinationId != null) 'destination_id': destinationId.id,
           if (amount != null) 'amount': amount,
-          if (currencyId != null) 'currency': currencyId,
+          if (currencyId != null) 'currency': currencyId.id,
           if (description != null) 'description': description,
-          if (budgetId != null) 'budget_id': budgetId,
+          if (budgetId != null) 'budget_id': budgetId.id,
           if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;
-  }
-
-  @override
-  Account? getSourceAccount() => sourceId == null ? null : api.accountCache.get(sourceId!);
-
-  @override
-  Future<Account>? retrieveSourceAccount({bool forceRetrieve = false}) {
-    if (sourceId == null) {
-      return null;
-    }
-    return api.retrieveAccountById(sourceId!, forceRetrieve: forceRetrieve);
-  }
-
-  @override
-  Account? getDestinationAccount() => destinationId == null ? null : api.accountCache.get(destinationId!);
-
-  @override
-  Future<Account>? retrieveDestinationAccount({bool forceRetrieve = false}) {
-    if (destinationId == null) {
-      return null;
-    }
-    return api.retrieveAccountById(destinationId!, forceRetrieve: forceRetrieve);
   }
 }
