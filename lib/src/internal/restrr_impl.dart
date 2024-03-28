@@ -66,7 +66,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<PartialSession> retrieveSessionById(IdPrimitive id, {bool forceRetrieve = false}) {
+  Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
     return PartialSessionIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
@@ -103,7 +103,7 @@ class RestrrImpl implements Restrr {
   Future<Account> createAccount(
       {required String name,
       required int originalBalance,
-      required IdPrimitive currencyId,
+      required Id currencyId,
       String? description,
       String? iban}) async {
     final RestResponse<Account> response = await requestHandler
@@ -124,7 +124,7 @@ class RestrrImpl implements Restrr {
   List<Account> getAccounts() => accountCache.getAll();
 
   @override
-  Future<Account> retrieveAccountById(IdPrimitive id, {bool forceRetrieve = false}) async {
+  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false}) async {
     return AccountIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
@@ -159,7 +159,7 @@ class RestrrImpl implements Restrr {
   List<Currency> getCurrencies() => currencyCache.getAll();
 
   @override
-  Future<Currency> retrieveCurrencyById(IdPrimitive id, {bool forceRetrieve = false}) async {
+  Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
     return CurrencyIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
@@ -179,12 +179,12 @@ class RestrrImpl implements Restrr {
   @override
   Future<Transaction> createTransaction(
       {required int amount,
-      required IdPrimitive currencyId,
+      required Id currencyId,
       required DateTime executedAt,
       String? description,
-      IdPrimitive? sourceId,
-      IdPrimitive? destinationId,
-      IdPrimitive? budgetId}) async {
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId}) async {
     if (sourceId == null && destinationId == null) {
       throw ArgumentError('Either source or destination must be set!');
     }
@@ -207,7 +207,7 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Transaction> retrieveTransactionById(IdPrimitive id, {bool forceRetrieve = false}) async {
+  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false}) async {
     return TransactionIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
   }
 

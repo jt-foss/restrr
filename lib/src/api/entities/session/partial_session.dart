@@ -1,6 +1,6 @@
 import '../../../../restrr.dart';
 
-abstract class PartialSessionId extends Id<PartialSession> {}
+abstract class PartialSessionId extends EntityId<PartialSession> {}
 
 abstract class PartialSession extends RestrrEntity<PartialSession, PartialSessionId> {
   @override

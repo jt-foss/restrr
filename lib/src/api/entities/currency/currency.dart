@@ -1,6 +1,6 @@
 import '../../../../restrr.dart';
 
-abstract class CurrencyId extends Id<Currency> {}
+abstract class CurrencyId extends EntityId<Currency> {}
 
 abstract class Currency extends RestrrEntity<Currency, CurrencyId> {
   @override

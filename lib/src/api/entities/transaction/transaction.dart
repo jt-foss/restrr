@@ -1,6 +1,6 @@
 import 'package:restrr/restrr.dart';
 
-abstract class TransactionId extends Id<Transaction> {}
+abstract class TransactionId extends EntityId<Transaction> {}
 
 abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   @override
@@ -11,7 +11,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   int get amount;
   CurrencyId get currencyId;
   String? get description;
-  Id? get budgetId;
+  EntityId? get budgetId;
   DateTime get createdAt;
   DateTime get executedAt;
 
@@ -25,7 +25,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
     int? amount,
     CurrencyId? currencyId,
     String? description,
-    Id? budgetId,
+    EntityId? budgetId,
     DateTime? executedAt,
   });
 }

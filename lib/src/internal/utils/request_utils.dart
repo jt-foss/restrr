@@ -8,7 +8,7 @@ import '../requests/responses/rest_response.dart';
 class RequestUtils {
   const RequestUtils._();
 
-  static Future<List<E>> fetchAllPaginated<E extends RestrrEntity<E, ID>, ID extends Id<E>>(Restrr api, Paginated<E> firstBatch,
+  static Future<List<E>> fetchAllPaginated<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(Restrr api, Paginated<E> firstBatch,
       {Duration? delay}) async {
     final List<E> all = [...firstBatch.items];
     Paginated<E> current = firstBatch;
@@ -23,8 +23,8 @@ class RequestUtils {
     return all;
   }
 
-  static Future<E> getOrRetrieveSingle<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
-      {required Id key,
+  static Future<E> getOrRetrieveSingle<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(
+      {required EntityId key,
       required EntityCacheView<E, ID> cacheView,
       required CompiledRoute compiledRoute,
       required E Function(dynamic) mapper,
@@ -44,7 +44,7 @@ class RequestUtils {
     return response.data!;
   }
 
-  static Future<List<E>> getOrRetrieveMulti<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
+  static Future<List<E>> getOrRetrieveMulti<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(
       {required BatchCacheView<E, ID> batchCache,
       required CompiledRoute compiledRoute,
       required E Function(dynamic) mapper,
@@ -66,7 +66,7 @@ class RequestUtils {
     return remote;
   }
 
-  static Future<Paginated<E>> getOrRetrievePage<E extends RestrrEntity<E, ID>, ID extends Id<E>>(
+  static Future<Paginated<E>> getOrRetrievePage<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(
       {required PageCacheView<E, ID> pageCache,
       required CompiledRoute compiledRoute,
       required E Function(dynamic) mapper,

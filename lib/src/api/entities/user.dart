@@ -1,6 +1,6 @@
 import '../../../restrr.dart';
 
-abstract class UserId extends Id<User> {}
+abstract class UserId extends EntityId<User> {}
 
 abstract class User extends RestrrEntity<User, UserId> {
   String get username;

@@ -51,7 +51,7 @@ abstract class Restrr {
 
   Future<PartialSession> retrieveCurrentSession({bool forceRetrieve = false});
 
-  Future<PartialSession> retrieveSessionById(IdPrimitive id, {bool forceRetrieve = false});
+  Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<PartialSession>> retrieveAllSessions({int page = 1, int limit = 25, bool forceRetrieve = false});
 
@@ -63,11 +63,11 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required IdPrimitive currencyId, String? description, String? iban});
+      {required String name, required int originalBalance, required Id currencyId, String? description, String? iban});
 
   List<Account> getAccounts();
 
-  Future<Account> retrieveAccountById(IdPrimitive id, {bool forceRetrieve = false});
+  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false});
 
@@ -77,7 +77,7 @@ abstract class Restrr {
 
   List<Currency> getCurrencies();
 
-  Future<Currency> retrieveCurrencyById(IdPrimitive id, {bool forceRetrieve = false});
+  Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Currency>> retrieveAllCurrencies({int page = 1, int limit = 25, bool forceRetrieve = false});
 
@@ -85,14 +85,14 @@ abstract class Restrr {
 
   Future<Transaction> createTransaction(
       {required int amount,
-      required IdPrimitive currencyId,
+      required Id currencyId,
       required DateTime executedAt,
       String? description,
-      IdPrimitive? sourceId,
-      IdPrimitive? destinationId,
-      IdPrimitive? budgetId});
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId});
 
-  Future<Transaction> retrieveTransactionById(IdPrimitive id, {bool forceRetrieve = false});
+  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
 }

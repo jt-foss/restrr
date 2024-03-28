@@ -1,16 +1,16 @@
 import '../../../restrr.dart';
 import '../restrr_impl.dart';
 
-abstract class IdImpl<E> implements Id<E> {
+abstract class IdImpl<E> implements EntityId<E> {
   @override
   final RestrrImpl api;
   @override
-  final IdPrimitive id;
+  final Id id;
 
   const IdImpl({required this.api, required this.id});
 }
 
-class RestrrEntityImpl<E, ID extends Id<E>> implements RestrrEntity<E, ID> {
+class RestrrEntityImpl<E, ID extends EntityId<E>> implements RestrrEntity<E, ID> {
   @override
   final RestrrImpl api;
   @override

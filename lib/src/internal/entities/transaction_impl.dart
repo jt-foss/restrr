@@ -35,7 +35,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   @override
   final String? description;
   @override
-  final Id? budgetId;
+  final EntityId? budgetId;
   @override
   final DateTime createdAt;
   @override
@@ -79,7 +79,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
       int? amount,
       CurrencyId? currencyId,
       String? description,
-      Id? budgetId,
+      EntityId? budgetId,
       DateTime? executedAt}) async {
     if (sourceId == null &&
         destinationId == null &&
