@@ -30,8 +30,8 @@ class RequestUtils {
       required E Function(dynamic) mapper,
       bool forceRetrieve = false,
       bool noAuth = false}) async {
-    if (!forceRetrieve && cacheView.contains(key.id)) {
-      return cacheView.get(key.id)!;
+    if (!forceRetrieve && cacheView.contains(key.value)) {
+      return cacheView.get(key.value)!;
     }
     final RestResponse<E> response = await RequestHandler.request(
         route: compiledRoute,

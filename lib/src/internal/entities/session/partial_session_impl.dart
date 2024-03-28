@@ -5,11 +5,11 @@ import '../../../../restrr.dart';
 import '../../utils/request_utils.dart';
 
 class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSessionId {
-  const PartialSessionIdImpl({required super.api, required super.id});
+  const PartialSessionIdImpl({required super.api, required super.value});
 
   @override
   PartialSession? get() {
-    return api.sessionCache.get(id);
+    return api.sessionCache.get(value);
   }
 
   @override
@@ -17,7 +17,7 @@ class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSess
     return RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.sessionCache,
-        compiledRoute: SessionRoutes.getById.compile(params: [id]),
+        compiledRoute: SessionRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildSession(json),
         forceRetrieve: forceRetrieve);
   }

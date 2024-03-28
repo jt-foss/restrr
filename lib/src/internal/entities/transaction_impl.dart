@@ -5,11 +5,11 @@ import '../requests/responses/rest_response.dart';
 import '../utils/request_utils.dart';
 
 class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
-  const TransactionIdImpl({required super.api, required super.id});
+  const TransactionIdImpl({required super.api, required super.value});
 
   @override
   Transaction? get() {
-    return api.transactionCache.get(id);
+    return api.transactionCache.get(value);
   }
 
   @override
@@ -17,7 +17,7 @@ class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
     return RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.transactionCache,
-        compiledRoute: TransactionRoutes.getById.compile(params: [id]),
+        compiledRoute: TransactionRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
   }

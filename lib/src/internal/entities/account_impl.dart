@@ -5,11 +5,11 @@ import '../requests/responses/rest_response.dart';
 import '../utils/request_utils.dart';
 
 class AccountIdImpl extends IdImpl<Account> implements AccountId {
-  const AccountIdImpl({required super.api, required super.id});
+  const AccountIdImpl({required super.api, required super.value});
 
   @override
   Account? get() {
-    return api.accountCache.get(id);
+    return api.accountCache.get(value);
   }
 
   @override
@@ -17,7 +17,7 @@ class AccountIdImpl extends IdImpl<Account> implements AccountId {
     return RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.accountCache,
-        compiledRoute: AccountRoutes.getById.compile(params: [id]),
+        compiledRoute: AccountRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildAccount(json),
         forceRetrieve: forceRetrieve);
   }

@@ -4,11 +4,11 @@ import '../../../restrr.dart';
 import '../utils/request_utils.dart';
 
 class UserIdImpl extends IdImpl<User> implements UserId {
-  const UserIdImpl({required super.api, required super.id});
+  const UserIdImpl({required super.api, required super.value});
 
   @override
   User? get() {
-    return api.userCache.get(id);
+    return api.userCache.get(value);
   }
 
   @override

@@ -4,11 +4,11 @@ import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 import '../../utils/request_utils.dart';
 
 class CurrencyIdImpl extends IdImpl<Currency> implements CurrencyId {
-  const CurrencyIdImpl({required super.api, required super.id});
+  const CurrencyIdImpl({required super.api, required super.value});
 
   @override
   Currency? get() {
-    return api.currencyCache.get(id);
+    return api.currencyCache.get(value);
   }
 
   @override
@@ -16,7 +16,7 @@ class CurrencyIdImpl extends IdImpl<Currency> implements CurrencyId {
     return RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.currencyCache,
-        compiledRoute: CurrencyRoutes.getById.compile(params: [id]),
+        compiledRoute: CurrencyRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         forceRetrieve: forceRetrieve);
   }

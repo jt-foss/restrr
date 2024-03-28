@@ -4,10 +4,24 @@ typedef Id = int;
 
 abstract class EntityId<E> {
   Restrr get api;
-  Id get id;
+  Id get value;
 
   E? get();
   Future<E> retrieve({forceRetrieve = false});
+
+  @override
+  String toString() => value.toString();
+
+  @override
+  bool operator ==(Object other) {
+    if (other is EntityId<E>) {
+      return other.value == value;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 /// The base class for all Restrr entities.

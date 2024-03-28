@@ -50,7 +50,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<User> retrieveSelf({bool forceRetrieve = false}) async {
-    return UserIdImpl(api: this, id: session.user.id.id).retrieve(forceRetrieve: forceRetrieve);
+    return UserIdImpl(api: this, value: session.user.id.value).retrieve(forceRetrieve: forceRetrieve);
   }
 
   /* Sessions */
@@ -67,7 +67,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
-    return PartialSessionIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
+    return PartialSessionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
@@ -125,7 +125,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false}) async {
-    return AccountIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
+    return AccountIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
@@ -160,7 +160,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
-    return CurrencyIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
+    return CurrencyIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
@@ -208,7 +208,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false}) async {
-    return TransactionIdImpl(api: this, id: id).retrieve(forceRetrieve: forceRetrieve);
+    return TransactionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
