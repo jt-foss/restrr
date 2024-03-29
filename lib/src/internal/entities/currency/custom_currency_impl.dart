@@ -5,7 +5,7 @@ import 'currency_impl.dart';
 
 class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
   @override
-  final int? user;
+  final UserId? userId;
 
   const CustomCurrencyImpl({
     required super.api,
@@ -14,16 +14,16 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
     required super.symbol,
     required super.isoCode,
     required super.decimalPlaces,
-    required this.user,
+    required this.userId,
   });
 
   @override
-  bool isCreatedBy(User user) => this.user == user.id;
+  bool isCreatedBy(User user) => userId?.value == user.id.value;
 
   @override
   Future<bool> delete() async {
     final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]));
+        await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id.value]));
     return response.hasData && response.data!;
   }
 

@@ -54,7 +54,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
   @override
   Future<bool> delete() async {
     final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: AccountRoutes.deleteById.compile(params: [id]));
+        await api.requestHandler.noResponseApiRequest(route: AccountRoutes.deleteById.compile(params: [id.value]));
     return response.hasData && response.data!;
   }
 
@@ -83,7 +83,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrievePage(
         pageCache: api.transactionPageCache,
-        compiledRoute: AccountRoutes.getTransactions.compile(params: [id]),
+        compiledRoute: AccountRoutes.getTransactions.compile(params: [id.value]),
         page: page,
         limit: limit,
         mapper: (json) => api.entityBuilder.buildTransaction(json),

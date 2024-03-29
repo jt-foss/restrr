@@ -34,7 +34,7 @@ class EntityBuilder {
         symbol: currency.symbol,
         isoCode: currency.isoCode,
         decimalPlaces: currency.decimalPlaces,
-        user: json['user'],
+        userId: UserIdImpl(api: api, value: json['user']),
       );
     }
     return api.currencyCache.cache(currency);

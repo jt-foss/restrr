@@ -45,7 +45,7 @@ class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSession
   @override
   Future<bool> delete() async {
     final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: SessionRoutes.deleteById.compile(params: [id]));
+        await api.requestHandler.noResponseApiRequest(route: SessionRoutes.deleteById.compile(params: [id.value]));
     return response.hasData && response.data!;
   }
 }
