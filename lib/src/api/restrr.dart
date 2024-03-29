@@ -87,6 +87,7 @@ abstract class Restrr {
       {required int amount,
       required Id currencyId,
       required DateTime executedAt,
+      required String name,
       String? description,
       Id? sourceId,
       Id? destinationId,

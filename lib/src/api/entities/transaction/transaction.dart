@@ -10,6 +10,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   AccountId? get destinationId;
   int get amount;
   CurrencyId get currencyId;
+  String get name;
   String? get description;
   EntityId? get budgetId;
   DateTime get createdAt;
@@ -24,6 +25,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
     Id? destinationId,
     int? amount,
     Id? currencyId,
+    String? name,
     String? description,
     Id? budgetId,
     DateTime? executedAt,

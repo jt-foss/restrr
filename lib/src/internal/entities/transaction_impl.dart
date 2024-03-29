@@ -33,6 +33,8 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   @override
   final CurrencyId currencyId;
   @override
+  final String name;
+  @override
   final String? description;
   @override
   final EntityId? budgetId;
@@ -48,6 +50,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
     required this.destinationId,
     required this.amount,
     required this.currencyId,
+    required this.name,
     required this.description,
     required this.budgetId,
     required this.createdAt,
@@ -78,6 +81,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
       Id? destinationId,
       int? amount,
       Id? currencyId,
+      String? name,
       String? description,
       Id? budgetId,
       DateTime? executedAt}) async {
@@ -85,6 +89,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
         destinationId == null &&
         amount == null &&
         currencyId == null &&
+        name == null &&
         description == null &&
         budgetId == null &&
         executedAt == null) {
@@ -98,6 +103,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
           if (destinationId != null) 'destination_id': destinationId,
           if (amount != null) 'amount': amount,
           if (currencyId != null) 'currency': currencyId,
+          if (name != null) 'name': name,
           if (description != null) 'description': description,
           if (budgetId != null) 'budget_id': budgetId,
           if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),

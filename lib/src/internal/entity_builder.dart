@@ -86,6 +86,7 @@ class EntityBuilder {
       destinationId: json['destination_id'] != null ? AccountIdImpl(api: api, value: json['destination_id']) : null,
       amount: json['amount'],
       currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
+      name: json['name'],
       description: json['description'],
       budgetId: null, // TODO: implement budgets
       createdAt: DateTime.parse(json['created_at']),
