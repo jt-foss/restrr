@@ -8,19 +8,15 @@ class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
   const TransactionIdImpl({required super.api, required super.value});
 
   @override
-  Transaction? get() {
-    return api.transactionCache.get(value);
-  }
+  Transaction? get() => api.transactionCache.get(value);
 
   @override
-  Future<Transaction> retrieve({forceRetrieve = false}) {
-    return RequestUtils.getOrRetrieveSingle(
+  Future<Transaction> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.transactionCache,
         compiledRoute: TransactionRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
-  }
 }
 
 class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> implements Transaction {
@@ -69,11 +65,11 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   }
 
   @override
-  Future<bool> delete() async {
-    final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: TransactionRoutes.deleteById.compile(params: [id.value]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+        compiledRoute: TransactionRoutes.deleteById.compile(params: [id.value]),
+        api: api,
+        key: id,
+        cacheView: api.transactionCache);
 
   @override
   Future<Transaction> update(

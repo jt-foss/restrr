@@ -7,19 +7,15 @@ class CurrencyIdImpl extends IdImpl<Currency> implements CurrencyId {
   const CurrencyIdImpl({required super.api, required super.value});
 
   @override
-  Currency? get() {
-    return api.currencyCache.get(value);
-  }
+  Currency? get() => api.currencyCache.get(value);
 
   @override
-  Future<Currency> retrieve({forceRetrieve = false}) {
-    return RequestUtils.getOrRetrieveSingle(
+  Future<Currency> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.currencyCache,
         compiledRoute: CurrencyRoutes.getById.compile(params: [value]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         forceRetrieve: forceRetrieve);
-  }
 }
 
 class CurrencyImpl extends RestrrEntityImpl<Currency, CurrencyId> implements Currency {

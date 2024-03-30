@@ -66,7 +66,7 @@ void main() {
     });
 
     test('.buildSession', () {
-      final Session session = api.entityBuilder.buildSession(jsonDecode(sessionJson)) as Session;
+      final Session session = api.entityBuilder.buildPartialSession(jsonDecode(sessionJson)) as Session;
       expect(session.id, 1);
       expect(session.token, 'abc');
       expect(session.user.id, 1);

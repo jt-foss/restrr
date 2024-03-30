@@ -23,6 +23,8 @@ abstract class MapCacheView<K, V> {
 
   V cache(V value) => _cache[valueFunction.call(value)] = value;
 
+  V? remove(K key) => _cache.remove(key);
+
   void clear() => _cache.clear();
 
   bool contains(K key) => _cache.containsKey(key);

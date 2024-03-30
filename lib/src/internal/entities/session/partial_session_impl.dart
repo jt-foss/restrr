@@ -8,19 +8,15 @@ class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSess
   const PartialSessionIdImpl({required super.api, required super.value});
 
   @override
-  PartialSession? get() {
-    return api.sessionCache.get(value);
-  }
+  PartialSession? get() => api.sessionCache.get(value);
 
   @override
-  Future<PartialSession> retrieve({forceRetrieve = false}) {
-    return RequestUtils.getOrRetrieveSingle(
+  Future<PartialSession> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
         key: this,
         cacheView: api.sessionCache,
         compiledRoute: SessionRoutes.getById.compile(params: [value]),
-        mapper: (json) => api.entityBuilder.buildSession(json),
+        mapper: (json) => api.entityBuilder.buildPartialSession(json),
         forceRetrieve: forceRetrieve);
-  }
 }
 
 class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSessionId> implements PartialSession {
@@ -43,9 +39,9 @@ class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSession
   });
 
   @override
-  Future<bool> delete() async {
-    final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: SessionRoutes.deleteById.compile(params: [id.value]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+      compiledRoute: SessionRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 }

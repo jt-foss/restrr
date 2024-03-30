@@ -1,6 +1,7 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
+import '../../utils/request_utils.dart';
 import 'currency_impl.dart';
 
 class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
@@ -21,11 +22,11 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
   bool isCreatedBy(User user) => userId?.value == user.id.value;
 
   @override
-  Future<bool> delete() async {
-    final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id.value]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+      compiledRoute: CurrencyRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 
   @override
   Future<Currency> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {

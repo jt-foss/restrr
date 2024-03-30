@@ -29,7 +29,7 @@ class RestrrBuilder {
             'session_name': sessionName,
           },
           noAuth: true,
-          mapper: (json) => apiImpl.entityBuilder.buildSession(json));
+          mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));
     });
   }
 
@@ -38,7 +38,7 @@ class RestrrBuilder {
       return apiImpl.requestHandler.apiRequest(
           route: SessionRoutes.refresh.compile(),
           bearerTokenOverride: sessionToken,
-          mapper: (json) => apiImpl.entityBuilder.buildSession(json));
+          mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));
     });
   }
 

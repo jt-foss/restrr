@@ -61,7 +61,7 @@ class RestrrImpl implements Restrr {
         key: session.id,
         cacheView: sessionCache,
         compiledRoute: SessionRoutes.getCurrent.compile(),
-        mapper: (json) => entityBuilder.buildSession(json),
+        mapper: (json) => entityBuilder.buildPartialSession(json),
         forceRetrieve: forceRetrieve);
   }
 
@@ -77,7 +77,7 @@ class RestrrImpl implements Restrr {
         compiledRoute: SessionRoutes.getAll.compile(),
         page: page,
         limit: limit,
-        mapper: (json) => entityBuilder.buildSession(json),
+        mapper: (json) => entityBuilder.buildPartialSession(json),
         forceRetrieve: forceRetrieve);
   }
 

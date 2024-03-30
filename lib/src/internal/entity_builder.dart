@@ -40,7 +40,7 @@ class EntityBuilder {
     return api.currencyCache.cache(currency);
   }
 
-  PartialSession buildSession(Map<String, dynamic> json) {
+  PartialSession buildPartialSession(Map<String, dynamic> json) {
     PartialSessionImpl session = PartialSessionImpl(
       api: api,
       id: PartialSessionIdImpl(api: api, value: json['id']),
@@ -60,7 +60,7 @@ class EntityBuilder {
         token: json['token'],
       );
     }
-    return session;
+    return api.sessionCache.cache(session);
   }
 
   Account buildAccount(Map<String, dynamic> json) {
