@@ -1,17 +1,28 @@
 ## 0.8
 - Cache accounts & currencies on startup
+  - Added `Restrr#getAccounts`
+  - Added `Restrr#getCurrencies`
+- Added entity-specific Ids:
+  - Added `EntityId<E>` methods: `get`, `retrieve`
+    - Added `AccountId`
+    - Added `TransactionId`
+    - Added `CurrencyId`
+    - Added `UserId`
+    - Added `PartialSessionId`
+  - Entities now feature the corresponding `EntityId<E>` instead of a `Id (int)`
 - Added `Account`
   - Added `AccountRoutes`
-  - Added `Account` methods: `delete`, `update`, `retrieveTransactions`, `getCurrency`, `retrieveCurrency`
-  - Added `Restrr` methods: `createAccount`, `getAccounts`, `retrieveAccountById`, `retrieveAllAccounts`
+  - Added `Account` methods: `delete`, `update`, `retrieveAllTransactions`
+  - Added `Restrr` methods: `createAccount`, `retrieveAccountById`, `retrieveAllAccounts`
 - Added `Transaction`
   - Added `TransactionRoutes`
-  - Added `Transaction` methods: `delete`, `update`, `getSourceAccount`, `getDestinationAccount`, `retrieveSourceAccount`, `retrieveDestinationAccount`
+  - Added `Transaction` methods: `delete`, `update`
   - Added `Restrr` methods: `createTransaction`, `retrieveTransactionById`, `retrieveAllTransactions`
-- Added `Restrr#getCurrencies`
 - Fixed `Session#delete` using a wrong route
+- Unified entity deletion
 - Implemented actual `RestrrError` error codes
   - Added `ErrorResponse#apiCode` 
+  - Made `ErrorResponse#reference` `dynamic`
 
 ## 0.7
 - Restructured package (many breaking changes!)
