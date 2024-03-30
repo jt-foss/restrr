@@ -34,7 +34,7 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Currency> response = await api.requestHandler.apiRequest(
-        route: CurrencyRoutes.patchById.compile(params: [id]),
+        route: CurrencyRoutes.patchById.compile(params: [id.value]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         body: {
           if (name != null) 'name': name,

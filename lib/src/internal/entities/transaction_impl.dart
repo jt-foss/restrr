@@ -92,7 +92,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Transaction> response = await api.requestHandler.apiRequest(
-        route: TransactionRoutes.patchById.compile(params: [id]),
+        route: TransactionRoutes.patchById.compile(params: [id.value]),
         mapper: (json) => api.entityBuilder.buildTransaction(json),
         body: {
           if (sourceId != null) 'source_id': sourceId,

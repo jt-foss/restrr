@@ -63,7 +63,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Account> response = await api.requestHandler.apiRequest(
-        route: AccountRoutes.patchById.compile(params: [id]),
+        route: AccountRoutes.patchById.compile(params: [id.value]),
         mapper: (json) => api.entityBuilder.buildAccount(json),
         body: {
           if (name != null) 'name': name,
