@@ -98,7 +98,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
           if (sourceId != null) 'source_id': sourceId,
           if (destinationId != null) 'destination_id': destinationId,
           if (amount != null) 'amount': amount,
-          if (currencyId != null) 'currency': currencyId,
+          if (currencyId != null) 'currency_id': currencyId,
           if (name != null) 'name': name,
           if (description != null) 'description': description,
           if (budgetId != null) 'budget_id': budgetId,
