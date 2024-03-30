@@ -73,7 +73,8 @@ abstract class Restrr {
 
   /* Currencies */
 
-  Future<Currency> createCurrency({required String name, required String symbol, required int decimalPlaces, String? isoCode});
+  Future<Currency> createCurrency(
+      {required String name, required String symbol, required int decimalPlaces, String? isoCode});
 
   List<Currency> getCurrencies();
 

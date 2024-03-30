@@ -57,7 +57,8 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
       cacheView: api.transactionCache);
 
   @override
-  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
+  Future<Account> update(
+      {String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
     if (name == null && description == null && iban == null && originalBalance == null && currencyId == null) {
       throw ArgumentError('At least one field must be set');
     }

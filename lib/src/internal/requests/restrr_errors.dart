@@ -49,5 +49,6 @@ enum RestrrError {
   }
 
   RestrrException toException() => ServerException(this);
-  RestResponse<T> toResponse<T>({required int? statusCode}) => RestResponse<T>(error: toException(), statusCode: statusCode);
+  RestResponse<T> toResponse<T>({required int? statusCode}) =>
+      RestResponse<T>(error: toException(), statusCode: statusCode);
 }

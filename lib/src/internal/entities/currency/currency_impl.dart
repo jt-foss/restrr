@@ -11,11 +11,11 @@ class CurrencyIdImpl extends IdImpl<Currency> implements CurrencyId {
 
   @override
   Future<Currency> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
-        key: this,
-        cacheView: api.currencyCache,
-        compiledRoute: CurrencyRoutes.getById.compile(params: [value]),
-        mapper: (json) => api.entityBuilder.buildCurrency(json),
-        forceRetrieve: forceRetrieve);
+      key: this,
+      cacheView: api.currencyCache,
+      compiledRoute: CurrencyRoutes.getById.compile(params: [value]),
+      mapper: (json) => api.entityBuilder.buildCurrency(json),
+      forceRetrieve: forceRetrieve);
 }
 
 class CurrencyImpl extends RestrrEntityImpl<Currency, CurrencyId> implements Currency {

@@ -5,7 +5,8 @@ class EntityCacheView<E extends RestrrEntity<E, ID>, ID extends EntityId<E>> ext
   EntityCacheView(RestrrImpl api) : super(api, valueFunction: (entity) => entity.id.value);
 }
 
-class PageCacheView<E extends RestrrEntity<E, ID>, ID extends EntityId<E>> extends MapCacheView<(int, int), Paginated<E>> {
+class PageCacheView<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>
+    extends MapCacheView<(int, int), Paginated<E>> {
   PageCacheView(RestrrImpl api) : super(api, valueFunction: (page) => (page.pageNumber, page.limit));
 }
 

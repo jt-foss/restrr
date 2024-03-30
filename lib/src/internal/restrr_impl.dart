@@ -83,7 +83,8 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> deleteCurrentSession() async {
-    final RestResponse<bool> response = await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
+    final RestResponse<bool> response =
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteCurrent.compile());
     if (response.hasData && response.data!) {
       eventHandler.fire(SessionDeleteEvent(api: this));
       return true;
@@ -93,7 +94,8 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<bool> deleteAllSessions() async {
-    final RestResponse<bool> response = await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
+    final RestResponse<bool> response =
+        await requestHandler.noResponseApiRequest(route: SessionRoutes.deleteAll.compile());
     return response.hasData && response.data!;
   }
 
@@ -147,7 +149,12 @@ class RestrrImpl implements Restrr {
     final RestResponse<Currency> response = await requestHandler.apiRequest(
         route: CurrencyRoutes.create.compile(),
         mapper: (json) => entityBuilder.buildCurrency(json),
-        body: {'name': name, 'symbol': symbol, 'decimal_places': decimalPlaces, if (isoCode != null) 'iso_code': isoCode});
+        body: {
+          'name': name,
+          'symbol': symbol,
+          'decimal_places': decimalPlaces,
+          if (isoCode != null) 'iso_code': isoCode
+        });
     if (response.hasError) {
       throw response.error!;
     }
@@ -189,17 +196,19 @@ class RestrrImpl implements Restrr {
     if (sourceId == null && destinationId == null) {
       throw ArgumentError('Either source or destination must be set!');
     }
-    final RestResponse<Transaction> response = await requestHandler
-        .apiRequest(route: TransactionRoutes.create.compile(), mapper: (json) => entityBuilder.buildTransaction(json), body: {
-      'amount': amount,
-      'currency_id': currencyId,
-      'executed_at': executedAt.toUtc().toIso8601String(),
-      'name': name,
-      if (description != null) 'description': description,
-      if (sourceId != null) 'source_id': sourceId,
-      if (destinationId != null) 'destination_id': destinationId,
-      if (budgetId != null) 'budget_id': budgetId
-    });
+    final RestResponse<Transaction> response = await requestHandler.apiRequest(
+        route: TransactionRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildTransaction(json),
+        body: {
+          'amount': amount,
+          'currency_id': currencyId,
+          'executed_at': executedAt.toUtc().toIso8601String(),
+          'name': name,
+          if (description != null) 'description': description,
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
+          if (budgetId != null) 'budget_id': budgetId
+        });
     if (response.hasError) {
       throw response.error!;
     }
@@ -214,7 +223,8 @@ class RestrrImpl implements Restrr {
   }
 
   @override
-  Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+  Future<Paginated<Transaction>> retrieveAllTransactions(
+      {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrievePage(
         pageCache: transactionPageCache,
         compiledRoute: TransactionRoutes.getAll.compile(),

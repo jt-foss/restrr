@@ -25,7 +25,11 @@ class RequestUtils {
   }
 
   static Future<bool> deleteSingle<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(
-      {required CompiledRoute compiledRoute, required Restrr api, required EntityId key, required EntityCacheView<E, ID> cacheView, bool noAuth = false}) async {
+      {required CompiledRoute compiledRoute,
+      required Restrr api,
+      required EntityId key,
+      required EntityCacheView<E, ID> cacheView,
+      bool noAuth = false}) async {
     final RestResponse<bool> response = await RequestHandler.noResponseRequest(
         route: compiledRoute, routeOptions: api.routeOptions, bearerToken: noAuth ? null : api.session.token);
     if (response.hasData && response.data!) {

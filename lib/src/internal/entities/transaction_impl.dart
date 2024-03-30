@@ -12,11 +12,11 @@ class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
 
   @override
   Future<Transaction> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
-        key: this,
-        cacheView: api.transactionCache,
-        compiledRoute: TransactionRoutes.getById.compile(params: [value]),
-        mapper: (json) => api.entityBuilder.buildTransaction(json),
-        forceRetrieve: forceRetrieve);
+      key: this,
+      cacheView: api.transactionCache,
+      compiledRoute: TransactionRoutes.getById.compile(params: [value]),
+      mapper: (json) => api.entityBuilder.buildTransaction(json),
+      forceRetrieve: forceRetrieve);
 }
 
 class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> implements Transaction {
@@ -66,10 +66,10 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
 
   @override
   Future<bool> delete() => RequestUtils.deleteSingle(
-        compiledRoute: TransactionRoutes.deleteById.compile(params: [id.value]),
-        api: api,
-        key: id,
-        cacheView: api.transactionCache);
+      compiledRoute: TransactionRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 
   @override
   Future<Transaction> update(

@@ -1,5 +1,4 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
-import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
 import '../../../../restrr.dart';
 import '../../utils/request_utils.dart';
@@ -12,11 +11,11 @@ class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSess
 
   @override
   Future<PartialSession> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
-        key: this,
-        cacheView: api.sessionCache,
-        compiledRoute: SessionRoutes.getById.compile(params: [value]),
-        mapper: (json) => api.entityBuilder.buildPartialSession(json),
-        forceRetrieve: forceRetrieve);
+      key: this,
+      cacheView: api.sessionCache,
+      compiledRoute: SessionRoutes.getById.compile(params: [value]),
+      mapper: (json) => api.entityBuilder.buildPartialSession(json),
+      forceRetrieve: forceRetrieve);
 }
 
 class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSessionId> implements PartialSession {
