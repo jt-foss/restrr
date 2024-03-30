@@ -8,9 +8,7 @@ class AccountIdImpl extends IdImpl<Account> implements AccountId {
   const AccountIdImpl({required super.api, required super.value});
 
   @override
-  Account? get() {
-    return api.accountCache.get(value);
-  }
+  Account? get() => api.accountCache.get(value);
 
   @override
   Future<Account> retrieve({forceRetrieve = false}) {
@@ -52,11 +50,11 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
   });
 
   @override
-  Future<bool> delete() async {
-    final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: AccountRoutes.deleteById.compile(params: [id.value]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+      compiledRoute: AccountRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 
   @override
   Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
