@@ -62,7 +62,7 @@ class RestrrBuilder {
     }
     apiImpl.session = response.data! as Session;
 
-    /// Retrieve all accounts & currencies to make them available in the cache
+    // Retrieve all accounts & currencies to make them available in the cache
     try {
       final List<Account> accounts =
       await RequestUtils.fetchAllPaginated<Account, AccountId>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
