@@ -1,8 +1,26 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../restrr.dart';
+import '../utils/request_utils.dart';
 
-class UserImpl extends RestrrEntityImpl implements User {
+class UserIdImpl extends IdImpl<User> implements UserId {
+  const UserIdImpl({required super.api, required super.value});
+
+  @override
+  User? get() => api.userCache.get(value);
+
+  @override
+  Future<User> retrieve({forceRetrieve = false}) {
+    return RequestUtils.getOrRetrieveSingle(
+        key: this,
+        cacheView: api.userCache,
+        compiledRoute: UserRoutes.getSelf.compile(),
+        mapper: (json) => api.entityBuilder.buildUser(json),
+        forceRetrieve: forceRetrieve);
+  }
+}
+
+class UserImpl extends RestrrEntityImpl<User, UserId> implements User {
   @override
   final String username;
   @override

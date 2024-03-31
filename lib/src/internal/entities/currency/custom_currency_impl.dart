@@ -1,11 +1,12 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 
+import '../../utils/request_utils.dart';
 import 'currency_impl.dart';
 
 class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
   @override
-  final int? user;
+  final UserId? userId;
 
   const CustomCurrencyImpl({
     required super.api,
@@ -14,18 +15,18 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
     required super.symbol,
     required super.isoCode,
     required super.decimalPlaces,
-    required this.user,
+    required this.userId,
   });
 
   @override
-  bool isCreatedBy(User user) => this.user == user.id;
+  bool isCreatedBy(User user) => userId?.value == user.id.value;
 
   @override
-  Future<bool> delete() async {
-    final RestResponse<bool> response =
-        await api.requestHandler.noResponseApiRequest(route: CurrencyRoutes.deleteById.compile(params: [id]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+      compiledRoute: CurrencyRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 
   @override
   Future<Currency> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {
@@ -33,7 +34,7 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
       throw ArgumentError('At least one field must be set');
     }
     final RestResponse<Currency> response = await api.requestHandler.apiRequest(
-        route: CurrencyRoutes.updateById.compile(params: [id]),
+        route: CurrencyRoutes.patchById.compile(params: [id.value]),
         mapper: (json) => api.entityBuilder.buildCurrency(json),
         body: {
           if (name != null) 'name': name,

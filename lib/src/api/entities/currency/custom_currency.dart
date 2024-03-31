@@ -1,7 +1,7 @@
 import 'package:restrr/restrr.dart';
 
 abstract class CustomCurrency extends Currency {
-  int? get user;
+  UserId? get userId;
 
   bool isCreatedBy(User user);
 

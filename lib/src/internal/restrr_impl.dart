@@ -1,9 +1,14 @@
 import 'package:restrr/src/internal/cache/cache_view.dart';
+import 'package:restrr/src/internal/entities/account_impl.dart';
+import 'package:restrr/src/internal/entities/currency/currency_impl.dart';
+import 'package:restrr/src/internal/entities/transaction_impl.dart';
+import 'package:restrr/src/internal/entities/user_impl.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
 
 import '../../restrr.dart';
 import '../api/events/event_handler.dart';
+import 'entities/session/partial_session_impl.dart';
 import 'entity_builder.dart';
 
 class RestrrImpl implements Restrr {
@@ -18,12 +23,16 @@ class RestrrImpl implements Restrr {
 
   /* Caches */
 
-  late final EntityCacheView<Currency> currencyCache = EntityCacheView(this);
-  late final EntityCacheView<PartialSession> sessionCache = EntityCacheView(this);
-  late final EntityCacheView<User> userCache = EntityCacheView(this);
+  late final EntityCacheView<Currency, CurrencyId> currencyCache = EntityCacheView(this);
+  late final EntityCacheView<PartialSession, PartialSessionId> sessionCache = EntityCacheView(this);
+  late final EntityCacheView<Account, AccountId> accountCache = EntityCacheView(this);
+  late final EntityCacheView<Transaction, TransactionId> transactionCache = EntityCacheView(this);
+  late final EntityCacheView<User, UserId> userCache = EntityCacheView(this);
 
-  late final PageCacheView<Currency> currencyPageCache = PageCacheView(this);
-  late final PageCacheView<PartialSession> sessionPageCache = PageCacheView(this);
+  late final PageCacheView<Currency, CurrencyId> currencyPageCache = PageCacheView(this);
+  late final PageCacheView<PartialSession, PartialSessionId> sessionPageCache = PageCacheView(this);
+  late final PageCacheView<Account, AccountId> accountPageCache = PageCacheView(this);
+  late final PageCacheView<Transaction, TransactionId> transactionPageCache = PageCacheView(this);
 
   RestrrImpl({required this.routeOptions, required Map<Type, Function> eventMap, this.options = const RestrrOptions()})
       : eventHandler = RestrrEventHandler(eventMap);
@@ -41,12 +50,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<User> retrieveSelf({bool forceRetrieve = false}) async {
-    return RequestUtils.getOrRetrieveSingle(
-        key: selfUser.id,
-        cacheView: userCache,
-        compiledRoute: UserRoutes.getSelf.compile(),
-        mapper: (json) => entityBuilder.buildUser(json),
-        forceRetrieve: forceRetrieve);
+    return UserIdImpl(api: this, value: session.user.id.value).retrieve(forceRetrieve: forceRetrieve);
   }
 
   /* Sessions */
@@ -57,18 +61,13 @@ class RestrrImpl implements Restrr {
         key: session.id,
         cacheView: sessionCache,
         compiledRoute: SessionRoutes.getCurrent.compile(),
-        mapper: (json) => entityBuilder.buildSession(json),
+        mapper: (json) => entityBuilder.buildPartialSession(json),
         forceRetrieve: forceRetrieve);
   }
 
   @override
   Future<PartialSession> retrieveSessionById(Id id, {bool forceRetrieve = false}) {
-    return RequestUtils.getOrRetrieveSingle(
-        key: id,
-        cacheView: sessionCache,
-        compiledRoute: SessionRoutes.getById.compile(params: [id]),
-        mapper: (json) => entityBuilder.buildSession(json),
-        forceRetrieve: forceRetrieve);
+    return PartialSessionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
@@ -78,7 +77,7 @@ class RestrrImpl implements Restrr {
         compiledRoute: SessionRoutes.getAll.compile(),
         page: page,
         limit: limit,
-        mapper: (json) => entityBuilder.buildSession(json),
+        mapper: (json) => entityBuilder.buildPartialSession(json),
         forceRetrieve: forceRetrieve);
   }
 
@@ -100,6 +99,48 @@ class RestrrImpl implements Restrr {
     return response.hasData && response.data!;
   }
 
+  /* Accounts */
+
+  @override
+  Future<Account> createAccount(
+      {required String name,
+      required int originalBalance,
+      required Id currencyId,
+      String? description,
+      String? iban}) async {
+    final RestResponse<Account> response = await requestHandler
+        .apiRequest(route: AccountRoutes.create.compile(), mapper: (json) => entityBuilder.buildAccount(json), body: {
+      'name': name,
+      'original_balance': originalBalance,
+      'currency_id': currencyId,
+      if (description != null) 'description': description,
+      if (iban != null) 'iban': iban
+    });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return accountCache.cache(response.data!);
+  }
+
+  @override
+  List<Account> getAccounts() => accountCache.getAll();
+
+  @override
+  Future<Account> retrieveAccountById(Id id, {bool forceRetrieve = false}) async {
+    return AccountIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<Account>> retrieveAllAccounts({int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: accountPageCache,
+        compiledRoute: AccountRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildAccount(json),
+        forceRetrieve: forceRetrieve);
+  }
+
   /* Currencies */
 
   @override
@@ -118,18 +159,15 @@ class RestrrImpl implements Restrr {
       throw response.error!;
     }
     // invalidate cache
-    currencyCache.clear();
-    return response.data!;
+    return currencyCache.cache(response.data!);
   }
 
   @override
+  List<Currency> getCurrencies() => currencyCache.getAll();
+
+  @override
   Future<Currency> retrieveCurrencyById(Id id, {bool forceRetrieve = false}) async {
-    return RequestUtils.getOrRetrieveSingle(
-        key: id,
-        cacheView: currencyCache,
-        compiledRoute: CurrencyRoutes.getById.compile(params: [id]),
-        mapper: (json) => entityBuilder.buildCurrency(json),
-        forceRetrieve: forceRetrieve);
+    return CurrencyIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
@@ -140,6 +178,59 @@ class RestrrImpl implements Restrr {
         page: page,
         limit: limit,
         mapper: (json) => entityBuilder.buildCurrency(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  /* Transactions */
+
+  @override
+  Future<Transaction> createTransaction(
+      {required int amount,
+      required Id currencyId,
+      required DateTime executedAt,
+      required String name,
+      String? description,
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId}) async {
+    if (sourceId == null && destinationId == null) {
+      throw ArgumentError('Either source or destination must be set!');
+    }
+    final RestResponse<Transaction> response = await requestHandler.apiRequest(
+        route: TransactionRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildTransaction(json),
+        body: {
+          'amount': amount,
+          'currency_id': currencyId,
+          'executed_at': executedAt.toUtc().toIso8601String(),
+          'name': name,
+          if (description != null) 'description': description,
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
+          if (budgetId != null) 'budget_id': budgetId
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    transactionCache.clear();
+    return response.data!;
+  }
+
+  @override
+  Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false}) async {
+    return TransactionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<Transaction>> retrieveAllTransactions(
+      {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        pageCache: transactionPageCache,
+        compiledRoute: TransactionRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildTransaction(json),
         forceRetrieve: forceRetrieve);
   }
 }

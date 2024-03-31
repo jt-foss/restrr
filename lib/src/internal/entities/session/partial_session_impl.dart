@@ -1,8 +1,24 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../../restrr.dart';
+import '../../utils/request_utils.dart';
 
-class PartialSessionImpl extends RestrrEntityImpl implements PartialSession {
+class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSessionId {
+  const PartialSessionIdImpl({required super.api, required super.value});
+
+  @override
+  PartialSession? get() => api.sessionCache.get(value);
+
+  @override
+  Future<PartialSession> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
+      key: this,
+      cacheView: api.sessionCache,
+      compiledRoute: SessionRoutes.getById.compile(params: [value]),
+      mapper: (json) => api.entityBuilder.buildPartialSession(json),
+      forceRetrieve: forceRetrieve);
+}
+
+class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSessionId> implements PartialSession {
   @override
   final String? name;
   @override
@@ -22,8 +38,9 @@ class PartialSessionImpl extends RestrrEntityImpl implements PartialSession {
   });
 
   @override
-  Future<bool> delete() async {
-    final response = await api.requestHandler.noResponseApiRequest(route: SessionRoutes.getById.compile(params: [id]));
-    return response.hasData && response.data!;
-  }
+  Future<bool> delete() => RequestUtils.deleteSingle(
+      compiledRoute: SessionRoutes.deleteById.compile(params: [id.value]),
+      api: api,
+      key: id,
+      cacheView: api.transactionCache);
 }
