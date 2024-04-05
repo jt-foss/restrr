@@ -11,9 +11,9 @@ class SessionRoutes {
   const SessionRoutes._();
 
   static final Route getCurrent = Route.get('/session/current');
-  static final Route deleteCurrent = Route.post('/session/current');
+  static final Route deleteCurrent = Route.delete('/session/current');
   static final Route getById = Route.get('/session/{sessionId}');
-  static final Route deleteById = Route.get('/session/{sessionId}');
+  static final Route deleteById = Route.delete('/session/{sessionId}');
   static final Route getAll = Route.get('/session');
   static final Route deleteAll = Route.delete('/session');
   static final Route create = Route.post('/session');

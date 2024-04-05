@@ -1,3 +1,6 @@
+## 0.8.1
+- Fixed http methods of `SessionRoutes#deleteCurrent` & `SessionRoutes#deleteById`
+
 ## 0.8
 - Cache accounts & currencies on startup
   - Added `Restrr#getAccounts`
