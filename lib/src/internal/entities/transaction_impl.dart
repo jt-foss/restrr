@@ -8,10 +8,11 @@ class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
   const TransactionIdImpl({required super.api, required super.value});
 
   @override
-  Transaction? get() => api.transactionCache.get(value);
+  Transaction? get() => api.transactionCache.get(this);
 
   @override
   Future<Transaction> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
+      api: api,
       key: this,
       cacheView: api.transactionCache,
       compiledRoute: TransactionRoutes.getById.compile(params: [value]),

@@ -10,9 +10,9 @@ class RestrrBuilder {
 
   final Uri uri;
 
-  final RestrrOptions options;
+  RestrrOptions options = RestrrOptions();
 
-  RestrrBuilder({required this.uri, this.options = const RestrrOptions()});
+  RestrrBuilder({required this.uri});
 
   RestrrBuilder on<T extends RestrrEvent>(Type type, void Function(T) func) {
     _eventMap[type] = func;
@@ -42,16 +42,16 @@ class RestrrBuilder {
     });
   }
 
-  Future<Restrr> _handleAuthProcess(
-      {required Future<RestResponse<PartialSession>> Function(RestrrImpl) authFunction}) async {
+  Future<Restrr> _handleAuthProcess({required Future<RestResponse<PartialSession>> Function(RestrrImpl) authFunction}) async {
     // check if the URI is valid and the API is healthy
     final ServerInfo statusResponse = await Restrr.checkUri(uri, isWeb: options.isWeb);
     Restrr.log.config('Host: $uri, API v${statusResponse.apiVersion}');
     // build api instance
-    final RestrrImpl apiImpl = RestrrImpl(
-        options: options,
-        routeOptions: RouteOptions(hostUri: uri, apiVersion: statusResponse.apiVersion),
-        eventMap: _eventMap);
+    final RestrrImpl apiImpl = RestrrImpl(eventMap: _eventMap)
+      ..options = options
+      ..routeOptions = (RouteOptions()
+        ..hostUri = uri
+        ..apiVersion = statusResponse.apiVersion);
     // call auth function
     final RestResponse<PartialSession> response = await authFunction(apiImpl);
     if (response.hasError) {
@@ -65,15 +65,15 @@ class RestrrBuilder {
     // Retrieve all accounts & currencies to make them available in the cache
     try {
       final List<Account> accounts =
-      await RequestUtils.fetchAllPaginated<Account, AccountId>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
+          await RequestUtils.fetchAllPaginated<Account, AccountId>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
       Restrr.log.info('Cached ${accounts.length} account(s)');
     } catch (e) {
       Restrr.log.warning('Failed to cache accounts: $e');
     }
 
     try {
-      final List<Currency> currencies = await RequestUtils.fetchAllPaginated<Currency, CurrencyId>(
-          apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
+      final List<Currency> currencies =
+          await RequestUtils.fetchAllPaginated<Currency, CurrencyId>(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
       Restrr.log.info('Cached ${currencies.length} currencies');
     } catch (e) {
       Restrr.log.warning('Failed to cache currencies: $e');

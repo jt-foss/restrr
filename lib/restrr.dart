@@ -5,6 +5,9 @@ export 'src/api/restrr.dart';
 export 'src/api/restrr_builder.dart';
 export 'src/api/server_info.dart';
 
+/* [ /src/api/cache ] */
+export 'src/api/cache/entity_cache_view.dart';
+
 /* [ /src/api/entities ] */
 export 'src/api/entities/currency/currency.dart';
 export 'src/api/entities/currency/custom_currency.dart';

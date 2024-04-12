@@ -7,10 +7,11 @@ class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSess
   const PartialSessionIdImpl({required super.api, required super.value});
 
   @override
-  PartialSession? get() => api.sessionCache.get(value);
+  PartialSession? get() => api.sessionCache.get(this);
 
   @override
   Future<PartialSession> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
+      api: api,
       key: this,
       cacheView: api.sessionCache,
       compiledRoute: SessionRoutes.getById.compile(params: [value]),
@@ -39,8 +40,5 @@ class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSession
 
   @override
   Future<bool> delete() => RequestUtils.deleteSingle(
-      compiledRoute: SessionRoutes.deleteById.compile(params: [id.value]),
-      api: api,
-      key: id,
-      cacheView: api.transactionCache);
+      compiledRoute: SessionRoutes.deleteById.compile(params: [id.value]), api: api, key: id, cacheView: api.sessionCache);
 }

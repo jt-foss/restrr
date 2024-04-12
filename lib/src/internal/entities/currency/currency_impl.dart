@@ -7,10 +7,11 @@ class CurrencyIdImpl extends IdImpl<Currency> implements CurrencyId {
   const CurrencyIdImpl({required super.api, required super.value});
 
   @override
-  Currency? get() => api.currencyCache.get(value);
+  Currency? get() => api.currencyCache.get(this);
 
   @override
   Future<Currency> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
+      api: api,
       key: this,
       cacheView: api.currencyCache,
       compiledRoute: CurrencyRoutes.getById.compile(params: [value]),
