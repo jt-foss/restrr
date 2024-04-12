@@ -23,10 +23,7 @@ class CustomCurrencyImpl extends CurrencyImpl implements CustomCurrency {
 
   @override
   Future<bool> delete() => RequestUtils.deleteSingle(
-      compiledRoute: CurrencyRoutes.deleteById.compile(params: [id.value]),
-      api: api,
-      key: id,
-      cacheView: api.transactionCache);
+      compiledRoute: CurrencyRoutes.deleteById.compile(params: [id.value]), api: api, key: id, cacheView: api.currencyCache);
 
   @override
   Future<Currency> update({String? name, String? symbol, String? isoCode, int? decimalPlaces}) async {

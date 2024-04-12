@@ -37,7 +37,7 @@ class EntityBuilder {
         userId: UserIdImpl(api: api, value: json['user']),
       );
     }
-    return api.currencyCache.cache(currency);
+    return api.currencyCache.add(currency);
   }
 
   PartialSession buildPartialSession(Map<String, dynamic> json) {
@@ -60,7 +60,7 @@ class EntityBuilder {
         token: json['token'],
       );
     }
-    return api.sessionCache.cache(session);
+    return api.sessionCache.add(session);
   }
 
   Account buildAccount(Map<String, dynamic> json) {
@@ -75,7 +75,7 @@ class EntityBuilder {
       currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       createdAt: DateTime.parse(json['created_at']),
     );
-    return api.accountCache.cache(account);
+    return api.accountCache.add(account);
   }
 
   Transaction buildTransaction(Map<String, dynamic> json) {
@@ -92,7 +92,7 @@ class EntityBuilder {
       createdAt: DateTime.parse(json['created_at']),
       executedAt: DateTime.parse(json['executed_at']),
     );
-    return api.transactionCache.cache(transaction);
+    return api.transactionCache.add(transaction);
   }
 
   User buildUser(Map<String, dynamic> json) {
@@ -105,6 +105,6 @@ class EntityBuilder {
       createdAt: DateTime.parse(json['created_at']),
       isAdmin: json['is_admin'],
     );
-    return api.userCache.cache(user);
+    return api.userCache.add(user);
   }
 }

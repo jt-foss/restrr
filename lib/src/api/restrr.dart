@@ -4,15 +4,19 @@ import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import '../../restrr.dart';
 
 class RestrrOptions {
-  final bool isWeb;
-  final bool disableLogging;
-  const RestrrOptions({this.isWeb = false, this.disableLogging = false});
+  bool isWeb = false;
+  bool disableLogging = false;
+
+  EntityCacheView<Currency, CurrencyId>? currencyCacheView;
+  EntityCacheView<PartialSession, PartialSessionId>? sessionCacheView;
+  EntityCacheView<Transaction, TransactionId>? transactionCacheView;
+  EntityCacheView<Account, AccountId>? accountCacheView;
+  EntityCacheView<User, UserId>? userCacheView;
 }
 
 class RouteOptions {
-  final Uri hostUri;
-  final int apiVersion;
-  const RouteOptions({required this.hostUri, this.apiVersion = -1});
+  Uri? hostUri;
+  int? apiVersion;
 }
 
 abstract class Restrr {
@@ -32,7 +36,7 @@ abstract class Restrr {
     final RestResponse<ServerInfo> response = await RequestHandler.request(
       route: StatusRoutes.health.compile(),
       mapper: (json) => ServerInfo.fromJson(json),
-      routeOptions: RouteOptions(hostUri: uri),
+      routeOptions: RouteOptions()..hostUri = uri,
     );
     if (response.hasError) {
       throw response.error!;
@@ -73,8 +77,7 @@ abstract class Restrr {
 
   /* Currencies */
 
-  Future<Currency> createCurrency(
-      {required String name, required String symbol, required int decimalPlaces, String? isoCode});
+  Future<Currency> createCurrency({required String name, required String symbol, required int decimalPlaces, String? isoCode});
 
   List<Currency> getCurrencies();
 

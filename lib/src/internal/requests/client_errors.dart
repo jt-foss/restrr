@@ -14,6 +14,5 @@ enum ClientError {
   const ClientError(this.message);
 
   RestrrException toException() => ClientException(this);
-  RestResponse<T> toResponse<T>({required int? statusCode}) =>
-      RestResponse<T>(error: toException(), statusCode: statusCode);
+  RestResponse<T> toResponse<T>({required int? statusCode}) => RestResponse<T>(error: toException(), statusCode: statusCode);
 }

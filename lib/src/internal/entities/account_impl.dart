@@ -8,11 +8,12 @@ class AccountIdImpl extends IdImpl<Account> implements AccountId {
   const AccountIdImpl({required super.api, required super.value});
 
   @override
-  Account? get() => api.accountCache.get(value);
+  Account? get() => api.accountCache.get(this);
 
   @override
   Future<Account> retrieve({forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
+        api: api,
         key: this,
         cacheView: api.accountCache,
         compiledRoute: AccountRoutes.getById.compile(params: [value]),
@@ -51,14 +52,10 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
 
   @override
   Future<bool> delete() => RequestUtils.deleteSingle(
-      compiledRoute: AccountRoutes.deleteById.compile(params: [id.value]),
-      api: api,
-      key: id,
-      cacheView: api.transactionCache);
+      compiledRoute: AccountRoutes.deleteById.compile(params: [id.value]), api: api, key: id, cacheView: api.accountCache);
 
   @override
-  Future<Account> update(
-      {String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
+  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
     if (name == null && description == null && iban == null && originalBalance == null && currencyId == null) {
       throw ArgumentError('At least one field must be set');
     }
@@ -81,7 +78,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
   @override
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false}) {
     return RequestUtils.getOrRetrievePage(
-        pageCache: api.transactionPageCache,
+        api: api,
         compiledRoute: AccountRoutes.getTransactions.compile(params: [id.value]),
         page: page,
         limit: limit,

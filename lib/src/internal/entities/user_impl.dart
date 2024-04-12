@@ -7,11 +7,12 @@ class UserIdImpl extends IdImpl<User> implements UserId {
   const UserIdImpl({required super.api, required super.value});
 
   @override
-  User? get() => api.userCache.get(value);
+  User? get() => api.userCache.get(this);
 
   @override
   Future<User> retrieve({forceRetrieve = false}) {
     return RequestUtils.getOrRetrieveSingle(
+        api: api,
         key: this,
         cacheView: api.userCache,
         compiledRoute: UserRoutes.getSelf.compile(),
