@@ -1,3 +1,8 @@
+## 0.9
+- Added `EntityCacheView`
+- Temporary remove page cache
+- Added ability to use custom EntityCacheView implementations (See `RestrrOptions`)
+
 ## 0.8.1
 - Fixed http methods of `SessionRoutes#deleteCurrent` & `SessionRoutes#deleteById`
 
