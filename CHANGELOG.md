@@ -1,3 +1,6 @@
+## 0.9.1
+- Fixed use of `EntityId<E>` 
+
 ## 0.9
 - Added `EntityCacheView`
 - Temporary remove page cache
