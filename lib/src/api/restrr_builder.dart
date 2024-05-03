@@ -36,24 +36,11 @@ class RestrrBuilder {
   Future<Restrr> register({required String username, required String password, String? displayName, String? email, String? sessionName}) async {
     return _handleAuthProcess(authFunction: (apiImpl) async {
       // register user first
-      final RestResponse<User> userResponse = await apiImpl.requestHandler.apiRequest(
-          route: UserRoutes.create.compile(),
-          body: {
-            'username': username,
-            'password': password,
-            if (displayName != null) 'display_name': displayName,
-            if (email != null) 'email': email,
-          },
-          noAuth: true,
-          mapper: (json) => apiImpl.entityBuilder.buildUser(json)
-      );
-      if (userResponse.hasError) {
-        throw userResponse.error!;
-      }
+      final User user = await apiImpl.createUser(username: username, password: password, email: email);
       return apiImpl.requestHandler.apiRequest(
           route: SessionRoutes.create.compile(),
           body: {
-            'username': username,
+            'username': user.username,
             'password': password,
             if (sessionName != null) 'session_name': sessionName,
           },
