@@ -1,3 +1,6 @@
+## 0.10
+- Implemented User registration (RestrrBuilder#register)
+
 ## 0.9.1
 - Fixed use of `EntityId<E>` 
 
