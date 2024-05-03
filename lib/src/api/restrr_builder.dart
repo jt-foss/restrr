@@ -33,7 +33,8 @@ class RestrrBuilder {
     });
   }
 
-  Future<Restrr> register({required String username, required String password, String? displayName, String? email, String? sessionName}) async {
+  Future<Restrr> register(
+      {required String username, required String password, String? displayName, String? email, String? sessionName}) async {
     return _handleAuthProcess(authFunction: (apiImpl) async {
       // register user first
       final User user = await apiImpl.createUser(username: username, password: password, email: email);
