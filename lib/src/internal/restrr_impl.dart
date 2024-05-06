@@ -48,6 +48,21 @@ class RestrrImpl implements Restrr {
     return UserIdImpl(api: this, value: session.user.id.value).retrieve(forceRetrieve: forceRetrieve);
   }
 
+  @override
+  Future<User> createUser({required String username, required String password, String? displayName, String? email}) async {
+    final RestResponse<User> response = await requestHandler
+        .apiRequest(route: UserRoutes.create.compile(), mapper: (json) => entityBuilder.buildUser(json), noAuth: true, body: {
+      'username': username,
+      'password': password,
+      if (displayName != null) 'display_name': displayName,
+      if (email != null) 'email': email,
+    });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    return response.data!;
+  }
+
   /* Sessions */
 
   @override

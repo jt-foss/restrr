@@ -26,7 +26,24 @@ class RestrrBuilder {
           body: {
             'username': username,
             'password': password,
-            'session_name': sessionName,
+            if (sessionName != null) 'session_name': sessionName,
+          },
+          noAuth: true,
+          mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));
+    });
+  }
+
+  Future<Restrr> register(
+      {required String username, required String password, String? displayName, String? email, String? sessionName}) async {
+    return _handleAuthProcess(authFunction: (apiImpl) async {
+      // register user first
+      final User user = await apiImpl.createUser(username: username, password: password, email: email);
+      return apiImpl.requestHandler.apiRequest(
+          route: SessionRoutes.create.compile(),
+          body: {
+            'username': user.username,
+            'password': password,
+            if (sessionName != null) 'session_name': sessionName,
           },
           noAuth: true,
           mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));

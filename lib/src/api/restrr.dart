@@ -51,6 +51,9 @@ abstract class Restrr {
   /// Retrieves the currently authenticated user.
   Future<User> retrieveSelf({bool forceRetrieve = false});
 
+  /// Creates a new user.
+  Future<User> createUser({required String username, required String password, String? displayName, String? email});
+
   /* Sessions */
 
   Future<PartialSession> retrieveCurrentSession({bool forceRetrieve = false});

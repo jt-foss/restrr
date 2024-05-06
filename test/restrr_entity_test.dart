@@ -70,6 +70,8 @@ const String transactionJson = '''
 void main() {
   late RestrrImpl api;
 
+  // TODO: mock the api instance instead of actually logging in
+
   setUp(() async {
     // log in, get api instance
     api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')) as RestrrImpl;
