@@ -55,9 +55,14 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   }) : assert(sourceId != null || destinationId != null);
 
   @override
-  TransactionType get type {
+  TransactionType getType(Account current) {
     if (sourceId != null && destinationId != null) {
-      return TransactionType.transfer;
+      if (sourceId!.value == current.id.value) {
+        return TransactionType.transferOut;
+      }
+      if (destinationId!.value == current.id.value) {
+        return TransactionType.transferIn;
+      }
     }
     if (sourceId != null) {
       return TransactionType.withdrawal;
