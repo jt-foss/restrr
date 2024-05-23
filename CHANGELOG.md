@@ -1,3 +1,6 @@
+# 0.12
+- Added `SessionPlatformType`
+
 ## 0.11
 - Split `TransactionType.transfer` into `TransactionType.transferIn` & `TransactionType.transferOut`
 
