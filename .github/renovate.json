@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "rangeStrategy": "bump",
+  "prHourlyLimit": 0,
+    "updateLockFiles": true,
+    "lockFileMaintenance": { 
+        "enabled": true,
+        "schedule": ["before 4am on monday"]
+    }
+}
