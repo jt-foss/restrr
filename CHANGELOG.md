@@ -1,3 +1,6 @@
+## 0.11
+- Split `TransactionType.transfer` into `TransactionType.transferIn` & `TransactionType.transferOut`
+
 ## 0.10
 - Implemented User registration (RestrrBuilder#register)
 - Added Restrr#createUser

@@ -16,7 +16,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   DateTime get createdAt;
   DateTime get executedAt;
 
-  TransactionType get type;
+  TransactionType getType(Account current);
 
   Future<bool> delete();
 
