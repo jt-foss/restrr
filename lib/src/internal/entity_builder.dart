@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:restrr/src/internal/utils/string_utils.dart';
