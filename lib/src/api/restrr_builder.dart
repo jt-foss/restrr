@@ -2,6 +2,23 @@ import '../../restrr.dart';
 import '../internal/requests/responses/rest_response.dart';
 import '../internal/restrr_impl.dart';
 import '../internal/utils/request_utils.dart';
+import 'entities/session/session_platform_type.dart';
+
+class SessionInfo {
+  final String name;
+  final String? description;
+  final SessionPlatform platform;
+
+  const SessionInfo({required this.name, this.description, required this.platform});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      if (description != null) 'description': description,
+      'platform': platform.name,
+    };
+  }
+}
 
 /// A builder for creating a new [Restrr] instance.
 /// The [Restrr] instance is created by calling [create].
@@ -19,14 +36,14 @@ class RestrrBuilder {
     return this;
   }
 
-  Future<Restrr> login({required String username, required String password, String? sessionName}) async {
+  Future<Restrr> login({required String username, required String password, required SessionInfo sessionInfo}) async {
     return _handleAuthProcess(authFunction: (apiImpl) {
       return apiImpl.requestHandler.apiRequest(
           route: SessionRoutes.create.compile(),
           body: {
             'username': username,
             'password': password,
-            if (sessionName != null) 'session_name': sessionName,
+            ...sessionInfo.toJson()
           },
           noAuth: true,
           mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));
@@ -34,7 +51,7 @@ class RestrrBuilder {
   }
 
   Future<Restrr> register(
-      {required String username, required String password, String? displayName, String? email, String? sessionName}) async {
+      {required String username, required String password, required SessionInfo sessionInfo, String? displayName, String? email}) async {
     return _handleAuthProcess(authFunction: (apiImpl) async {
       // register user first
       final User user = await apiImpl.createUser(username: username, password: password, email: email);
@@ -43,7 +60,7 @@ class RestrrBuilder {
           body: {
             'username': user.username,
             'password': password,
-            if (sessionName != null) 'session_name': sessionName,
+            ...sessionInfo.toJson()
           },
           noAuth: true,
           mapper: (json) => apiImpl.entityBuilder.buildPartialSession(json));
