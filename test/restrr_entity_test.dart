@@ -32,6 +32,9 @@ const String sessionJson = '''
 {
   "id": 1,
   "token": "abc",
+  "name": "Test Session",
+  "description": null,
+  "platform": "web",
   "user": $userJson,
   "created_at": "+002024-02-17T20:48:43.391176000Z",
   "expires_at": "+002024-02-17T20:48:43.391176000Z"
@@ -66,7 +69,6 @@ const String transactionJson = '''
 }
 ''';
 
-
 void main() {
   late RestrrImpl api;
 
@@ -74,7 +76,10 @@ void main() {
 
   setUp(() async {
     // log in, get api instance
-    api = (await RestrrBuilder(uri: _validUri).login(username: 'admin', password: 'Financrr123')) as RestrrImpl;
+    api = (await RestrrBuilder(uri: _validUri).login(
+        username: 'admin',
+        password: 'Financrr123',
+        sessionInfo: SessionInfo(name: 'Test Session', platform: SessionPlatform.web))) as RestrrImpl;
   });
 
   group('[EntityBuilder] ', () {
@@ -91,6 +96,9 @@ void main() {
       final Session session = api.entityBuilder.buildPartialSession(jsonDecode(sessionJson)) as Session;
       expect(session.id.value, 1);
       expect(session.token, 'abc');
+      expect(session.name, 'Test Session');
+      expect(session.description, null);
+      expect(session.platform, SessionPlatform.web);
       expect(session.user.id.value, 1);
       expect(session.createdAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));
       expect(session.expiresAt, DateTime.parse('+002024-02-17T20:48:43.391176000Z'));

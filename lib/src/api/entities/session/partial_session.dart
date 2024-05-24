@@ -6,7 +6,9 @@ abstract class PartialSession extends RestrrEntity<PartialSession, PartialSessio
   @override
   PartialSessionId get id;
 
-  String? get name;
+  String get name;
+  String? get description;
+  SessionPlatform get platform;
   DateTime get createdAt;
   DateTime get expiresAt;
   User get user;

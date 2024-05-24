@@ -21,7 +21,11 @@ class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSess
 
 class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSessionId> implements PartialSession {
   @override
-  final String? name;
+  final String name;
+  @override
+  final String? description;
+  @override
+  final SessionPlatform platform;
   @override
   final DateTime createdAt;
   @override
@@ -33,6 +37,8 @@ class PartialSessionImpl extends RestrrEntityImpl<PartialSession, PartialSession
     required super.api,
     required super.id,
     required this.name,
+    required this.description,
+    required this.platform,
     required this.createdAt,
     required this.expiresAt,
     required this.user,

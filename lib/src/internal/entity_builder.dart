@@ -1,5 +1,6 @@
 import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
+import 'package:restrr/src/internal/utils/string_utils.dart';
 
 import 'entities/account_impl.dart';
 import 'entities/currency/currency_impl.dart';
@@ -45,6 +46,8 @@ class EntityBuilder {
       api: api,
       id: PartialSessionIdImpl(api: api, value: json['id']),
       name: json['name'],
+      description: json['description'],
+      platform: StringUtils.tryEnumFromString(json['platform'], SessionPlatform.values) ?? SessionPlatform.unknown,
       createdAt: DateTime.parse(json['created_at']),
       expiresAt: DateTime.parse(json['expires_at']),
       user: buildUser(json['user']),
@@ -54,6 +57,8 @@ class EntityBuilder {
         api: api,
         id: session.id,
         name: session.name,
+        description: session.description,
+        platform: session.platform,
         createdAt: session.createdAt,
         expiresAt: session.expiresAt,
         user: session.user,

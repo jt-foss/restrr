@@ -1,3 +1,9 @@
+# 0.12
+- Added `SessionPlatformType`
+- Added `SessionInfo`, which is required for any form of session creation (login, register)
+- `PartialSession#name` is not nullable anymore
+- Added `PartialSession#description` (String?) & `PartialSession#platform` (SessionPlatformType)
+
 ## 0.11
 - Split `TransactionType.transfer` into `TransactionType.transferIn` & `TransactionType.transferOut`
 
