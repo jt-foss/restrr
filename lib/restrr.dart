@@ -13,6 +13,7 @@ export 'src/api/entities/currency/currency.dart';
 export 'src/api/entities/currency/custom_currency.dart';
 export 'src/api/entities/session/partial_session.dart';
 export 'src/api/entities/session/session.dart';
+export 'src/api/entities/session/session_platform.dart';
 export 'src/api/entities/account.dart';
 export 'src/api/entities/restrr_entity.dart';
 export 'src/api/entities/transaction/transaction.dart';
