@@ -1,5 +1,3 @@
-import 'package:restrr/src/api/entities/session/session_platform.dart';
-
 import '../../../../restrr.dart';
 
 abstract class PartialSessionId extends EntityId<PartialSession> {}

@@ -9,8 +9,8 @@ enum SessionPlatform {
   linux,
   unknown;
 
-  static SessionPlatform current({Platform? platformOverride}) {
-    switch (platformOverride ?? Platform.operatingSystem) {
+  static SessionPlatform current() {
+    switch (Platform.operatingSystem) {
       case 'android':
         return SessionPlatform.android;
       case 'ios':

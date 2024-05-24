@@ -1,7 +1,6 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
 import '../../../../restrr.dart';
-import '../../../api/entities/session/session_platform.dart';
 import '../../utils/request_utils.dart';
 
 class PartialSessionIdImpl extends IdImpl<PartialSession> implements PartialSessionId {

@@ -2,7 +2,6 @@ import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:restrr/src/internal/utils/string_utils.dart';
 
-import '../api/entities/session/session_platform.dart';
 import 'entities/account_impl.dart';
 import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
