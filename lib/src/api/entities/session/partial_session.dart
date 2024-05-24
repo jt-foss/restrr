@@ -1,4 +1,4 @@
-import 'package:restrr/src/api/entities/session/session_platform_type.dart';
+import 'package:restrr/src/api/entities/session/session_platform.dart';
 
 import '../../../../restrr.dart';
 

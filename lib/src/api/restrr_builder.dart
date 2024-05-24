@@ -2,7 +2,7 @@ import '../../restrr.dart';
 import '../internal/requests/responses/rest_response.dart';
 import '../internal/restrr_impl.dart';
 import '../internal/utils/request_utils.dart';
-import 'entities/session/session_platform_type.dart';
+import 'entities/session/session_platform.dart';
 
 class SessionInfo {
   final String name;
