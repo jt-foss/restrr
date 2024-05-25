@@ -12,11 +12,21 @@ class UnformattedAmount {
     return UnformattedAmount(json);
   }
 
-  String format(String currencySymbol, int decimalPlaces, String decimalSeparator, String thousandsSeparator) {
-    return '';
+  String format(int decimalPlaces, String decimalSeparator, {String? currencySymbol, String? thousandsSeparator}) {
+    String amount = rawAmount.toString();
+    if (amount.length <= decimalPlaces) {
+      amount = '0'.padLeft(decimalPlaces - amount.length + 1, '0') + amount;
+    }
+    amount = amount.substring(0, amount.length - decimalPlaces) + decimalSeparator + amount.substring(amount.length - decimalPlaces);
+    if (thousandsSeparator != null) {
+      for (int i = amount.length - decimalPlaces - 4; i > 0; i -= 3) {
+        amount = amount.substring(0, i) + thousandsSeparator + amount.substring(i);
+      }
+    }
+    return '$amount${currencySymbol ?? ''}';
   }
 
-  String formatWithCurrency(Currency currency, String decimalSeparator, String thousandsSeparator) {
-    return format(currency.symbol, currency.decimalPlaces, decimalSeparator, thousandsSeparator);
+  String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator}) {
+    return format(currency.decimalPlaces, decimalSeparator, currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator);
   }
 }
