@@ -8,7 +8,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
 
   AccountId? get sourceId;
   AccountId? get destinationId;
-  int get amount;
+  UnformattedAmount get amount;
   CurrencyId get currencyId;
   String get name;
   String? get description;
@@ -23,7 +23,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   Future<Transaction> update({
     Id? sourceId,
     Id? destinationId,
-    int? amount,
+    UnformattedAmount? amount,
     Id? currencyId,
     String? name,
     String? description,

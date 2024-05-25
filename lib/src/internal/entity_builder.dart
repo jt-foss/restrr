@@ -1,6 +1,4 @@
 import 'package:restrr/restrr.dart';
-import 'package:restrr/src/api/entities/transaction/recurring/recurring_transaction.dart';
-import 'package:restrr/src/api/entities/transaction/transaction_template.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:restrr/src/internal/utils/string_utils.dart';
 
@@ -79,8 +77,8 @@ class EntityBuilder {
       name: json['name'],
       description: json['description'],
       iban: json['iban'],
-      balance: json['balance'],
-      originalBalance: json['original_balance'],
+      balance: UnformattedAmount.fromJson(json['balance']),
+      originalBalance: UnformattedAmount.fromJson(json['original_balance']),
       currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       createdAt: DateTime.parse(json['created_at']),
     );
@@ -93,7 +91,7 @@ class EntityBuilder {
       id: TransactionIdImpl(api: api, value: json['id']),
       sourceId: json['source_id'] != null ? AccountIdImpl(api: api, value: json['source_id']) : null,
       destinationId: json['destination_id'] != null ? AccountIdImpl(api: api, value: json['destination_id']) : null,
-      amount: json['amount'],
+      amount: UnformattedAmount.fromJson(json['amount']),
       currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       name: json['name'],
       description: json['description'],
@@ -110,7 +108,7 @@ class EntityBuilder {
       id: TransactionTemplateIdImpl(api: api, value: json['id']),
       sourceId: json['source_id'] != null ? AccountIdImpl(api: api, value: json['source_id']) : null,
       destinationId: json['destination_id'] != null ? AccountIdImpl(api: api, value: json['destination_id']) : null,
-      amount: json['amount'],
+      amount: UnformattedAmount.fromJson(json['amount']),
       currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
       name: json['name'],
       description: json['description'],

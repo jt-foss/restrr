@@ -27,7 +27,7 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
   @override
   final AccountId? destinationId;
   @override
-  final int amount;
+  final UnformattedAmount amount;
   @override
   final CurrencyId currencyId;
   @override
@@ -61,7 +61,7 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
 
   @override
   Future<TransactionTemplate> update(
-      {Id? sourceId, Id? destinationId, int? amount, Id? currencyId, String? name, String? description, Id? budgetId}) async {
+      {Id? sourceId, Id? destinationId, UnformattedAmount? amount, Id? currencyId, String? name, String? description, Id? budgetId}) async {
     if (sourceId == null &&
         destinationId == null &&
         amount == null &&
@@ -77,7 +77,7 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
         body: {
           if (sourceId != null) 'source_id': sourceId,
           if (destinationId != null) 'destination_id': destinationId,
-          if (amount != null) 'amount': amount,
+          if (amount != null) 'amount': amount.rawAmount,
           if (currencyId != null) 'currency_id': currencyId,
           if (name != null) 'name': name,
           if (description != null) 'description': description,

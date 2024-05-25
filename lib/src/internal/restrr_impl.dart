@@ -118,11 +118,11 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currencyId, String? description, String? iban}) async {
+      {required String name, required UnformattedAmount originalBalance, required Id currencyId, String? description, String? iban}) async {
     final RestResponse<Account> response = await requestHandler
         .apiRequest(route: AccountRoutes.create.compile(), mapper: (json) => entityBuilder.buildAccount(json), body: {
       'name': name,
-      'original_balance': originalBalance,
+      'original_balance': originalBalance.rawAmount,
       'currency_id': currencyId,
       if (description != null) 'description': description,
       if (iban != null) 'iban': iban
@@ -190,7 +190,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Transaction> createTransaction(
-      {required int amount,
+      {required UnformattedAmount amount,
       required Id currencyId,
       required DateTime executedAt,
       required String name,
@@ -203,7 +203,7 @@ class RestrrImpl implements Restrr {
     }
     final RestResponse<Transaction> response = await requestHandler
         .apiRequest(route: TransactionRoutes.create.compile(), mapper: (json) => entityBuilder.buildTransaction(json), body: {
-      'amount': amount,
+      'amount': amount.rawAmount,
       'currency_id': currencyId,
       'executed_at': executedAt.toUtc().toIso8601String(),
       'name': name,
@@ -240,7 +240,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<TransactionTemplate> createTransactionTemplate(
-      {required int amount,
+      {required UnformattedAmount amount,
       required Id currencyId,
       required String name,
       String? description,
@@ -254,7 +254,7 @@ class RestrrImpl implements Restrr {
         route: TransactionTemplateRoutes.create.compile(),
         mapper: (json) => entityBuilder.buildTransactionTemplate(json),
         body: {
-          'amount': amount,
+          'amount': amount.rawAmount,
           'currency_id': currencyId,
           'name': name,
           if (description != null) 'description': description,

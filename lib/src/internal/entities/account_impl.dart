@@ -30,9 +30,9 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
   @override
   final String? iban;
   @override
-  final int balance;
+  final UnformattedAmount balance;
   @override
-  final int originalBalance;
+  final UnformattedAmount originalBalance;
   @override
   final CurrencyId currencyId;
   @override
@@ -55,7 +55,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
       compiledRoute: AccountRoutes.deleteById.compile(params: [id.value]), api: api, key: id, cacheView: api.accountCache);
 
   @override
-  Future<Account> update({String? name, String? description, String? iban, int? originalBalance, Id? currencyId}) async {
+  Future<Account> update({String? name, String? description, String? iban, UnformattedAmount? originalBalance, Id? currencyId}) async {
     if (name == null && description == null && iban == null && originalBalance == null && currencyId == null) {
       throw ArgumentError('At least one field must be set');
     }
@@ -66,7 +66,7 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
           if (name != null) 'name': name,
           if (description != null) 'description': description,
           if (iban != null) 'iban': iban,
-          if (originalBalance != null) 'original_balance': originalBalance,
+          if (originalBalance != null) 'original_balance': originalBalance.rawAmount,
           if (currencyId != null) 'currency_id': currencyId,
         });
     if (response.hasError) {

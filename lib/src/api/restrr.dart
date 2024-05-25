@@ -72,7 +72,7 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currencyId, String? description, String? iban});
+      {required String name, required UnformattedAmount originalBalance, required Id currencyId, String? description, String? iban});
 
   List<Account> getAccounts();
 
@@ -93,7 +93,7 @@ abstract class Restrr {
   /* Transactions */
 
   Future<Transaction> createTransaction(
-      {required int amount,
+      {required UnformattedAmount amount,
       required Id currencyId,
       required DateTime executedAt,
       required String name,
@@ -109,7 +109,7 @@ abstract class Restrr {
   /* Transaction Templates */
 
   Future<TransactionTemplate> createTransactionTemplate(
-      {required int amount,
+      {required UnformattedAmount amount,
       required Id currencyId,
       required String name,
       String? description,

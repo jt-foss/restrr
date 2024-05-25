@@ -1,3 +1,7 @@
+# 0.13
+- Added `UnformattedAmount`, which represents the backend's, still-to-be-formatted, amount and
+  balance representations
+
 # 0.12
 - Added `SessionPlatformType`
 - Added `SessionInfo`, which is required for any form of session creation (login, register)
@@ -12,7 +16,7 @@
 - Added Restrr#createUser
 
 ## 0.9.1
-- Fixed use of `EntityId<E>` 
+- Fixed use of `EntityId<E>`
 
 ## 0.9
 - Added `EntityCacheView`
@@ -24,36 +28,37 @@
 
 ## 0.8
 - Cache accounts & currencies on startup
-  - Added `Restrr#getAccounts`
-  - Added `Restrr#getCurrencies`
+    - Added `Restrr#getAccounts`
+    - Added `Restrr#getCurrencies`
 - Added entity-specific Ids:
-  - Added `EntityId<E>` methods: `get`, `retrieve`
-    - Added `AccountId`
-    - Added `TransactionId`
-    - Added `CurrencyId`
-    - Added `UserId`
-    - Added `PartialSessionId`
-  - Entities now feature the corresponding `EntityId<E>` instead of a `Id (int)`
+    - Added `EntityId<E>` methods: `get`, `retrieve`
+        - Added `AccountId`
+        - Added `TransactionId`
+        - Added `CurrencyId`
+        - Added `UserId`
+        - Added `PartialSessionId`
+    - Entities now feature the corresponding `EntityId<E>` instead of a `Id (int)`
 - Added `Account`
-  - Added `AccountRoutes`
-  - Added `Account` methods: `delete`, `update`, `retrieveAllTransactions`
-  - Added `Restrr` methods: `createAccount`, `retrieveAccountById`, `retrieveAllAccounts`
+    - Added `AccountRoutes`
+    - Added `Account` methods: `delete`, `update`, `retrieveAllTransactions`
+    - Added `Restrr` methods: `createAccount`, `retrieveAccountById`, `retrieveAllAccounts`
 - Added `Transaction`
-  - Added `TransactionRoutes`
-  - Added `Transaction` methods: `delete`, `update`
-  - Added `Restrr` methods: `createTransaction`, `retrieveTransactionById`, `retrieveAllTransactions`
+    - Added `TransactionRoutes`
+    - Added `Transaction` methods: `delete`, `update`
+    - Added `Restrr`
+      methods: `createTransaction`, `retrieveTransactionById`, `retrieveAllTransactions`
 - Fixed `Session#delete` using a wrong route
 - Unified entity deletion
 - Implemented actual `RestrrError` error codes
-  - Added `ErrorResponse#apiCode` 
-  - Made `ErrorResponse#reference` `dynamic`
+    - Added `ErrorResponse#apiCode`
+    - Made `ErrorResponse#reference` `dynamic`
 
 ## 0.7
 - Restructured package (many breaking changes!)
-  - Split package into `api` (abstraction) and `internal` (implementation)
+    - Split package into `api` (abstraction) and `internal` (implementation)
 - Added `Session`-based authentication
 - Reworked `RestrrBuilder` to support new `Session`s
-  - Added `RestrrBuilder#refresh`
+    - Added `RestrrBuilder#refresh`
 - Implemented Pagination (see `Paginated<T>`)
 
 ## 0.6.2
@@ -97,7 +102,7 @@
 - Fixed `RestrrOptions` and added `isWeb` attribute
 - Removed network check when no CookieJar is set (web)
 
-## 0.3.1 
+## 0.3.1
 - Added ability to customize & disable Cookie Jar
 
 ## 0.3
@@ -105,7 +110,7 @@
 - Added `Restrr#logout`
 - Added `Restrr#register`
 - Further refactored error handling
-  - Added `errorMap` to `ApiService#request` (and similar methods)
+    - Added `errorMap` to `ApiService#request` (and similar methods)
 - Added more tests
 
 ## 0.2.1

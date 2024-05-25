@@ -26,7 +26,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   @override
   final AccountId? destinationId;
   @override
-  final int amount;
+  final UnformattedAmount amount;
   @override
   final CurrencyId currencyId;
   @override
@@ -81,7 +81,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   Future<Transaction> update(
       {Id? sourceId,
       Id? destinationId,
-      int? amount,
+      UnformattedAmount? amount,
       Id? currencyId,
       String? name,
       String? description,
@@ -103,7 +103,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
         body: {
           if (sourceId != null) 'source_id': sourceId,
           if (destinationId != null) 'destination_id': destinationId,
-          if (amount != null) 'amount': amount,
+          if (amount != null) 'amount': amount.rawAmount,
           if (currencyId != null) 'currency_id': currencyId,
           if (name != null) 'name': name,
           if (description != null) 'description': description,

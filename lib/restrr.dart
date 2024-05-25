@@ -11,6 +11,7 @@ export 'src/api/cache/entity_cache_view.dart';
 /* [ /src/api/entities ] */
 export 'src/api/entities/currency/currency.dart';
 export 'src/api/entities/currency/custom_currency.dart';
+export 'src/api/entities/currency/unformatted_amount.dart';
 export 'src/api/entities/session/partial_session.dart';
 export 'src/api/entities/session/session.dart';
 export 'src/api/entities/session/session_platform.dart';
