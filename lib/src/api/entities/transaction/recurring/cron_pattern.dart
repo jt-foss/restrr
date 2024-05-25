@@ -15,7 +15,8 @@ class CronPattern {
     required this.dayOfWeek,
   });
 
-  static CronPattern fromJson(Map<String, dynamic> json) {
+  static CronPattern? fromJson(Map<String, dynamic>? json) {
+    if (json == null) return null;
     return CronPattern(
       second: json['second'],
       minute: json['minute'],
@@ -52,6 +53,37 @@ class CronPattern {
       dayOfMonth: dayOfMonth ?? this.dayOfMonth,
       month: month ?? this.month,
       dayOfWeek: dayOfWeek ?? this.dayOfWeek,
+    );
+  }
+}
+
+class CronPatternBuilder {
+  String? second;
+  String? minute;
+  String? hour;
+  String? dayOfMonth;
+  String? month;
+  String? dayOfWeek;
+
+  CronPatternBuilder();
+
+  // TODO: further implement builder
+
+  CronPatternBuilder at({String? second, String? minute, String? hour}) {
+    this.second = second;
+    this.minute = minute;
+    this.hour = hour;
+    return this;
+  }
+
+  CronPattern build() {
+    return CronPattern(
+      second: second,
+      minute: minute,
+      hour: hour,
+      dayOfMonth: dayOfMonth,
+      month: month,
+      dayOfWeek: dayOfWeek,
     );
   }
 }
