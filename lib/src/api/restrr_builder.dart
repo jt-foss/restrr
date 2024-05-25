@@ -91,24 +91,23 @@ class RestrrBuilder {
     }
     apiImpl.session = response.data! as Session;
 
-    // Retrieve all accounts & currencies to make them available in the cache
-    try {
-      final List<Account> accounts =
-          await RequestUtils.fetchAllPaginated<Account, AccountId>(apiImpl, await apiImpl.retrieveAllAccounts(limit: 50));
-      Restrr.log.info('Cached ${accounts.length} account(s)');
-    } catch (e) {
-      Restrr.log.warning('Failed to cache accounts: $e');
-    }
-
-    try {
-      final List<Currency> currencies =
-          await RequestUtils.fetchAllPaginated<Currency, CurrencyId>(apiImpl, await apiImpl.retrieveAllCurrencies(limit: 50));
-      Restrr.log.info('Cached ${currencies.length} currencies');
-    } catch (e) {
-      Restrr.log.warning('Failed to cache currencies: $e');
-    }
+    // Retrieve all accounts, currencies, templates & recurring transactions to make them available in the cache
+    _cacheEntities(apiImpl, (api) => api.retrieveAllAccounts(limit: 50), 'accounts');
+    _cacheEntities(apiImpl, (api) => api.retrieveAllCurrencies(limit: 50), 'currencies');
+    _cacheEntities(apiImpl, (api) => api.retrieveAllTransactionTemplates(limit: 50), 'transaction templates');
+    _cacheEntities(apiImpl, (api) => api.retrieveAllRecurringTransactions(limit: 50), 'recurring transactions');
 
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return apiImpl;
+  }
+
+  Future _cacheEntities<E extends RestrrEntity<E, ID>, ID extends EntityId<E>>(
+      RestrrImpl apiImpl, Future<Paginated<E>> Function(RestrrImpl) cacheFunction, String term) async {
+    try {
+      final List<E> currencies = await RequestUtils.fetchAllPaginated<E, ID>(apiImpl, await cacheFunction.call(apiImpl));
+      Restrr.log.info('Cached ${currencies.length} $term');
+    } catch (e) {
+      Restrr.log.warning('Failed to cache $term: $e');
+    }
   }
 }

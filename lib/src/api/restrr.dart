@@ -10,6 +10,8 @@ class RestrrOptions {
   EntityCacheView<Currency, CurrencyId>? currencyCacheView;
   EntityCacheView<PartialSession, PartialSessionId>? sessionCacheView;
   EntityCacheView<Transaction, TransactionId>? transactionCacheView;
+  EntityCacheView<TransactionTemplate, TransactionTemplateId>? transactionTemplateCacheView;
+  EntityCacheView<RecurringTransaction, RecurringTransactionId>? recurringTransactionCacheView;
   EntityCacheView<Account, AccountId>? accountCacheView;
   EntityCacheView<User, UserId>? userCacheView;
 }
@@ -103,4 +105,29 @@ abstract class Restrr {
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /* Transaction Templates */
+
+  Future<TransactionTemplate> createTransactionTemplate(
+      {required int amount,
+      required Id currencyId,
+      required String name,
+      String? description,
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId});
+
+  Future<TransactionTemplate> retrieveTransactionTemplateById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<TransactionTemplate>> retrieveAllTransactionTemplates(
+      {int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /* Recurring Transactions */
+
+  Future<RecurringTransaction> createRecurringTransaction({required Id templateId, required RecurringRule recurringRule});
+
+  Future<RecurringTransaction> retrieveRecurringTransactionById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<RecurringTransaction>> retrieveAllRecurringTransactions(
+      {int page = 1, int limit = 25, bool forceRetrieve = false});
 }

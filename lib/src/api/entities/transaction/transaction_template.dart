@@ -1,10 +1,10 @@
-import 'package:restrr/restrr.dart';
+import '../../../../restrr.dart';
 
-abstract class TransactionId extends EntityId<Transaction> {}
+abstract class TransactionTemplateId extends EntityId<TransactionTemplate> {}
 
-abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
+abstract class TransactionTemplate extends RestrrEntity<TransactionTemplate, TransactionTemplateId> {
   @override
-  TransactionId get id;
+  TransactionTemplateId get id;
 
   AccountId? get sourceId;
   AccountId? get destinationId;
@@ -14,13 +14,10 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
   String? get description;
   EntityId? get budgetId;
   DateTime get createdAt;
-  DateTime get executedAt;
-
-  TransactionType getType(Account current);
 
   Future<bool> delete();
 
-  Future<Transaction> update({
+  Future<TransactionTemplate> update({
     Id? sourceId,
     Id? destinationId,
     int? amount,
@@ -28,8 +25,7 @@ abstract class Transaction extends RestrrEntity<Transaction, TransactionId> {
     String? name,
     String? description,
     Id? budgetId,
-    DateTime? executedAt,
   });
 
-  Future<TransactionTemplate> createTemplate();
+  Future<RecurringTransaction> createRecurringTransaction(RecurringRule rule);
 }

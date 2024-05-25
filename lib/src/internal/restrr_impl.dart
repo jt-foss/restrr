@@ -1,6 +1,6 @@
 import 'package:restrr/src/internal/entities/account_impl.dart';
 import 'package:restrr/src/internal/entities/currency/currency_impl.dart';
-import 'package:restrr/src/internal/entities/transaction_impl.dart';
+import 'package:restrr/src/internal/entities/transaction/transaction_impl.dart';
 import 'package:restrr/src/internal/entities/user_impl.dart';
 import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import 'package:restrr/src/internal/utils/request_utils.dart';
@@ -9,6 +9,8 @@ import '../../restrr.dart';
 import '../api/events/event_handler.dart';
 import 'cache/entity_cache_view_impl.dart';
 import 'entities/session/partial_session_impl.dart';
+import 'entities/transaction/recurring_transaction_impl.dart';
+import 'entities/transaction/transaction_template_impl.dart';
 import 'entity_builder.dart';
 
 class RestrrImpl implements Restrr {
@@ -28,6 +30,10 @@ class RestrrImpl implements Restrr {
   late final EntityCacheView<Account, AccountId> accountCache = options.accountCacheView ?? EntityCacheViewImpl();
   late final EntityCacheView<Transaction, TransactionId> transactionCache =
       options.transactionCacheView ?? EntityCacheViewImpl();
+  late final EntityCacheView<TransactionTemplate, TransactionTemplateId> transactionTemplateCache =
+      options.transactionTemplateCacheView ?? EntityCacheViewImpl();
+  late final EntityCacheView<RecurringTransaction, RecurringTransactionId> recurringTransactionCache =
+      options.recurringTransactionCacheView ?? EntityCacheViewImpl();
   late final EntityCacheView<User, UserId> userCache = options.userCacheView ?? EntityCacheViewImpl();
 
   RestrrImpl({required Map<Type, Function> eventMap}) : eventHandler = RestrrEventHandler(eventMap);
@@ -227,6 +233,94 @@ class RestrrImpl implements Restrr {
         page: page,
         limit: limit,
         mapper: (json) => entityBuilder.buildTransaction(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  /* Transaction Templates */
+
+  @override
+  Future<TransactionTemplate> createTransactionTemplate(
+      {required int amount,
+      required Id currencyId,
+      required String name,
+      String? description,
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId}) async {
+    if (sourceId == null && destinationId == null) {
+      throw ArgumentError('Either source or destination must be set!');
+    }
+    final RestResponse<TransactionTemplate> response = await requestHandler.apiRequest(
+        route: TransactionTemplateRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildTransactionTemplate(json),
+        body: {
+          'amount': amount,
+          'currency_id': currencyId,
+          'name': name,
+          if (description != null) 'description': description,
+          if (sourceId != null) 'source_id': sourceId,
+          if (destinationId != null) 'destination_id': destinationId,
+          if (budgetId != null) 'budget_id': budgetId
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    transactionTemplateCache.clear();
+    return response.data!;
+  }
+
+  @override
+  Future<TransactionTemplate> retrieveTransactionTemplateById(Id id, {bool forceRetrieve = false}) async {
+    return TransactionTemplateIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<TransactionTemplate>> retrieveAllTransactionTemplates(
+      {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        api: this,
+        compiledRoute: TransactionTemplateRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildTransactionTemplate(json),
+        forceRetrieve: forceRetrieve);
+  }
+
+  /* Recurring Transactions */
+
+  @override
+  Future<RecurringTransaction> createRecurringTransaction(
+      {required Id templateId, required RecurringRule recurringRule}) async {
+    final RestResponse<RecurringTransaction> response = await requestHandler.apiRequest(
+        route: RecurringTransactionRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildRecurringTransaction(json),
+        body: {
+          'template_id': templateId,
+          'recurrence_rule': recurringRule.toJson(),
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    recurringTransactionCache.clear();
+    return response.data!;
+  }
+
+  @override
+  Future<RecurringTransaction> retrieveRecurringTransactionById(Id id, {bool forceRetrieve = false}) async {
+    return RecurringTransactionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
+  }
+
+  @override
+  Future<Paginated<RecurringTransaction>> retrieveAllRecurringTransactions(
+      {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
+    return RequestUtils.getOrRetrievePage(
+        api: this,
+        compiledRoute: RecurringTransactionRoutes.getAll.compile(),
+        page: page,
+        limit: limit,
+        mapper: (json) => entityBuilder.buildRecurringTransaction(json),
         forceRetrieve: forceRetrieve);
   }
 }

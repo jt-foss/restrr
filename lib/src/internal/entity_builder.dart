@@ -1,4 +1,6 @@
 import 'package:restrr/restrr.dart';
+import 'package:restrr/src/api/entities/transaction/recurring/recurring_transaction.dart';
+import 'package:restrr/src/api/entities/transaction/transaction_template.dart';
 import 'package:restrr/src/internal/restrr_impl.dart';
 import 'package:restrr/src/internal/utils/string_utils.dart';
 
@@ -7,7 +9,9 @@ import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
 import 'entities/session/partial_session_impl.dart';
 import 'entities/session/session_impl.dart';
-import 'entities/transaction_impl.dart';
+import 'entities/transaction/recurring_transaction_impl.dart';
+import 'entities/transaction/transaction_impl.dart';
+import 'entities/transaction/transaction_template_impl.dart';
 import 'entities/user_impl.dart';
 
 /// Defines how to build entities from JSON responses.
@@ -98,6 +102,34 @@ class EntityBuilder {
       executedAt: DateTime.parse(json['executed_at']),
     );
     return api.transactionCache.add(transaction);
+  }
+
+  TransactionTemplate buildTransactionTemplate(Map<String, dynamic> json) {
+    final TransactionTemplateImpl transactionTemplate = TransactionTemplateImpl(
+      api: api,
+      id: TransactionTemplateIdImpl(api: api, value: json['id']),
+      sourceId: json['source_id'] != null ? AccountIdImpl(api: api, value: json['source_id']) : null,
+      destinationId: json['destination_id'] != null ? AccountIdImpl(api: api, value: json['destination_id']) : null,
+      amount: json['amount'],
+      currencyId: CurrencyIdImpl(api: api, value: json['currency_id']),
+      name: json['name'],
+      description: json['description'],
+      budgetId: null, // TODO: implement budgets
+      createdAt: DateTime.parse(json['created_at']),
+    );
+    return api.transactionTemplateCache.add(transactionTemplate);
+  }
+
+  RecurringTransaction buildRecurringTransaction(Map<String, dynamic> json) {
+    final RecurringTransactionImpl recurringTransaction = RecurringTransactionImpl(
+      api: api,
+      id: RecurringTransactionIdImpl(api: api, value: json['id']),
+      templateId: TransactionTemplateIdImpl(api: api, value: json['template_id']),
+      lastExecutedAt: DateTime.parse(json['last_executed_at']),
+      recurringRule: RecurringRule.fromJson(json['recurring_rule']),
+      createdAt: DateTime.parse(json['created_at']),
+    );
+    return api.recurringTransactionCache.add(recurringTransaction);
   }
 
   User buildUser(Map<String, dynamic> json) {

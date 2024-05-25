@@ -1,8 +1,8 @@
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
-import '../../../restrr.dart';
-import '../requests/responses/rest_response.dart';
-import '../utils/request_utils.dart';
+import '../../../../restrr.dart';
+import '../../requests/responses/rest_response.dart';
+import '../../utils/request_utils.dart';
 
 class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
   const TransactionIdImpl({required super.api, required super.value});
@@ -111,5 +111,17 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
           if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;
+  }
+
+  @override
+  Future<TransactionTemplate> createTemplate() async {
+    return api.createTransactionTemplate(
+        amount: amount,
+        currencyId: currencyId.value,
+        name: name,
+        description: description,
+        sourceId: sourceId?.value,
+        destinationId: destinationId?.value,
+        budgetId: budgetId?.value);
   }
 }
