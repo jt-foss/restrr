@@ -61,5 +61,11 @@ class UnformattedAmount {
   bool operator <=(UnformattedAmount other) => rawAmount <= other.rawAmount;
 
   @override
+  bool operator >(UnformattedAmount other) => rawAmount > other.rawAmount;
+
+  @override
+  bool operator >=(UnformattedAmount other) => rawAmount >= other.rawAmount;
+
+  @override
   String toString() => rawAmount.toString();
 }
