@@ -5,7 +5,7 @@ class UnformattedAmount {
 
   final int rawAmount;
 
-  const UnformattedAmount(this.rawAmount) : assert(rawAmount >= 0);
+  const UnformattedAmount(this.rawAmount);
 
   /// Removes all non-digit characters from the string and parses the result as an integer.
   /// (e.g. '1,234.56€' -> 123456)
@@ -33,7 +33,7 @@ class UnformattedAmount {
         amount = amount.substring(0, i) + thousandsSeparator + amount.substring(i);
       }
     }
-    return '${isNegative ? '-' : ''}$amount${currencySymbol ?? ''}';
+    return '${isNegative || rawAmount < 0 ? '-' : ''}$amount${currencySymbol ?? ''}';
   }
 
   String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator, bool isNegative = false}) {
