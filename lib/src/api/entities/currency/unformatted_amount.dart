@@ -40,5 +40,26 @@ class UnformattedAmount {
   }
 
   @override
+  UnformattedAmount operator +(UnformattedAmount other) => UnformattedAmount(rawAmount + other.rawAmount);
+
+  @override
+  UnformattedAmount operator -(UnformattedAmount other) => UnformattedAmount(rawAmount - other.rawAmount);
+
+  @override
+  UnformattedAmount operator *(int other) => UnformattedAmount(rawAmount * other);
+
+  @override
+  UnformattedAmount operator /(int other) => UnformattedAmount(rawAmount ~/ other);
+
+  @override
+  bool operator ==(Object other) => other is UnformattedAmount && rawAmount == other.rawAmount;
+
+  @override
+  bool operator <(UnformattedAmount other) => rawAmount < other.rawAmount;
+
+  @override
+  bool operator <=(UnformattedAmount other) => rawAmount <= other.rawAmount;
+
+  @override
   String toString() => rawAmount.toString();
 }
