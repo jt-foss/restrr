@@ -22,7 +22,13 @@ class UnformattedAmount {
 
   String format(int decimalPlaces, String decimalSeparator,
       {String? currencySymbol, String? thousandsSeparator, bool isNegative = false}) {
+    // whether the amount is negative by itself or the user defined it to be negative
+    bool negativeAmount = rawAmount < 0 || isNegative;
     String amount = rawAmount.toString();
+    // remove sign
+    if (negativeAmount) {
+      amount = amount.substring(1);
+    }
     if (amount.length <= decimalPlaces) {
       amount = '0'.padLeft(decimalPlaces - amount.length + 1, '0') + amount;
     }
@@ -33,7 +39,7 @@ class UnformattedAmount {
         amount = amount.substring(0, i) + thousandsSeparator + amount.substring(i);
       }
     }
-    return '${isNegative || rawAmount < 0 ? '-' : ''}$amount${currencySymbol ?? ''}';
+    return '${negativeAmount ? '-' : ''}$amount${currencySymbol ?? ''}';
   }
 
   String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator, bool isNegative = false}) {
