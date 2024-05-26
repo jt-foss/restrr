@@ -3,7 +3,13 @@ import 'package:restrr/restrr.dart';
 class UnformattedAmount {
   final int rawAmount;
 
-  const UnformattedAmount(this.rawAmount);
+  const UnformattedAmount(this.rawAmount) : assert(rawAmount >= 0);
+
+  /// Removes all non-digit characters from the string and parses the result as an integer.
+  /// (e.g. '1,234.56€' -> 123456)
+  static UnformattedAmount fromString(String str) {
+    return UnformattedAmount(int.parse(str.replaceAll(RegExp(r'[^\d]'), '')));
+  }
 
   static UnformattedAmount fromJson(dynamic json) {
     if (json == null || json is! int) {
@@ -29,4 +35,7 @@ class UnformattedAmount {
   String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator}) {
     return format(currency.decimalPlaces, decimalSeparator, currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator);
   }
+
+  @override
+  String toString() => rawAmount.toString();
 }
