@@ -1,6 +1,8 @@
 import 'package:restrr/restrr.dart';
 
 class UnformattedAmount {
+  static const UnformattedAmount zero = UnformattedAmount(0);
+
   final int rawAmount;
 
   const UnformattedAmount(this.rawAmount) : assert(rawAmount >= 0);
