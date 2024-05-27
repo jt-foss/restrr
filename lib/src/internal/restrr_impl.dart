@@ -118,7 +118,11 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Account> createAccount(
-      {required String name, required UnformattedAmount originalBalance, required Id currencyId, String? description, String? iban}) async {
+      {required String name,
+      required UnformattedAmount originalBalance,
+      required Id currencyId,
+      String? description,
+      String? iban}) async {
     final RestResponse<Account> response = await requestHandler
         .apiRequest(route: AccountRoutes.create.compile(), mapper: (json) => entityBuilder.buildAccount(json), body: {
       'name': name,

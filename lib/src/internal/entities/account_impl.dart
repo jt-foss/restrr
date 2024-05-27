@@ -55,7 +55,8 @@ class AccountImpl extends RestrrEntityImpl<Account, AccountId> implements Accoun
       compiledRoute: AccountRoutes.deleteById.compile(params: [id.value]), api: api, key: id, cacheView: api.accountCache);
 
   @override
-  Future<Account> update({String? name, String? description, String? iban, UnformattedAmount? originalBalance, Id? currencyId}) async {
+  Future<Account> update(
+      {String? name, String? description, String? iban, UnformattedAmount? originalBalance, Id? currencyId}) async {
     if (name == null && description == null && iban == null && originalBalance == null && currencyId == null) {
       throw ArgumentError('At least one field must be set');
     }

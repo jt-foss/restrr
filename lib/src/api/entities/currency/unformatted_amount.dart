@@ -4,7 +4,6 @@ class UnformattedAmount {
   static const UnformattedAmount zero = UnformattedAmount(0);
 
   final int rawAmount;
-  final bool isNegative;
 
   const UnformattedAmount(this.rawAmount);
 
@@ -25,7 +24,7 @@ class UnformattedAmount {
     bool isNegative = rawAmount < 0;
     String amount = rawAmount.toString();
     // remove sign
-    if (negativeAmount) {
+    if (isNegative) {
       amount = amount.substring(1);
     }
     if (amount.length <= decimalPlaces) {
@@ -42,35 +41,30 @@ class UnformattedAmount {
   }
 
   String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator}) {
-    return format(currency.decimalPlaces, decimalSeparator, currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator);
+    return format(currency.decimalPlaces, decimalSeparator,
+        currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator);
   }
 
-  @override
   UnformattedAmount operator +(UnformattedAmount other) => UnformattedAmount(rawAmount + other.rawAmount);
 
-  @override
   UnformattedAmount operator -(UnformattedAmount other) => UnformattedAmount(rawAmount - other.rawAmount);
 
-  @override
   UnformattedAmount operator *(int other) => UnformattedAmount(rawAmount * other);
 
-  @override
   UnformattedAmount operator /(int other) => UnformattedAmount(rawAmount ~/ other);
 
-  @override
   bool operator ==(Object other) => other is UnformattedAmount && rawAmount == other.rawAmount;
 
-  @override
   bool operator <(UnformattedAmount other) => rawAmount < other.rawAmount;
 
-  @override
   bool operator <=(UnformattedAmount other) => rawAmount <= other.rawAmount;
 
-  @override
   bool operator >(UnformattedAmount other) => rawAmount > other.rawAmount;
 
-  @override
   bool operator >=(UnformattedAmount other) => rawAmount >= other.rawAmount;
+
+  @override
+  int get hashCode => rawAmount.hashCode;
 
   @override
   String toString() => rawAmount.toString();

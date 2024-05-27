@@ -61,7 +61,13 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
 
   @override
   Future<TransactionTemplate> update(
-      {Id? sourceId, Id? destinationId, UnformattedAmount? amount, Id? currencyId, String? name, String? description, Id? budgetId}) async {
+      {Id? sourceId,
+      Id? destinationId,
+      UnformattedAmount? amount,
+      Id? currencyId,
+      String? name,
+      String? description,
+      Id? budgetId}) async {
     if (sourceId == null &&
         destinationId == null &&
         amount == null &&

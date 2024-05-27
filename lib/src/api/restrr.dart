@@ -72,7 +72,11 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required UnformattedAmount originalBalance, required Id currencyId, String? description, String? iban});
+      {required String name,
+      required UnformattedAmount originalBalance,
+      required Id currencyId,
+      String? description,
+      String? iban});
 
   List<Account> getAccounts();
 
