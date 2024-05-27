@@ -71,6 +71,16 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   }
 
   @override
+  UnformattedAmount getDisplayAmount(Account current) {
+    final TransactionType type = getType(current);
+    if (type == TransactionType.deposit || type == TransactionType.transferIn) {
+      return amount;
+    } else {
+      return amount * -1;
+    }
+  }
+
+  @override
   Future<bool> delete() => RequestUtils.deleteSingle(
       compiledRoute: TransactionRoutes.deleteById.compile(params: [id.value]),
       api: api,

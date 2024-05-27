@@ -4,6 +4,7 @@ class UnformattedAmount {
   static const UnformattedAmount zero = UnformattedAmount(0);
 
   final int rawAmount;
+  final bool isNegative;
 
   const UnformattedAmount(this.rawAmount);
 
@@ -20,10 +21,8 @@ class UnformattedAmount {
     return UnformattedAmount(json);
   }
 
-  String format(int decimalPlaces, String decimalSeparator,
-      {String? currencySymbol, String? thousandsSeparator, bool isNegative = false}) {
-    // whether the amount is negative by itself or the user defined it to be negative
-    bool negativeAmount = rawAmount < 0 || isNegative;
+  String format(int decimalPlaces, String decimalSeparator, {String? currencySymbol, String? thousandsSeparator}) {
+    bool isNegative = rawAmount < 0;
     String amount = rawAmount.toString();
     // remove sign
     if (negativeAmount) {
@@ -39,12 +38,11 @@ class UnformattedAmount {
         amount = amount.substring(0, i) + thousandsSeparator + amount.substring(i);
       }
     }
-    return '${negativeAmount ? '-' : ''}$amount${currencySymbol ?? ''}';
+    return '${isNegative ? '-' : ''}$amount${currencySymbol ?? ''}';
   }
 
-  String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator, bool isNegative = false}) {
-    return format(currency.decimalPlaces, decimalSeparator,
-        currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator, isNegative: isNegative);
+  String formatWithCurrency(Currency currency, String decimalSeparator, {String? thousandsSeparator}) {
+    return format(currency.decimalPlaces, decimalSeparator, currencySymbol: currency.symbol, thousandsSeparator: thousandsSeparator);
   }
 
   @override
