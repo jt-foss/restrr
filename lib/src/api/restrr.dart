@@ -112,6 +112,8 @@ abstract class Restrr {
 
   /* Transaction Templates */
 
+  List<TransactionTemplate> getTransactionTemplates();
+
   Future<TransactionTemplate> createTransactionTemplate(
       {required UnformattedAmount amount,
       required Id currencyId,
@@ -127,6 +129,8 @@ abstract class Restrr {
       {int page = 1, int limit = 25, bool forceRetrieve = false});
 
   /* Recurring Transactions */
+
+  List<RecurringTransaction> getRecurringTransactions();
 
   Future<RecurringTransaction> createRecurringTransaction({required Id templateId, required RecurringRule recurringRule});
 

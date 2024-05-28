@@ -243,6 +243,9 @@ class RestrrImpl implements Restrr {
   /* Transaction Templates */
 
   @override
+  List<TransactionTemplate> getTransactionTemplates() => transactionTemplateCache.getAll();
+
+  @override
   Future<TransactionTemplate> createTransactionTemplate(
       {required UnformattedAmount amount,
       required Id currencyId,
@@ -292,6 +295,9 @@ class RestrrImpl implements Restrr {
   }
 
   /* Recurring Transactions */
+
+  @override
+  List<RecurringTransaction> getRecurringTransactions() => recurringTransactionCache.getAll();
 
   @override
   Future<RecurringTransaction> createRecurringTransaction(
