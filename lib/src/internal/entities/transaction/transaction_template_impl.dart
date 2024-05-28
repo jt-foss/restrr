@@ -53,6 +53,22 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
   });
 
   @override
+  TransactionType getType(Account current) {
+    if (sourceId != null && destinationId != null) {
+      if (sourceId!.value == current.id.value) {
+        return TransactionType.transferOut;
+      }
+      if (destinationId!.value == current.id.value) {
+        return TransactionType.transferIn;
+      }
+    }
+    if (sourceId != null) {
+      return TransactionType.withdrawal;
+    }
+    return TransactionType.deposit;
+  }
+
+  @override
   Future<bool> delete() => RequestUtils.deleteSingle(
       compiledRoute: TransactionTemplateRoutes.deleteById.compile(params: [id.value]),
       api: api,

@@ -15,6 +15,7 @@ abstract class TransactionTemplate extends RestrrEntity<TransactionTemplate, Tra
   EntityId? get budgetId;
   DateTime get createdAt;
 
+  TransactionType getType(Account current);
   Future<bool> delete();
 
   Future<TransactionTemplate> update({
