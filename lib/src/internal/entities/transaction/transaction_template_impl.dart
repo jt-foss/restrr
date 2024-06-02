@@ -15,7 +15,7 @@ class TransactionTemplateIdImpl extends IdImpl<TransactionTemplate> implements T
       api: api,
       key: this,
       cacheView: api.transactionTemplateCache,
-      compiledRoute: TransactionRoutes.getById.compile(params: [value]),
+      compiledRoute: TransactionTemplateRoutes.getById.compile(params: [value]),
       mapper: (json) => api.entityBuilder.buildTransactionTemplate(json),
       forceRetrieve: forceRetrieve);
 }
