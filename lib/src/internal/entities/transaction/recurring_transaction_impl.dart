@@ -27,6 +27,8 @@ class RecurringTransactionImpl extends RestrrEntityImpl<RecurringTransaction, Re
   @override
   final DateTime? lastExecutedAt;
   @override
+  final DateTime? nextExecutedAt;
+  @override
   final RecurringRule recurringRule;
   @override
   final DateTime createdAt;
@@ -36,6 +38,7 @@ class RecurringTransactionImpl extends RestrrEntityImpl<RecurringTransaction, Re
     required super.id,
     required this.templateId,
     required this.lastExecutedAt,
+    required this.nextExecutedAt,
     required this.recurringRule,
     required this.createdAt,
   });

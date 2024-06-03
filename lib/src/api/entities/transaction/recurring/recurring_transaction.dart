@@ -8,6 +8,7 @@ abstract class RecurringTransaction extends RestrrEntity<RecurringTransaction, R
 
   TransactionTemplateId get templateId;
   DateTime? get lastExecutedAt;
+  DateTime? get nextExecutedAt;
   RecurringRule get recurringRule;
   DateTime get createdAt;
 

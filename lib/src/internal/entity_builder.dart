@@ -122,8 +122,9 @@ class EntityBuilder {
     final RecurringTransactionImpl recurringTransaction = RecurringTransactionImpl(
       api: api,
       id: RecurringTransactionIdImpl(api: api, value: json['id']),
-      templateId: TransactionTemplateIdImpl(api: api, value: json['template']), // TODO: wait for fix
+      templateId: TransactionTemplateIdImpl(api: api, value: json['template_id']),
       lastExecutedAt: json['last_executed_at'] == null ? null : DateTime.parse(json['last_executed_at']),
+      nextExecutedAt: json['next_executed_at'] == null ? null : DateTime.parse(json['next_executed_at']),
       recurringRule: RecurringRule.fromJson(json['recurring_rule']),
       createdAt: DateTime.parse(json['created_at']),
     );
