@@ -1,32 +1,33 @@
+import 'package:restrr/restrr.dart';
 import 'package:restrr/src/internal/entities/restrr_entity_impl.dart';
 
-import '../../../restrr.dart';
-import '../requests/responses/rest_response.dart';
-import '../utils/request_utils.dart';
+import '../../requests/responses/rest_response.dart';
+import '../../utils/request_utils.dart';
 
-class TransactionIdImpl extends IdImpl<Transaction> implements TransactionId {
-  const TransactionIdImpl({required super.api, required super.value});
-
-  @override
-  Transaction? get() => api.transactionCache.get(this);
+class TransactionTemplateIdImpl extends IdImpl<TransactionTemplate> implements TransactionTemplateId {
+  const TransactionTemplateIdImpl({required super.api, required super.value});
 
   @override
-  Future<Transaction> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
+  TransactionTemplate? get() => api.transactionTemplateCache.get(this);
+
+  @override
+  Future<TransactionTemplate> retrieve({forceRetrieve = false}) => RequestUtils.getOrRetrieveSingle(
       api: api,
       key: this,
-      cacheView: api.transactionCache,
-      compiledRoute: TransactionRoutes.getById.compile(params: [value]),
-      mapper: (json) => api.entityBuilder.buildTransaction(json),
+      cacheView: api.transactionTemplateCache,
+      compiledRoute: TransactionTemplateRoutes.getById.compile(params: [value]),
+      mapper: (json) => api.entityBuilder.buildTransactionTemplate(json),
       forceRetrieve: forceRetrieve);
 }
 
-class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> implements Transaction {
+class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, TransactionTemplateId>
+    implements TransactionTemplate {
   @override
   final AccountId? sourceId;
   @override
   final AccountId? destinationId;
   @override
-  final int amount;
+  final UnformattedAmount amount;
   @override
   final CurrencyId currencyId;
   @override
@@ -37,10 +38,8 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
   final EntityId? budgetId;
   @override
   final DateTime createdAt;
-  @override
-  final DateTime executedAt;
 
-  const TransactionImpl({
+  const TransactionTemplateImpl({
     required super.api,
     required super.id,
     required this.sourceId,
@@ -51,8 +50,7 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
     required this.description,
     required this.budgetId,
     required this.createdAt,
-    required this.executedAt,
-  }) : assert(sourceId != null || destinationId != null);
+  });
 
   @override
   TransactionType getType(Account current) {
@@ -72,44 +70,51 @@ class TransactionImpl extends RestrrEntityImpl<Transaction, TransactionId> imple
 
   @override
   Future<bool> delete() => RequestUtils.deleteSingle(
-      compiledRoute: TransactionRoutes.deleteById.compile(params: [id.value]),
+      compiledRoute: TransactionTemplateRoutes.deleteById.compile(params: [id.value]),
       api: api,
       key: id,
-      cacheView: api.transactionCache);
+      cacheView: api.transactionTemplateCache);
 
   @override
-  Future<Transaction> update(
+  Future<TransactionTemplate> update(
       {Id? sourceId,
       Id? destinationId,
-      int? amount,
+      UnformattedAmount? amount,
       Id? currencyId,
       String? name,
       String? description,
-      Id? budgetId,
-      DateTime? executedAt}) async {
+      Id? budgetId}) async {
     if (sourceId == null &&
         destinationId == null &&
         amount == null &&
         currencyId == null &&
         name == null &&
         description == null &&
-        budgetId == null &&
-        executedAt == null) {
+        budgetId == null) {
       throw ArgumentError('At least one field must be set');
     }
-    final RestResponse<Transaction> response = await api.requestHandler.apiRequest(
-        route: TransactionRoutes.patchById.compile(params: [id.value]),
-        mapper: (json) => api.entityBuilder.buildTransaction(json),
+    final RestResponse<TransactionTemplate> response = await api.requestHandler.apiRequest(
+        route: TransactionTemplateRoutes.patchById.compile(params: [id.value]),
+        mapper: (json) => api.entityBuilder.buildTransactionTemplate(json),
         body: {
           if (sourceId != null) 'source_id': sourceId,
           if (destinationId != null) 'destination_id': destinationId,
-          if (amount != null) 'amount': amount,
+          if (amount != null) 'amount': amount.rawAmount,
           if (currencyId != null) 'currency_id': currencyId,
           if (name != null) 'name': name,
           if (description != null) 'description': description,
           if (budgetId != null) 'budget_id': budgetId,
-          if (executedAt != null) 'executed_at': executedAt.toUtc().toIso8601String(),
         });
     return response.data!;
+  }
+
+  @override
+  Future<ScheduledTransactionTemplate> schedule(ScheduleRule scheduleRule) async {
+    return api.createScheduledTransactionTemplate(templateId: id.value, scheduleRule: scheduleRule);
+  }
+
+  @override
+  Future<Transaction> createTransaction({required DateTime executedAt}) async {
+    return api.createTransactionFromTemplate(templateId: id.value, executedAt: executedAt);
   }
 }

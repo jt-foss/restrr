@@ -10,6 +10,8 @@ class RestrrOptions {
   EntityCacheView<Currency, CurrencyId>? currencyCacheView;
   EntityCacheView<PartialSession, PartialSessionId>? sessionCacheView;
   EntityCacheView<Transaction, TransactionId>? transactionCacheView;
+  EntityCacheView<TransactionTemplate, TransactionTemplateId>? transactionTemplateCacheView;
+  EntityCacheView<ScheduledTransactionTemplate, ScheduledTransactionTemplateId>? scheduledTransactionTemplateCacheView;
   EntityCacheView<Account, AccountId>? accountCacheView;
   EntityCacheView<User, UserId>? userCacheView;
 }
@@ -70,7 +72,11 @@ abstract class Restrr {
   /* Accounts */
 
   Future<Account> createAccount(
-      {required String name, required int originalBalance, required Id currencyId, String? description, String? iban});
+      {required String name,
+      required UnformattedAmount originalBalance,
+      required Id currencyId,
+      String? description,
+      String? iban});
 
   List<Account> getAccounts();
 
@@ -91,7 +97,7 @@ abstract class Restrr {
   /* Transactions */
 
   Future<Transaction> createTransaction(
-      {required int amount,
+      {required UnformattedAmount amount,
       required Id currencyId,
       required DateTime executedAt,
       required String name,
@@ -100,7 +106,39 @@ abstract class Restrr {
       Id? destinationId,
       Id? budgetId});
 
+  Future<Transaction> createTransactionFromTemplate({required Id templateId, required DateTime executedAt});
+
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /* Transaction Templates */
+
+  List<TransactionTemplate> getTransactionTemplates();
+
+  Future<TransactionTemplate> createTransactionTemplate(
+      {required UnformattedAmount amount,
+      required Id currencyId,
+      required String name,
+      String? description,
+      Id? sourceId,
+      Id? destinationId,
+      Id? budgetId});
+
+  Future<TransactionTemplate> retrieveTransactionTemplateById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<TransactionTemplate>> retrieveAllTransactionTemplates(
+      {int page = 1, int limit = 25, bool forceRetrieve = false});
+
+  /* Scheduled Transaction Templates */
+
+  List<ScheduledTransactionTemplate> getScheduledTransactionTemplates();
+
+  Future<ScheduledTransactionTemplate> createScheduledTransactionTemplate(
+      {required Id templateId, required ScheduleRule scheduleRule});
+
+  Future<ScheduledTransactionTemplate> retrieveScheduledTransactionTemplateById(Id id, {bool forceRetrieve = false});
+
+  Future<Paginated<ScheduledTransactionTemplate>> retrieveAllScheduledTransactionTemplates(
+      {int page = 1, int limit = 25, bool forceRetrieve = false});
 }
