@@ -109,7 +109,7 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
   }
 
   @override
-  Future<RecurringTransaction> createRecurringTransaction(RecurringRule recurringRule) async {
-    return api.createRecurringTransaction(templateId: id.value, recurringRule: recurringRule);
+  Future<ScheduledTransactionTemplate> schedule(ScheduleRule scheduleRule) async {
+    return api.createScheduledTransactionTemplate(templateId: id.value, scheduleRule: scheduleRule);
   }
 }

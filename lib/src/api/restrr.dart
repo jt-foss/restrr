@@ -11,7 +11,7 @@ class RestrrOptions {
   EntityCacheView<PartialSession, PartialSessionId>? sessionCacheView;
   EntityCacheView<Transaction, TransactionId>? transactionCacheView;
   EntityCacheView<TransactionTemplate, TransactionTemplateId>? transactionTemplateCacheView;
-  EntityCacheView<RecurringTransaction, RecurringTransactionId>? recurringTransactionCacheView;
+  EntityCacheView<ScheduledTransactionTemplate, ScheduledTransactionTemplateId>? scheduledTransactionTemplateCacheView;
   EntityCacheView<Account, AccountId>? accountCacheView;
   EntityCacheView<User, UserId>? userCacheView;
 }
@@ -128,14 +128,14 @@ abstract class Restrr {
   Future<Paginated<TransactionTemplate>> retrieveAllTransactionTemplates(
       {int page = 1, int limit = 25, bool forceRetrieve = false});
 
-  /* Recurring Transactions */
+  /* Scheduled Transaction Templates */
 
-  List<RecurringTransaction> getRecurringTransactions();
+  List<ScheduledTransactionTemplate> getScheduledTransactionTemplates();
 
-  Future<RecurringTransaction> createRecurringTransaction({required Id templateId, required RecurringRule recurringRule});
+  Future<ScheduledTransactionTemplate> createScheduledTransactionTemplate({required Id templateId, required ScheduleRule scheduleRule});
 
-  Future<RecurringTransaction> retrieveRecurringTransactionById(Id id, {bool forceRetrieve = false});
+  Future<ScheduledTransactionTemplate> retrieveScheduledTransactionTemplateById(Id id, {bool forceRetrieve = false});
 
-  Future<Paginated<RecurringTransaction>> retrieveAllRecurringTransactions(
+  Future<Paginated<ScheduledTransactionTemplate>> retrieveAllScheduledTransactionTemplates(
       {int page = 1, int limit = 25, bool forceRetrieve = false});
 }

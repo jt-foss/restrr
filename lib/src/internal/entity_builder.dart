@@ -7,7 +7,7 @@ import 'entities/currency/currency_impl.dart';
 import 'entities/currency/custom_currency_impl.dart';
 import 'entities/session/partial_session_impl.dart';
 import 'entities/session/session_impl.dart';
-import 'entities/transaction/recurring_transaction_impl.dart';
+import 'entities/transaction/scheduled_transaction_template_impl.dart';
 import 'entities/transaction/transaction_impl.dart';
 import 'entities/transaction/transaction_template_impl.dart';
 import 'entities/user_impl.dart';
@@ -118,17 +118,17 @@ class EntityBuilder {
     return api.transactionTemplateCache.add(transactionTemplate);
   }
 
-  RecurringTransaction buildRecurringTransaction(Map<String, dynamic> json) {
-    final RecurringTransactionImpl recurringTransaction = RecurringTransactionImpl(
+  ScheduledTransactionTemplate buildScheduledTransactionTemplate(Map<String, dynamic> json) {
+    final ScheduledTransactionTemplateImpl scheduledTemplate = ScheduledTransactionTemplateImpl(
       api: api,
-      id: RecurringTransactionIdImpl(api: api, value: json['id']),
+      id: ScheduledTransactionTemplateIdImpl(api: api, value: json['id']),
       templateId: TransactionTemplateIdImpl(api: api, value: json['template_id']),
       lastExecutedAt: json['last_executed_at'] == null ? null : DateTime.parse(json['last_executed_at']),
       nextExecutedAt: json['next_executed_at'] == null ? null : DateTime.parse(json['next_executed_at']),
-      recurringRule: RecurringRule.fromJson(json['recurring_rule']),
+      scheduleRule: ScheduleRule.fromJson(json['recurring_rule']), // TODO: rename once backend is updated
       createdAt: DateTime.parse(json['created_at']),
     );
-    return api.recurringTransactionCache.add(recurringTransaction);
+    return api.scheduledTransactionTemplateCache.add(scheduledTemplate);
   }
 
   User buildUser(Map<String, dynamic> json) {

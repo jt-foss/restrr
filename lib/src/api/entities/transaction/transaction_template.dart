@@ -28,5 +28,5 @@ abstract class TransactionTemplate extends RestrrEntity<TransactionTemplate, Tra
     Id? budgetId,
   });
 
-  Future<RecurringTransaction> createRecurringTransaction(RecurringRule rule);
+  Future<ScheduledTransactionTemplate> schedule(ScheduleRule rule);
 }

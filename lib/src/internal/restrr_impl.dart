@@ -9,7 +9,7 @@ import '../../restrr.dart';
 import '../api/events/event_handler.dart';
 import 'cache/entity_cache_view_impl.dart';
 import 'entities/session/partial_session_impl.dart';
-import 'entities/transaction/recurring_transaction_impl.dart';
+import 'entities/transaction/scheduled_transaction_template_impl.dart';
 import 'entities/transaction/transaction_template_impl.dart';
 import 'entity_builder.dart';
 
@@ -32,8 +32,8 @@ class RestrrImpl implements Restrr {
       options.transactionCacheView ?? EntityCacheViewImpl();
   late final EntityCacheView<TransactionTemplate, TransactionTemplateId> transactionTemplateCache =
       options.transactionTemplateCacheView ?? EntityCacheViewImpl();
-  late final EntityCacheView<RecurringTransaction, RecurringTransactionId> recurringTransactionCache =
-      options.recurringTransactionCacheView ?? EntityCacheViewImpl();
+  late final EntityCacheView<ScheduledTransactionTemplate, ScheduledTransactionTemplateId> scheduledTransactionTemplateCache =
+      options.scheduledTransactionTemplateCacheView ?? EntityCacheViewImpl();
   late final EntityCacheView<User, UserId> userCache = options.userCacheView ?? EntityCacheViewImpl();
 
   RestrrImpl({required Map<Type, Function> eventMap}) : eventHandler = RestrrEventHandler(eventMap);
@@ -294,43 +294,43 @@ class RestrrImpl implements Restrr {
         forceRetrieve: forceRetrieve);
   }
 
-  /* Recurring Transactions */
+  /* Scheduled Transaction Templates */
 
   @override
-  List<RecurringTransaction> getRecurringTransactions() => recurringTransactionCache.getAll();
+  List<ScheduledTransactionTemplate> getScheduledTransactionTemplates() => scheduledTransactionTemplateCache.getAll();
 
   @override
-  Future<RecurringTransaction> createRecurringTransaction(
-      {required Id templateId, required RecurringRule recurringRule}) async {
-    final RestResponse<RecurringTransaction> response = await requestHandler.apiRequest(
-        route: RecurringTransactionRoutes.create.compile(),
-        mapper: (json) => entityBuilder.buildRecurringTransaction(json),
+  Future<ScheduledTransactionTemplate> createScheduledTransactionTemplate(
+      {required Id templateId, required ScheduleRule scheduleRule}) async {
+    final RestResponse<ScheduledTransactionTemplate> response = await requestHandler.apiRequest(
+        route: ScheduledTransactionTemplateRoutes.create.compile(),
+        mapper: (json) => entityBuilder.buildScheduledTransactionTemplate(json),
         body: {
           'template_id': templateId,
-          'recurrence_rule': recurringRule.toJson(),
+          'recurrence_rule': scheduleRule.toJson(),
         });
     if (response.hasError) {
       throw response.error!;
     }
     // invalidate cache
-    recurringTransactionCache.clear();
+    scheduledTransactionTemplateCache.clear();
     return response.data!;
   }
 
   @override
-  Future<RecurringTransaction> retrieveRecurringTransactionById(Id id, {bool forceRetrieve = false}) async {
-    return RecurringTransactionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
+  Future<ScheduledTransactionTemplate> retrieveScheduledTransactionTemplateById(Id id, {bool forceRetrieve = false}) async {
+    return ScheduledTransactionTemplateIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }
 
   @override
-  Future<Paginated<RecurringTransaction>> retrieveAllRecurringTransactions(
+  Future<Paginated<ScheduledTransactionTemplate>> retrieveAllScheduledTransactionTemplates(
       {int page = 1, int limit = 25, bool forceRetrieve = false}) async {
     return RequestUtils.getOrRetrievePage(
         api: this,
-        compiledRoute: RecurringTransactionRoutes.getAll.compile(),
+        compiledRoute: ScheduledTransactionTemplateRoutes.getAll.compile(),
         page: page,
         limit: limit,
-        mapper: (json) => entityBuilder.buildRecurringTransaction(json),
+        mapper: (json) => entityBuilder.buildScheduledTransactionTemplate(json),
         forceRetrieve: forceRetrieve);
   }
 }

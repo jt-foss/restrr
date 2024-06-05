@@ -69,12 +69,12 @@ class TransactionTemplateRoutes {
   static final Route create = Route.post('/transaction/template');
 }
 
-class RecurringTransactionRoutes {
-  const RecurringTransactionRoutes._();
+class ScheduledTransactionTemplateRoutes {
+  const ScheduledTransactionTemplateRoutes._();
 
-  static final Route getAll = Route.get('/transaction/recurring');
-  static final Route getById = Route.get('/transaction/recurring/{recurringId}');
-  static final Route deleteById = Route.delete('/transaction/recurring/{recurringId}');
-  static final Route patchById = Route.patch('/transaction/recurring/{recurringId}');
-  static final Route create = Route.post('/transaction/recurring');
+  static final Route getAll = Route.get('/transaction/recurring'); // TODO: rename once backend is updated
+  static final Route getById = Route.get('/transaction/recurring/{recurringId}'); // TODO: rename once backend is updated
+  static final Route deleteById = Route.delete('/transaction/recurring/{recurringId}'); // TODO: rename once backend is updated
+  static final Route patchById = Route.patch('/transaction/recurring/{recurringId}'); // TODO: rename once backend is updated
+  static final Route create = Route.post('/transaction/recurring'); // TODO: rename once backend is updated
 }

@@ -91,11 +91,11 @@ class RestrrBuilder {
     }
     apiImpl.session = response.data! as Session;
 
-    // Retrieve all accounts, currencies, templates & recurring transactions to make them available in the cache
+    // Retrieve all accounts, currencies, templates & scheduled templates to make them available in the cache
     _cacheEntities(apiImpl, (api) => api.retrieveAllAccounts(limit: 50), 'accounts');
     _cacheEntities(apiImpl, (api) => api.retrieveAllCurrencies(limit: 50), 'currencies');
     _cacheEntities(apiImpl, (api) => api.retrieveAllTransactionTemplates(limit: 50), 'transaction templates');
-    _cacheEntities(apiImpl, (api) => api.retrieveAllRecurringTransactions(limit: 50), 'recurring transactions');
+    _cacheEntities(apiImpl, (api) => api.retrieveAllScheduledTransactionTemplates(limit: 50), 'scheduled transaction templates');
 
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return apiImpl;
