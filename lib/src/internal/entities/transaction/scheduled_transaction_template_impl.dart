@@ -4,7 +4,8 @@ import 'package:restrr/src/internal/requests/responses/rest_response.dart';
 import '../../../../restrr.dart';
 import '../../utils/request_utils.dart';
 
-class ScheduledTransactionTemplateIdImpl extends IdImpl<ScheduledTransactionTemplate> implements ScheduledTransactionTemplateId {
+class ScheduledTransactionTemplateIdImpl extends IdImpl<ScheduledTransactionTemplate>
+    implements ScheduledTransactionTemplateId {
   const ScheduledTransactionTemplateIdImpl({required super.api, required super.value});
 
   @override

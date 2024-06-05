@@ -225,6 +225,24 @@ class RestrrImpl implements Restrr {
   }
 
   @override
+  Future<Transaction> createTransactionFromTemplate(
+      {required TransactionTemplateId templateId, required DateTime executedAt}) async {
+    final RestResponse<Transaction> response = await requestHandler.apiRequest(
+        route: TransactionRoutes.createFromTemplate.compile(),
+        mapper: (json) => entityBuilder.buildTransaction(json),
+        body: {
+          'template_id': templateId,
+          'executed_at': executedAt.toUtc().toIso8601String(),
+        });
+    if (response.hasError) {
+      throw response.error!;
+    }
+    // invalidate cache
+    transactionCache.clear();
+    return response.data!;
+  }
+
+  @override
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false}) async {
     return TransactionIdImpl(api: this, value: id).retrieve(forceRetrieve: forceRetrieve);
   }

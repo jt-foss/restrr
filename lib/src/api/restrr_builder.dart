@@ -95,7 +95,8 @@ class RestrrBuilder {
     _cacheEntities(apiImpl, (api) => api.retrieveAllAccounts(limit: 50), 'accounts');
     _cacheEntities(apiImpl, (api) => api.retrieveAllCurrencies(limit: 50), 'currencies');
     _cacheEntities(apiImpl, (api) => api.retrieveAllTransactionTemplates(limit: 50), 'transaction templates');
-    _cacheEntities(apiImpl, (api) => api.retrieveAllScheduledTransactionTemplates(limit: 50), 'scheduled transaction templates');
+    _cacheEntities(
+        apiImpl, (api) => api.retrieveAllScheduledTransactionTemplates(limit: 50), 'scheduled transaction templates');
 
     apiImpl.eventHandler.fire(ReadyEvent(api: apiImpl));
     return apiImpl;

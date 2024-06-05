@@ -112,4 +112,9 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
   Future<ScheduledTransactionTemplate> schedule(ScheduleRule scheduleRule) async {
     return api.createScheduledTransactionTemplate(templateId: id.value, scheduleRule: scheduleRule);
   }
+
+  @override
+  Future<Transaction> createTransaction({required DateTime executedAt}) async {
+    return api.createTransactionFromTemplate(templateId: id, executedAt: executedAt);
+  }
 }

@@ -29,4 +29,6 @@ abstract class TransactionTemplate extends RestrrEntity<TransactionTemplate, Tra
   });
 
   Future<ScheduledTransactionTemplate> schedule(ScheduleRule rule);
+
+  Future<Transaction> createTransaction({required DateTime executedAt});
 }

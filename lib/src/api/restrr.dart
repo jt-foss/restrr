@@ -106,6 +106,8 @@ abstract class Restrr {
       Id? destinationId,
       Id? budgetId});
 
+  Future<Transaction> createTransactionFromTemplate({required TransactionTemplateId templateId, required DateTime executedAt});
+
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 
   Future<Paginated<Transaction>> retrieveAllTransactions({int page = 1, int limit = 25, bool forceRetrieve = false});
@@ -132,7 +134,8 @@ abstract class Restrr {
 
   List<ScheduledTransactionTemplate> getScheduledTransactionTemplates();
 
-  Future<ScheduledTransactionTemplate> createScheduledTransactionTemplate({required Id templateId, required ScheduleRule scheduleRule});
+  Future<ScheduledTransactionTemplate> createScheduledTransactionTemplate(
+      {required Id templateId, required ScheduleRule scheduleRule});
 
   Future<ScheduledTransactionTemplate> retrieveScheduledTransactionTemplateById(Id id, {bool forceRetrieve = false});
 

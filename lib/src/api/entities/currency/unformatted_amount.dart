@@ -53,8 +53,6 @@ class UnformattedAmount {
 
   UnformattedAmount operator /(int other) => UnformattedAmount(rawAmount ~/ other);
 
-  bool operator ==(Object other) => other is UnformattedAmount && rawAmount == other.rawAmount;
-
   bool operator <(UnformattedAmount other) => rawAmount < other.rawAmount;
 
   bool operator <=(UnformattedAmount other) => rawAmount <= other.rawAmount;
@@ -62,6 +60,9 @@ class UnformattedAmount {
   bool operator >(UnformattedAmount other) => rawAmount > other.rawAmount;
 
   bool operator >=(UnformattedAmount other) => rawAmount >= other.rawAmount;
+
+  @override
+  bool operator ==(Object other) => other is UnformattedAmount && rawAmount == other.rawAmount;
 
   @override
   int get hashCode => rawAmount.hashCode;
