@@ -115,6 +115,6 @@ class TransactionTemplateImpl extends RestrrEntityImpl<TransactionTemplate, Tran
 
   @override
   Future<Transaction> createTransaction({required DateTime executedAt}) async {
-    return api.createTransactionFromTemplate(templateId: id, executedAt: executedAt);
+    return api.createTransactionFromTemplate(templateId: id.value, executedAt: executedAt);
   }
 }

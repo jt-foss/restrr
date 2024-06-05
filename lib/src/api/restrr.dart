@@ -106,7 +106,7 @@ abstract class Restrr {
       Id? destinationId,
       Id? budgetId});
 
-  Future<Transaction> createTransactionFromTemplate({required TransactionTemplateId templateId, required DateTime executedAt});
+  Future<Transaction> createTransactionFromTemplate({required Id templateId, required DateTime executedAt});
 
   Future<Transaction> retrieveTransactionById(Id id, {bool forceRetrieve = false});
 

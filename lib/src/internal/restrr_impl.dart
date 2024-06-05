@@ -226,7 +226,7 @@ class RestrrImpl implements Restrr {
 
   @override
   Future<Transaction> createTransactionFromTemplate(
-      {required TransactionTemplateId templateId, required DateTime executedAt}) async {
+      {required Id templateId, required DateTime executedAt}) async {
     final RestResponse<Transaction> response = await requestHandler.apiRequest(
         route: TransactionRoutes.createFromTemplate.compile(),
         mapper: (json) => entityBuilder.buildTransaction(json),
